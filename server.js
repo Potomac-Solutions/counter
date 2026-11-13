@@ -11,6 +11,7 @@ import { createZubra } from '@zubra/server';
 import { signedCookie } from '@potomac-solutions/kit/auth';
 import { createStaff } from '@potomac-solutions/kit/staff';
 import { staffPages } from '@potomac-solutions/kit/staff/pages';
+import { createNotices } from '@potomac-solutions/kit/notice';
 import { createCounter, timeLabel, dayWord } from './src/counter.js';
 import { layout, escape } from './src/layout.js';
 
@@ -34,13 +35,16 @@ export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'count
   // shop's own log; their pages and routes are the kit's too.
   const production = process.env.NODE_ENV === 'production';
   const staff = createStaff({ store: counter.store, secure: production, ...(staffCost ? { cost: staffCost } : {}) });
-  const pages = staffPages({ staff, home: '/kitchen', business: shop.name, secure: production, render: (res, title, body) => page(res, zubra.page(), title, body) });
+  // A message in an address shows only if the server signed it (kit/notice), so a link can't put
+  // its own words in a page's alert.
+  const notices = createNotices({ secret });
+  const pages = staffPages({ staff, notices, proxies: Number(process.env.TRUST_PROXIES ?? 0), home: '/kitchen', business: shop.name, secure: production, render: (res, title, body) => page(res, zubra.page(), title, body) });
   const send = (res, status, html) => (res.writeHead(status, { 'content-type': 'text/html; charset=utf-8' }), res.end(html));
-  const back = (res, location) => (res.writeHead(303, { location }), res.end());
+  const back = (res, location) => (res.writeHead(303, { location: notices.sign(location) }), res.end());
   const page = (res, p, title, body, { guest = null, refresh = 0 } = {}) => send(res, 200, p.finish(layout({ title, shop, body, count: guest ? counter.cart(guest).count : null, refresh })));
   const note = (url) => {
-    const problem = (url.searchParams.get('problem') ?? '').slice(0, 200);
-    const done = (url.searchParams.get('done') ?? '').slice(0, 200);
+    const problem = notices.read(url).problem;
+    const done = notices.read(url).done;
     return `${problem ? `<p class="notice" role="alert">${escape(problem)}</p>` : ''}${done ? `<p class="ok" role="status">${escape(done)}</p>` : ''}`;
   };
   const withProblem = (path, answer) => `${path}?problem=${encodeURIComponent(answer.error)}`;
@@ -86,7 +90,7 @@ ${view.lines.length ? `<form class="panel" method="post" action="/order/time"><h
     const view = counter.cart(guest);
     const slot = counter.pickup(guest);
     return `<section><a href="/order">Back to your order</a><h1>Check out</h1><p class="lede">Pickup ${escape(pickupWords(slot))}. ${escape(shop.pickup)}</p></section>
-${p.render('checkout-form', { cart: view, place: '/checkout', checkout: counter.checkoutKey(), problem: (url.searchParams.get('problem') ?? '').slice(0, 200), testMode: true })}`;
+${p.render('checkout-form', { cart: view, place: '/checkout', checkout: counter.checkoutKey(), problem: notices.read(url).problem, testMode: true })}`;
   }
 
   function orderStatus(p, order) {

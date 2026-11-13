@@ -7,6 +7,13 @@ import { join } from 'node:path';
 import { chromium } from 'playwright';
 import { createApp } from '../server.js';
 
+// A redirect's location as words: the signature on its message (kit/notice) checked and taken off.
+const plain = (location) => {
+  location = String(location ?? '');
+  if (/[?&](problem|done)=/.test(location) && !location.startsWith('?')) assert.match(location, /&sig=[\w-]{22}/, `unsigned message: ${location}`);
+  return decodeURIComponent(location.replace(/&sig=[\w-]+/, '').replaceAll('+', ' '));
+};
+
 // The owner every test shop starts with, set up from the shop's setup link; cheap hashing for tests.
 const OWNER = { email: 'owner@example.com', name: 'Test Owner', password: 'test owner password' };
 const COST = { N: 2 ** 10, r: 8, p: 1 };
@@ -50,7 +57,7 @@ async function device(name, { javaScriptEnabled = true, shift = false } = {}) {
   await page.goto(app.base);
   const post = async (path, form, headers = {}) => {
     const response = await context.request.post(`${app.base}${path}`, { form, headers, maxRedirects: 0 });
-    return { status: response.status(), location: decodeURIComponent(response.headers().location ?? '') };
+    return { status: response.status(), location: plain(response.headers().location ?? '') };
   };
   const get = async (path) => (await context.request.get(`${app.base}${path}`)).text();
   if (shift) await post('/staff/sign-in', { email: OWNER.email, password: OWNER.password });
@@ -173,7 +180,7 @@ test('a paid order keeps its place after holds run out; a made-up time is refuse
   try {
   for (let i = 0; i < 3; i++) {
     const context = await browser.newContext({ javaScriptEnabled: false });
-    const post = async (path, form) => decodeURIComponent((await context.request.post(`${base}${path}`, { form, maxRedirects: 0 })).headers().location ?? '');
+    const post = async (path, form) => plain((await context.request.post(`${base}${path}`, { form, maxRedirects: 0 })).headers().location ?? '');
     await context.request.get(base);
     await post('/cart/add', { item: 'baguette', qty: '1' });
     await post('/order/time', { slot });
@@ -206,7 +213,7 @@ test('a declined card takes nothing: the stock, the pickup place and the bag sta
   // Checking out with no time sends the guest back to choose one.
   const fresh = await device('no time', { javaScriptEnabled: false });
   await fresh.post('/cart/add', { item: 'baguette', qty: '1' });
-  assert.equal(decodeURIComponent((await fresh.context.request.get(`${app.base}/checkout`, { maxRedirects: 0 })).headers().location), '/order?problem=Choose a pickup time first.');
+  assert.equal(plain((await fresh.context.request.get(`${app.base}/checkout`, { maxRedirects: 0 })).headers().location), '/order?problem=Choose a pickup time first.');
   await guest.context.close();
   await fresh.context.close();
 });
