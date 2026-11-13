@@ -8,9 +8,11 @@ The shop it starts with, Hickory Hollow Bakehouse in Oakland, Maryland, is made 
 
 `npm install`, then `npm start`, and open http://localhost:3000. Two browser windows side by side (one private, so it's another person) show the live parts best.
 
+**Staff sign in with their own accounts.** The first time, nobody has one, so the server prints a setup link: open it to make the owner (your email, name and a password). The owner's **People** page invites the rest of the staff (an invite is a link to send them), resets passwords and turns people off.
+
 1. **Order.** Add a few things from the menu, open **Your order**, choose a pickup time (after closing, tomorrow's), and **Check out** with any card number (`4000 0000 0000 0002` is declined, to see that).
 2. **Watch the menu.** In the other window, buy the rye. The first window's menu shows how many are left, without a reload.
-3. **The kitchen.** Open **The kitchen (staff)** from the footer and start a shift. Press **Start making**, then **Ready**: the guest's order page follows each step. The list refreshes itself every 20 seconds.
+3. **The kitchen.** Open **The kitchen (staff)** from the footer and sign in. Press **Start making**, then **Ready**: the guest's order page follows each step. The list refreshes itself every 20 seconds.
 4. **Sold out.** Under **Stock and today's note**, set the rye to 0: every open menu shows it sold out at once. Post a note ("Pumpkin scones at 9"), and it's on every menu too.
 5. **A full pickup time.** Each time takes three orders; a fourth is told to choose another, even when they pay at the same moment.
 6. **Without JavaScript** (turn it off in the browser's settings), all of it works the same.
@@ -19,7 +21,7 @@ The shop it starts with, Hickory Hollow Bakehouse in Oakland, Maryland, is made 
 
 | Piece | Job |
 | --- | --- |
-| [Potomac kit](https://github.com/Potomac-Solutions/kit) (private) | `catalog` (what's left, taken all or nothing), `cart` (the bag), `checkout` (pay once, then the order), `pay` (its test provider), `hold` (each pickup time's places), `stages` (placed, making, ready, picked up), `auth` (guest and kitchen cookies), `store` (the Sync log). The kit's `cart-panel` and `checkout-form`, from its package |
+| [Potomac kit](https://github.com/Potomac-Solutions/kit) (private) | `catalog` (what's left, taken all or nothing), `cart` (the bag), `checkout` (pay once, then the order), `pay` (its test provider), `hold` (each pickup time's places), `stages` (placed, making, ready, picked up), `staff` and `staff/pages` (the owner and staff: passwords, sessions, invites, roles, and their pages), `auth` (guest and kitchen cookies), `store` (the Sync log). The kit's `cart-panel` and `checkout-form`, from its package |
 | `@zubra/server` | Renders every page before any JavaScript runs |
 | `@zubra/sync` | The log (one SQLite file). Each menu item, the note and each order are documents only the server writes; pages follow them live, and read only the menu, the note and their own orders |
 | `src/shop.js` | The bakery: hours, pickup spacing and places, today's menu, as data |
@@ -43,7 +45,7 @@ Node 22.13 or later. `SESSION_SECRET` is required in production; `DATA_DIR` says
 4. A pickup time takes three orders; the fourth is told it filled up, even at the same moment, and has to choose again.
 5. A paid order keeps its place after holds run out; a made-up pickup time is refused.
 6. A declined card takes nothing: the stock, the pickup place and the bag stay as they were. Checking out with no time goes back to choose one.
-7. The kitchen needs a shift; it moves an order one step per press (two presses at once move it once); the guest follows live; picked-up orders leave the list.
+7. The kitchen needs a staff sign-in; it moves an order one step per press (two presses at once move it once); the guest follows live; picked-up orders leave the list.
 8. A page reads the menu, the note and its own orders, nothing else, even when it asks; it writes nothing; another site's post is refused; another guest's order page isn't theirs.
 
 Every behaviour was broken on purpose once to check a test fails (19 of 20 caught). The one that can't be: a guest's place at a pickup time is picked from those free with no wait in between, so holding it can't fail; the check stays as a safety belt.
@@ -52,4 +54,4 @@ Every behaviour was broken on purpose once to check a test fails (19 of 20 caugh
 
 - The owner's admin: the menu, sections, hours and pickup spacing, now in `src/shop.js`. Options on an item (oat milk, extra shot).
 - A kitchen list that updates itself without the 20-second refresh.
-- Texts when an order is ready (the kit's `notify`, as Work Ticket uses), staff accounts, and a real payment provider.
+- Texts when an order is ready (the kit's `notify`, as Work Ticket uses), and a real payment provider.

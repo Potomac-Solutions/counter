@@ -7,6 +7,15 @@ import { join } from 'node:path';
 import { chromium } from 'playwright';
 import { createApp } from '../server.js';
 
+// The owner every test shop starts with, set up from the shop's setup link; cheap hashing for tests.
+const OWNER = { email: 'owner@example.com', name: 'Test Owner', password: 'test owner password' };
+const COST = { N: 2 ** 10, r: 8, p: 1 };
+async function withOwner(server) {
+  const made = await server.staff.accept(await server.staff.setup(), OWNER);
+  if (!made.ok) throw new Error(made.error);
+  return server;
+}
+
 const dir = mkdtempSync(join(tmpdir(), 'counter-'));
 const errors = [];
 let browser;
@@ -19,7 +28,7 @@ const sinceHalfSeven = ((Number(bakery.find((part) => part.type === 'hour').valu
 const now = () => Date.now() - sinceHalfSeven;
 
 before(async () => {
-  const server = await createApp({ db: join(dir, 'app.db'), cache: false, secret: 'test', now });
+  const server = await withOwner(await createApp({ staffCost: COST, db: join(dir, 'app.db'), cache: false, secret: 'test', now }));
   await new Promise((done) => server.listen(0, done));
   app = { server, base: `http://localhost:${server.address().port}` };
   const system = ['/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser', 'C:/Program Files/Google/Chrome/Application/chrome.exe', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'].find((path) => existsSync(path));
@@ -44,7 +53,7 @@ async function device(name, { javaScriptEnabled = true, shift = false } = {}) {
     return { status: response.status(), location: decodeURIComponent(response.headers().location ?? '') };
   };
   const get = async (path) => (await context.request.get(`${app.base}${path}`)).text();
-  if (shift) await post('/staff/start', {});
+  if (shift) await post('/staff/sign-in', { email: OWNER.email, password: OWNER.password });
   return { context, page, post, get };
 }
 const counter = () => app.server.counter;
@@ -157,7 +166,7 @@ test('a pickup time takes three orders; the fourth is told it filled up, even at
 });
 
 test('a paid order keeps its place after holds run out; a made-up time is refused', async () => {
-  const quick = await createApp({ db: join(dir, 'quick.db'), cache: false, secret: 'test', now, holdMs: 800 });
+  const quick = await withOwner(await createApp({ staffCost: COST, db: join(dir, 'quick.db'), cache: false, secret: 'test', now, holdMs: 800 }));
   await new Promise((done) => quick.listen(0, done));
   const base = `http://localhost:${quick.address().port}`;
   const slot = quick.counter.times()[0].slot;
@@ -210,9 +219,9 @@ test('the kitchen moves each order one step, the guest follows live, and two pre
   await guest.page.waitForFunction(() => customElements.get('order-progress'));
   await guest.page.waitForTimeout(400);
   const outsider = await device('not kitchen', { javaScriptEnabled: false });
-  assert.match(await outsider.get('/kitchen'), /Start a kitchen shift/);
+  assert.match(await outsider.get('/kitchen'), /<button type=\"submit\">Sign in<\/button>/);
   assert.equal((await outsider.post('/kitchen/advance', { key, to: 'making' })).location, '/kitchen');
-  assert.equal((await outsider.post('/staff/start', {}, { 'sec-fetch-site': 'cross-site' })).status, 403);
+  assert.equal((await outsider.post('/staff/sign-in', {}, { 'sec-fetch-site': 'cross-site' })).status, 403);
 
   const a = await device('kitchen a', { javaScriptEnabled: false, shift: true });
   const b = await device('kitchen b', { javaScriptEnabled: false, shift: true });
