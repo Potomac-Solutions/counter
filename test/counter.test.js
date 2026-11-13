@@ -12,8 +12,14 @@ const errors = [];
 let browser;
 let app;
 
+// The bakery's clock, set to 7:30 this morning and running from there, so the whole morning's
+// pickup times are ahead whenever the tests run (at noon only a few are left before 2 pm).
+const bakery = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date());
+const sinceHalfSeven = ((Number(bakery.find((part) => part.type === 'hour').value) * 60 + Number(bakery.find((part) => part.type === 'minute').value) - 450 + 1440) % 1440) * 60_000;
+const now = () => Date.now() - sinceHalfSeven;
+
 before(async () => {
-  const server = await createApp({ db: join(dir, 'app.db'), cache: false, secret: 'test' });
+  const server = await createApp({ db: join(dir, 'app.db'), cache: false, secret: 'test', now });
   await new Promise((done) => server.listen(0, done));
   app = { server, base: `http://localhost:${server.address().port}` };
   const system = ['/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser', 'C:/Program Files/Google/Chrome/Application/chrome.exe', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'].find((path) => existsSync(path));
@@ -151,7 +157,7 @@ test('a pickup time takes three orders; the fourth is told it filled up, even at
 });
 
 test('a paid order keeps its place after holds run out; a made-up time is refused', async () => {
-  const quick = await createApp({ db: join(dir, 'quick.db'), cache: false, secret: 'test', holdMs: 800 });
+  const quick = await createApp({ db: join(dir, 'quick.db'), cache: false, secret: 'test', now, holdMs: 800 });
   await new Promise((done) => quick.listen(0, done));
   const base = `http://localhost:${quick.address().port}`;
   const slot = quick.counter.times()[0].slot;
