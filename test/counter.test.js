@@ -103,6 +103,8 @@ test('the menu is live: what others buy and what the kitchen marks sold out show
   // Today's note.
   await kitchen.post('/kitchen/note', { text: 'Pumpkin scones, out at 9.' });
   await reader.page.locator('kitchen-note', { hasText: 'Pumpkin scones, out at 9.' }).waitFor({ timeout: 5000 });
+  // Without JavaScript too, with when it was posted.
+  assert.match(await buyer.get('/'), /Pumpkin scones, out at 9\.<\/p>[\s\S]*Posted at \d{1,2}:\d{2} [AP]M/);
   // The kitchen's limits: a number, and coffee doesn't run out.
   assert.equal((await kitchen.post('/kitchen/stock', { item: 'rye', left: '-1' })).location, '/kitchen/menu?problem=Give a number from 0 to 500.');
   assert.equal((await kitchen.post('/kitchen/stock', { item: 'drip', left: '3' })).location, '/kitchen/menu?problem=Drip coffee doesn’t run out.');

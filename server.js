@@ -54,7 +54,7 @@ export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'count
     const today = counter.note();
     return `<section><h1>Order ahead</h1><p class="lede">Choose a pickup time, pay once, and we’ll have it bagged at the side window.</p></section>
 ${note(url)}
-${p.render('kitchen-note', { note: 'today', textNow: today.text, atNow: today.at, timeZone: shop.timeZone })}
+${p.render('kitchen-note', { note: 'today', textNow: today.text, atNow: today.at, atLabel: today.at ? new Date(today.at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: shop.timeZone }) : '', timeZone: shop.timeZone })}
 ${mine.length ? `<section class="panel"><h2>Your orders</h2><ul>${mine.map((order) => `<li><a href="/orders/${order.key}">${escape(pickupWords(order.slot))}</a> · ${order.status.replace('-', ' ')}</li>`).join('')}</ul></section>` : ''}
 ${counter
   .menu()
