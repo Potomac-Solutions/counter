@@ -1,0 +1,39 @@
+<!--
+  One thing on the menu, with how many are left, live. The item is a Sync document only the server
+  writes ('use collection items by item'): when someone buys the last cinnamon roll, or the
+  kitchen marks the rye sold out, every open menu shows it without a reload. Adding to the order
+  is a plain form post, so it works without JavaScript.
+-->
+<script>
+  'use collection items by item'
+  import { from } from '@zubra/runtime'
+
+  let left = from(leftNow)
+
+  const money = (cents) => `$${(cents / 100).toFixed(2)}`
+  const out = left !== null && left <= 0
+  const few = left !== null && left > 0 && left <= 5
+</script>
+<style>
+  :host { display: block; }
+  article { display: grid; grid-template-columns: 1fr auto; gap: 0.25rem 1rem; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid var(--border, #e3d6c6); }
+  h3 { margin: 0; font-size: 1.05rem; }
+  p { margin: 0; color: var(--muted-foreground, #7a6a58); font-size: 0.92rem; }
+  .left { font-weight: 700; color: var(--accent, #b4532a); }
+  .out { color: var(--muted-foreground, #7a6a58); text-decoration: line-through; }
+  form { grid-row: span 2; display: flex; gap: 0.4rem; align-items: center; }
+  input { width: 3.2rem; font: inherit; padding: 0.4rem; border-radius: 0.4rem; border: 1px solid var(--border, #e3d6c6); }
+  button { font: inherit; font-weight: 700; padding: 0.45rem 0.8rem; border: 0; border-radius: 0.45rem; background: var(--primary, #6b3f22); color: var(--primary-foreground, #fff); cursor: pointer; }
+  button:disabled { opacity: 0.45; cursor: not-allowed; }
+</style>
+<menu-item item="" name="" unit="" cents={0} left-now={null} add="">
+  <article>
+    <h3 class:out={out}>{name}</h3>
+    <form method="post" action={add}>
+      <input type="hidden" name="item" value={item}>
+      <input type="number" name="qty" value="1" min="1" max={left === null ? 24 : Math.max(1, left)} aria-label={`How many ${name}`} disabled={out}>
+      <button type="submit" disabled={out}>Add</button>
+    </form>
+    <p>{money(cents)} · {unit} <span class="left" zb-if={few}>· {left} left</span><span class="left" zb-if={out}>· Sold out</span></p>
+  </article>
+</menu-item>
