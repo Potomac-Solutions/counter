@@ -13,6 +13,11 @@
 //   slots/<time>/<n>  the places at a pickup time                     (kit hold)
 //   pickups/<guest>   the pickup time a guest chose
 //   notes/today       the kitchen's note on the menu (live)
+//   settings/shop     what the owner changed from the admin: hours, pickup words
+//   audit/<key>       who on the staff did what, and when
+//   customers, customer-sessions, customer-tokens   customer accounts (kit customers)
+//
+// An order carries `owner` (the browser) and, signed in, `customer` (the account): either makes it theirs.
 import { createSyncServer } from '@zubra/sync/server';
 import { sqliteLog } from '@zubra/sync/sqlite';
 import { syncStore, serverOnly, SERVER_ONLY } from '@potomac-solutions/kit/store';
@@ -57,19 +62,25 @@ const slotKey = (slot) => slot.replace(/[^0-9]/g, '');
 
 export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 2 * 60_000 } = {}) {
   let who = () => null;
-  const ordersOf = (pub) => store.under('orders').filter((order) => order.owner === pub).map((order) => order.key);
+  const owns = (guest, order) => Boolean(guest && order && (order.owner === guest.pub || (guest.customer && order.customer === guest.customer)));
+  const ordersOf = (guest) => store.under('orders').filter((order) => owns(guest, order)).map((order) => order.key);
   const sync = createSyncServer({
     log: await sqliteLog(db),
     // Pages write nothing: every collection here is the server's.
-    authorize: serverOnly([...SERVER_ONLY, 'orders', 'slots', 'slot-holds', 'pickups', 'notes'], ({ kind }) => kind === 'read'),
+    authorize: serverOnly([...SERVER_ONLY, 'orders', 'slots', 'slot-holds', 'pickups', 'notes', 'settings', 'audit'], ({ kind }) => kind === 'read'),
     // A page reads the menu and the note, and its own orders: nobody else's name or basket.
     scope({ request }) {
       const guest = who(request);
-      const keys = guest ? ordersOf(guest.pub) : [];
+      const keys = guest ? ordersOf(guest) : [];
       return { items: true, notes: true, ...(keys.length ? { orders: keys } : {}) };
     },
   });
   const store = await syncStore(sync);
+
+  // What the owner changed, over the defaults in shop.js.
+  const defaults = { hours: shop.hours, pickup: shop.pickup };
+  const applySettings = () => Object.assign(shop, defaults, Object.fromEntries(Object.entries(store.get('settings', 'shop') ?? {}).filter(([name]) => name in defaults)));
+  applySettings();
 
   // Today's bake, the first time the bakery opens on this log.
   if (!store.under('items').length) for (const { key, ...item } of menu) await store.write('items', key, item);
@@ -164,7 +175,7 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
       const done = await checkout.place(guest.pub, {
         key,
         method: { card: String(form.get('card') ?? '') },
-        fields: { name: String(form.get('name') ?? '').trim().slice(0, 80), phone: String(form.get('phone') ?? '').trim().slice(0, 40), slot, placedAt: now() },
+        fields: { name: String(form.get('name') ?? '').trim().slice(0, 80), email: String(form.get('email') ?? '').trim().slice(0, 200), phone: String(form.get('phone') ?? '').trim().slice(0, 40), slot, placedAt: now(), customer: guest.customer ?? '' },
         description: `${shop.name} order (test mode)`,
       });
       if (!done.ok) {
@@ -178,9 +189,9 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
     /** A paid order the guest owns, or null. */
     order(guest, key) {
       const order = KEY.test(key) && store.get('orders', key);
-      return order && guest && order.owner === guest.pub ? { key, ...order } : null;
+      return order && owns(guest, order) ? { key, ...order } : null;
     },
-    ordersFor: (guest) => (guest ? store.under('orders').filter((order) => order.owner === guest.pub).sort((a, b) => (a.slot < b.slot ? -1 : 1)) : []),
+    ordersFor: (guest) => (guest ? store.under('orders').filter((order) => owns(guest, order)).sort((a, b) => (a.slot < b.slot ? -1 : 1)) : []),
 
     /** The kitchen's list: orders not picked up, soonest pickup first. */
     kitchen: () => store.under('orders').filter((order) => order.status !== 'picked-up').sort((a, b) => (a.slot < b.slot ? -1 : a.slot > b.slot ? 1 : a.placedAt - b.placedAt)),
@@ -213,5 +224,55 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
       return { ok: true };
     },
     note: () => store.get('notes', 'today') ?? { text: '', at: 0 },
+
+    // ---- Accounts, the admin and the owner's settings -----------------------------------------
+    /** On signing in or up: this browser's orders join the account. */
+    async claim(guest, customer) {
+      let claimed = 0;
+      for (const order of store.under('orders')) {
+        if (order.owner === guest?.pub && !order.customer) {
+          await store.write('orders', order.key, { customer });
+          claimed++;
+        }
+      }
+      return claimed;
+    },
+    /** Every order, newest first, for the admin. */
+    allOrders: () => store.under('orders').sort((a, b) => (b.placedAt ?? 0) - (a.placedAt ?? 0)),
+    staffOrder(key) {
+      const order = KEY.test(key ?? '') ? store.get('orders', key) : null;
+      return order ? { key, ...order } : null;
+    },
+
+    /** Something someone on the staff did, for the activity list. */
+    async audit(by, what, ref = '') {
+      await store.write('audit', `l${now().toString(36)}${Math.random().toString(36).slice(2, 8)}`, { by: by?.name ?? 'System', what: String(what).slice(0, 200), ref, at: now() });
+    },
+    activity: (limit = 20) => store.under('audit').sort((a, b) => b.at - a.at).slice(0, limit),
+
+    /** The owner changes an item's name and price. Orders already paid keep theirs. */
+    async setItem(form) {
+      const key = String(form.get('item') ?? '');
+      const item = store.get('items', key);
+      if (!item) return { error: 'That isn’t on the menu.' };
+      const name = String(form.get('name') ?? '').trim().slice(0, 80);
+      const match = /^\$?\s*(\d{1,4})(?:\.(\d{1,2}))?$/.exec(String(form.get('price') ?? '').trim());
+      if (!name) return { error: 'Give the item a name.' };
+      if (!match) return { error: `Give ${name} a price, like 4.75.` };
+      const cents = Number(match[1]) * 100 + Number((match[2] ?? '0').padEnd(2, '0'));
+      if (cents < 25) return { error: `Give ${name} a price of at least $0.25.` };
+      await store.write('items', key, { name, cents });
+      return { ok: true, item: { ...item, name, cents } };
+    },
+
+    /** The owner changes the hours and pickup words. */
+    async setShop(form) {
+      const hours = String(form.get('hours') ?? '').trim().slice(0, 120);
+      const pickup = String(form.get('pickup') ?? '').trim().slice(0, 240);
+      if (!hours || !pickup) return { error: 'Give the hours and the pickup words.' };
+      await store.write('settings', 'shop', { hours, pickup });
+      applySettings();
+      return { ok: true };
+    },
   };
 }
