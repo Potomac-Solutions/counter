@@ -6,16 +6,30 @@ The shop it starts with, Hickory Hollow Bakehouse in Oakland, Maryland, is made 
 
 ## Try it
 
-`npm install`, then `npm start`, and open http://localhost:3000. Two browser windows side by side (one private, so it's another person) show the live parts best.
+`npm install`, then `npm run demo`: it fills the bakery with four months of made-up orders and forty customers, puts this morning's orders in the kitchen, and starts it on http://localhost:3000. It prints three demo sign-ins, for this machine only:
 
-**Staff sign in with their own accounts.** The first time, nobody has one, so the server prints a setup link: open it to make the owner (your email, name and a password). The owner's **People** page invites the rest of the staff (an invite is a link to send them), resets passwords and turns people off.
+| Who | Email | Password | Where |
+| --- | --- | --- | --- |
+| Owner | `owner@example.com` | `hickory-owner-demo` | `/admin`: everything |
+| Staff | `counter@example.com` | `hickory-staff-demo` | `/admin` (overview, orders, customers), `/kitchen` |
+| Customer | `riley@example.com` | `hickory-guest-demo` | `/account` |
 
-1. **Order.** Add a few things from the menu, open **Your order**, choose a pickup time (after closing, tomorrow's), and **Check out** with any card number (`4000 0000 0000 0002` is declined, to see that).
-2. **Watch the menu.** In the other window, buy the rye. The first window's menu shows how many are left, without a reload.
-3. **The kitchen.** Open **The kitchen (staff)** from the footer and sign in. Press **Start making**, then **Ready**: the guest's order page follows each step. The list refreshes itself every 20 seconds.
-4. **Sold out.** Under **Stock and today's note**, set the rye to 0: every open menu shows it sold out at once. Post a note ("Pumpkin scones at 9"), and it's on every menu too.
-5. **A full pickup time.** Each time takes three orders; a fourth is told to choose another, even when they pay at the same moment.
-6. **Without JavaScript** (turn it off in the browser's settings), all of it works the same.
+`npm start` alone keeps what's there; with no data it prints a setup link for the first owner instead. `npm run seed` fills an empty shop, and `npm run seed -- --fresh` starts over.
+
+**The public side**
+1. **The landing page** (`/`): what the bakery does, today's note, the menu with what's left (live), how ordering works, and where and when.
+2. **Order.** Add a few things, open **Your order**, choose a pickup time, and **Check out** with any card number (`4000 0000 0000 0002` is declined). A confirmation email lands in the owner's **Outbox**.
+3. **An account** (`/account`): sign up, and orders from this browser join it; signed in elsewhere, they're there too, and checkout fills in your name and email. **Forgot your password?** sends a one-time link (to the Outbox, and the server's log).
+4. **Watch it live.** In another window, buy the rye: the first window's menu counts down. Each pickup time takes three orders.
+
+**The admin** (`/admin`, staff sign-in)
+5. **Overview**: takings and orders for the last 30 days against the 30 before, today's pickups, what's sold out, new accounts, takings by day, what's in the kitchen, and what the staff did.
+6. **Orders**: search by name, email, phone or code; filter by pickup day and status; CSV. An order's page moves it along a step at a time.
+7. **Customers**: every account with its orders and spend, as CSV; an owner can turn one off or email a reset link.
+8. **Reports** (owners): takings and orders by day, week or month in the shop's time zone, by item and by section, the busiest pickup hours, how many account holders came back, and CSV.
+9. **Settings** (owners): each item's name and price, the hours and the pickup words. New orders pay the new price; paid ones keep theirs.
+10. **The kitchen** (`/kitchen`): orders by pickup time, **Start making**, **Ready**, **Picked up**, with the guest's phone following each step; **Stock and today's note** marks things sold out and posts the note to every open menu.
+11. **Without JavaScript** (turn it off in the browser's settings), all of it works the same.
 
 ## How it is put together
 
@@ -25,7 +39,10 @@ The shop it starts with, Hickory Hollow Bakehouse in Oakland, Maryland, is made 
 | `@zubra/server` | Renders every page before any JavaScript runs |
 | `@zubra/sync` | The log (one SQLite file). Each menu item, the note and each order are documents only the server writes; pages follow them live, and read only the menu, the note and their own orders |
 | `src/shop.js` | The bakery: hours, pickup spacing and places, today's menu, as data |
-| `src/counter.js` | The bakery's side: the menu by section, pickup times, the kitchen, stock, the note, and the words |
+| `src/counter.js` | The bakery's side: the menu by section, pickup times, the kitchen, stock, the note, what follows a customer account, the owner's settings, the staff activity, and the words |
+| `kit/customers`, `kit/reports`, `kit/charts` | Customer accounts; the numbers by day, week or month, and CSV; charts drawn on the server as SVG, with a table under each |
+| `src/account.js`, `src/admin.js` | The account pages; the admin |
+| `bin/seed.js` | The demo data |
 
 ## Run it
 
@@ -48,10 +65,21 @@ Node 22.13 or later. `SESSION_SECRET` is required in production; `DATA_DIR` says
 7. The kitchen needs a staff sign-in; it moves an order one step per press (two presses at once move it once); the guest follows live; picked-up orders leave the list.
 8. A page reads the menu, the note and its own orders, nothing else, even when it asks; it writes nothing; another site's post is refused; another guest's order page isn't theirs.
 
+The admin, customer accounts and reports (`test/admin.test.js`, over plain HTTP):
+
+9. The landing page leads with ordering ahead, then the menu; a guest sees no admin link.
+10. A sign-up takes in the order from that browser and sends its confirmation to the outbox; signed in elsewhere the order follows and checkout is filled in; signed out, it doesn't.
+11. A forgotten password gets the same page whether or not the account exists; the emailed link works once.
+12. The admin needs a staff sign-in; staff get no reports, settings or outbox (403), and their settings posts change nothing; owners get them all.
+13. Staff find an order and move it along from its page, once per step; it shows in the activity.
+14. A new name and price show on the menu and new orders pay it; paid orders keep theirs; a bad price is refused; the hours change.
+15. The report's takings match the orders and its CSV adds up to them; a name starting with `=` opens in a spreadsheet as text.
+16. A turned-off customer is signed out; only an owner can turn them back on.
+
 Every behaviour was broken on purpose once to check a test fails (19 of 20 caught). The one that can't be: a guest's place at a pickup time is picked from those free with no wait in between, so holding it can't fail; the check stays as a safety belt.
 
 ## Not yet
 
-- The owner's admin: the menu, sections, hours and pickup spacing, now in `src/shop.js`. Options on an item (oat milk, extra shot).
+- More of the owner's admin: adding items and sections, the opening hours and pickup spacing are still in `src/shop.js` (names, prices and the words are editable). Options on an item (oat milk, extra shot).
 - A kitchen list that updates itself without the 20-second refresh.
-- Texts when an order is ready (the kit's `notify`, as Work Ticket uses), and a real payment provider.
+- Texts when an order is ready, real email (the confirmations and reset links go to the outbox), and a real payment provider.
