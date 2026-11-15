@@ -1,0 +1,6 @@
+.next/
+.svelte-kit/
+build/
+.nuxt/
+.output/
+next-env.d.ts
