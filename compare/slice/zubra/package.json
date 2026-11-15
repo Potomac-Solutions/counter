@@ -1,0 +1,11 @@
+{
+  "name": "counter-slice-zubra",
+  "private": true,
+  "type": "module",
+  "scripts": { "start": "NODE_ENV=production node server.js" },
+  "dependencies": {
+    "@zubra/runtime": "5.19.0",
+    "@zubra/server": "5.19.0",
+    "@zubra/sync": "5.19.0"
+  }
+}
