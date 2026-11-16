@@ -1,4 +1,4 @@
-# The slice: Counter's menu, bag and pickup time
+# The slice: Counter's menu, bag, pickup time, checkout and order page
 
 One slice of Counter, built once per framework. Each build is a small app of its
 own in `compare/slice/<framework>/`. Every build:
@@ -24,7 +24,10 @@ the contract only follows the forms.
 | Bag | `GET /order` | The lines, total, and the pickup time form |
 | Change | forms on the bag | `slice.change` with the new quantity (0 removes) |
 | Time | form on the bag | `slice.choose`, then the bag |
-| Live | the framework's choice | Pushes what's left to an open menu, which updates without a reload |
+| Checkout | `GET /checkout` | The bag's summary and the payment form; with an empty bag or no time, a 303 to `/order` with the problem |
+| Place | form on checkout | `slice.place`; on success a 303 to `/orders/<key>`, otherwise back to `/checkout` (or `/order` when `back` says) with the problem |
+| Order | `GET /orders/<key>` | The order's steps and lines; someone else's order or an unknown key is a 404 |
+| Live | the framework's choice | Pushes what's left to an open menu, and an order's steps to its open order page, without a reload |
 
 ## Markup
 
@@ -58,7 +61,30 @@ main
                  options "tomorrow 7:15 am" ("… (full)" and disabled when full)
                  button "Set the time"
     p "Pickup: tomorrow at 7:15 am" when one is set
+  a "Check out" → /checkout     (only when the bag has lines and a time is set)
+  -- checkout --
+  h1 "Check out"
+  p.summary "2 items · $18.00 · pickup tomorrow at 7:15 am"
+  form (post): hidden checkout (from slice.checkoutKey(), made with the page)
+               label "Name" input name; label "Email" input email;
+               label "Card number" input card
+               button "Place order · $18.00"
+  p.meta "Test mode: 4242 4242 4242 4242 pays, 4000 0000 0000 0002 is declined."
+  -- order --
+  h1 "Order for tomorrow at 7:15 am"
+  p "For Sam · $18.00"
+  ol.steps > li ("Placed", "Being made", "Ready at the window", "Picked up");
+             li.done for each step reached
+  ul.lines > li "2 × Country sourdough"
+  -- not found --
+  h1 "We can’t find that order."   (status 404)
 ```
+
+Each validation problem is `slice.place`'s own words: "Give a name for the bag.",
+"Give an email we can send the receipt to.", "Give a card number (test mode: …)"
+and "That card was declined. Try another." The form keeps the name and email the
+guest typed when it comes back with a problem only if the framework does that
+without extra work; the contract doesn't require it.
 
 Page titles are `<page> · Hickory Hollow Bakehouse`.
 

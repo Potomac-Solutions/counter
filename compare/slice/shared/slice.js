@@ -22,17 +22,29 @@ export async function createSlice({ db = process.env.SLICE_DB ?? ':memory:', sec
   const notices = createNotices({ secret });
   counter.identify((request) => cookies.session(request));
 
-  // What's left, as a string, so a change is one comparison. Polled from the same store every
+  // What's left, and where each order is, as strings, so a change is one comparison. Polled from the same store every
   // implementation reads, so no framework gets a faster feed than another.
   const listeners = new Set();
+  const orderListeners = new Map(); // order key → Set of fn(order)
   const snapshot = () => JSON.stringify(counter.store.under('items').map((item) => [item.key, item.left]));
+  const stages = () => new Map(counter.store.under('orders').map((order) => [order.key, order.status]));
   let last = snapshot();
+  let lastStages = stages();
   const timer = setInterval(() => {
     const next = snapshot();
-    if (next === last) return;
-    last = next;
-    const menu = counter.menu();
-    for (const fn of listeners) fn(menu);
+    if (next !== last) {
+      last = next;
+      const menu = counter.menu();
+      for (const fn of listeners) fn(menu);
+    }
+    if (!orderListeners.size) return;
+    const now = stages();
+    for (const [key, fns] of orderListeners) {
+      if (now.get(key) === lastStages.get(key)) continue;
+      const order = { key, ...counter.store.get('orders', key) };
+      for (const fn of fns) fn(view(order));
+    }
+    lastStages = now;
   }, pollMs);
   timer.unref();
 
@@ -42,16 +54,63 @@ export async function createSlice({ db = process.env.SLICE_DB ?? ':memory:', sec
   if (control) {
     kitchen = createServer(async (req, res) => {
       const url = new URL(req.url, 'http://control');
-      if (req.method !== 'POST' || url.pathname !== '/stock') return res.writeHead(404).end();
-      const done = await counter.stock(url.searchParams);
+      if (req.method !== 'POST') return res.writeHead(404).end();
+      // POST /advance?key=c…&to=making moves an order along, as the kitchen board does.
+      const done = url.pathname === '/stock' ? await counter.stock(url.searchParams) : url.pathname === '/advance' ? await counter.advance(url.searchParams.get('key'), url.searchParams.get('to')) : null;
+      if (!done) return res.writeHead(404).end();
       res.writeHead(done.ok ? 200 : 400, { 'content-type': 'application/json' }).end(JSON.stringify(done));
     });
     kitchen.listen(Number(control), '127.0.0.1');
     kitchen.unref();
   }
 
+  /** An order as a page shows it: who, when, what, the total, and each step done or not. */
+  const STEP_WORDS = { placed: 'Placed', making: 'Being made', ready: 'Ready at the window', 'picked-up': 'Picked up' };
+  const view = (order) => {
+    const reached = counter.steps.indexOf(order.status);
+    return {
+      key: order.key,
+      name: order.name,
+      when: pickupWords(counter.times().map((time) => ({ ...time, day: dayWord(time.slot, now()) })), order.slot) || order.slot,
+      lines: (order.lines ?? []).map((line) => ({ item: line.item, qty: line.qty, name: line.name })),
+      total: money(order.total ?? order.cents ?? 0),
+      status: order.status,
+      steps: counter.steps.map((step, i) => ({ step, words: STEP_WORDS[step], done: i <= reached })),
+    };
+  };
+
   return {
     shop: counter.shop,
+    /** A new checkout's key, put in the checkout form so a second press is the same checkout. */
+    checkoutKey: () => counter.checkoutKey(),
+    /**
+     * Pay for the bag. Checks the name, email and card first, then `{ ok, key }` or `{ error }`, with
+     * `back: '/order'` when the problem is the pickup time. Card 4000 0000 0000 0002 is declined.
+     */
+    async place(guest, { checkout, name, email, card }) {
+      name = String(name ?? '').trim();
+      email = String(email ?? '').trim();
+      if (!counter.cart(guest).lines.length) return { error: 'Your bag is empty.', back: '/order' };
+      if (!name) return { error: 'Give a name for the bag.' };
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { error: 'Give an email we can send the receipt to.' };
+      if (String(card ?? '').replace(/\D/g, '').length < 12) return { error: 'Give a card number (test mode: 4242 4242 4242 4242).' };
+      return counter.place(guest, form({ checkout, name, email, card }));
+    },
+    /** The guest's paid order as a page shows it, or null if it isn't theirs. */
+    order(guest, key) {
+      const order = counter.order(guest, String(key ?? ''));
+      return order ? view(order) : null;
+    },
+    /** fn(order) whenever that order moves along; returns unsubscribe. */
+    watchOrder(key, fn) {
+      if (!orderListeners.has(key)) orderListeners.set(key, new Set());
+      orderListeners.get(key).add(fn);
+      lastStages = stages();
+      return () => {
+        orderListeners.get(key)?.delete(fn);
+        if (!orderListeners.get(key)?.size) orderListeners.delete(key);
+      };
+    },
     /** Where to send the browser after a post: `back('/', { done: 'Added to your order.' })`. */
     back: (path, { done, problem } = {}) => notices.sign(`${path}${done ? `?done=${encodeURIComponent(done)}` : problem ? `?problem=${encodeURIComponent(problem)}` : ''}`),
     /** The signed message in a page's address, if any: `{ done }` or `{ problem }`. */
