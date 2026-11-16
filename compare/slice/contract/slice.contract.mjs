@@ -38,8 +38,10 @@ test('S1 the menu shows every section and item, with what is left', async () => 
   await page.getByRole('heading', { name: 'Order ahead', level: 1 }).waitFor();
   for (const section of ['Bread', 'Pastry', 'Coffee']) await page.getByRole('heading', { name: section, level: 2 }).waitFor();
   assert.equal(await page.locator('li.item').count(), 8);
-  assert.match(await row(page, 'Country sourdough').innerText(), /\$9\.00[\s\S]*loaf[\s\S]*12 left/);
-  assert.doesNotMatch(await row(page, 'Drip coffee').innerText(), /left|Sold out/);
+  // Locators, not innerText: they also read an item's shadow root, where a web component may render it.
+  const sourdough = row(page, 'Country sourdough');
+  for (const words of ['$9.00', 'loaf', '12 left']) await sourdough.getByText(words).first().waitFor();
+  assert.equal(await row(page, 'Drip coffee').getByText(/left|Sold out/).count(), 0);
   await context.close();
 });
 
