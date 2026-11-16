@@ -1,10 +1,11 @@
 {
   "machine": {
+    "pinned": true,
     "cpus": 2,
     "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
     "memoryGb": 8,
     "node": "v26.13.1",
-    "date": "2026-11-16T00:44:07.740Z",
+    "date": "2026-11-16T01:46:12.050Z",
     "loadSeconds": 10,
     "runs": {
       "build": 3,
@@ -19,24 +20,9 @@
       "@zubra/server": "5.19.0",
       "@zubra/sync": "5.19.0"
     },
-    "nextjs": {
-      "counter-slice-backend": "file:../shared",
-      "next": "16.4.6",
-      "react": "19.3.1",
-      "react-dom": "19.3.1",
-      "server-only": "^0.0.1"
-    },
-    "sveltekit": {
-      "counter-slice-backend": "file:../shared",
-      "@sveltejs/adapter-node": "6.0.2",
-      "@sveltejs/kit": "3.2.0",
-      "svelte": "5.57.3",
-      "vite": "8.3.8"
-    },
-    "nuxt": {
-      "counter-slice-backend": "file:../shared",
-      "nuxt": "4.6.4",
-      "vue": "3.5.45"
+    "zubra-stream": {
+      "@zubra/runtime": "5.19.0",
+      "@zubra/server": "5.19.0"
     },
     "lit": {
       "@lit-labs/ssr": "4.1.0",
@@ -66,16 +52,48 @@
       "@microsoft/webui-framework": "3.1.2",
       "counter-slice-backend": "file:../shared",
       "esbuild": "0.28.2"
+    },
+    "sveltekit": {
+      "counter-slice-backend": "file:../shared",
+      "@sveltejs/adapter-node": "6.0.2",
+      "@sveltejs/kit": "3.2.0",
+      "svelte": "5.57.3",
+      "vite": "8.3.8"
+    },
+    "nextjs": {
+      "counter-slice-backend": "file:../shared",
+      "next": "16.4.6",
+      "react": "19.3.1",
+      "react-dom": "19.3.1",
+      "server-only": "^0.0.1"
+    },
+    "nextjs-tuned": {
+      "counter-slice-backend": "file:../shared",
+      "next": "16.4.6",
+      "react": "19.3.1",
+      "react-dom": "19.3.1",
+      "server-only": "^0.0.1"
+    },
+    "nuxt": {
+      "counter-slice-backend": "file:../shared",
+      "nuxt": "4.6.4",
+      "vue": "3.5.45"
+    },
+    "nuxt-tuned": {
+      "counter-slice-backend": "file:../shared",
+      "nuxt": "4.6.4",
+      "vue": "3.5.45"
     }
   },
   "results": [
     {
       "name": "zubra",
       "lines": {
-        "total": 123,
+        "total": 174,
         "files": {
           "components/slice-item.zb": 17,
-          "server.js": 106
+          "components/slice-steps.zb": 15,
+          "server.js": 142
         }
       },
       "dependencies": {
@@ -89,16 +107,16 @@
       },
       "runtimeSize": 6647808,
       "start": {
-        "ms": 148.20825999999988,
+        "ms": 173.95596699999987,
         "runs": [
-          178.230865,
-          147.4084989999999,
-          148.20825999999988,
-          167.92967199999975,
-          142.61531100000002
+          200.33579100000009,
+          177.0712249999999,
+          145.99284899999998,
+          133.7367830000003,
+          173.95596699999987
         ]
       },
-      "idleRss": 91103232,
+      "idleRss": 91574272,
       "payload": {
         "scripts": 5,
         "jsRaw": 76873,
@@ -107,6 +125,11 @@
         "htmlGzip": 1127,
         "requests": 7,
         "files": [
+          {
+            "url": "/_zubra/sync/connect.js",
+            "raw": 15517,
+            "gzip": 5516
+          },
           {
             "url": "/_zubra/components/slice-item.js",
             "raw": 2692,
@@ -123,11 +146,6 @@
             "gzip": 14282
           },
           {
-            "url": "/_zubra/sync/connect.js",
-            "raw": 15517,
-            "gzip": 5516
-          },
-          {
             "url": "/_zubra/sync/webrtc.js",
             "raw": 5949,
             "gzip": 2210
@@ -138,77 +156,1486 @@
         "menu": [],
         "bag": []
       },
+      "updates": {
+        "menu": {
+          "median": 9,
+          "p90": 11,
+          "samples": [
+            14,
+            9,
+            10,
+            9,
+            9,
+            8,
+            7,
+            9,
+            7,
+            11,
+            8,
+            8
+          ]
+        },
+        "order": {
+          "median": 9,
+          "p90": 11,
+          "samples": [
+            9,
+            8,
+            7,
+            10,
+            10,
+            6,
+            13,
+            9,
+            10,
+            11,
+            8,
+            7
+          ]
+        }
+      },
+      "slow": {
+        "load": 432.89999999990687,
+        "add": 532,
+        "loads": [
+          317.39999999990687,
+          432.89999999990687,
+          434.70000000018626,
+          421.09999999962747,
+          463.1999999997206
+        ],
+        "adds": [
+          466,
+          536,
+          532,
+          504,
+          756
+        ]
+      },
       "lighthouse": {
-        "score": 100,
-        "lcp": 753.2964999999999,
-        "tbt": 12.5,
-        "fcp": 753.2964999999999,
+        "score": 94,
+        "lcp": 752.4976999999999,
+        "tbt": 287.56999999999994,
+        "fcp": 752.4976999999999,
         "runs": [
           {
-            "score": 100,
-            "lcp": 753.2964999999999,
-            "tbt": 6,
-            "fcp": 753.2964999999999
+            "score": 96,
+            "lcp": 752.4976999999999,
+            "tbt": 246.25115000000005,
+            "fcp": 752.4976999999999
           },
           {
-            "score": 100,
-            "lcp": 751.1600000000001,
-            "tbt": 64.99999999999989,
-            "fcp": 751.1600000000001
+            "score": 91,
+            "lcp": 753.9970000000001,
+            "tbt": 391.0015000000001,
+            "fcp": 753.9970000000001
           },
           {
-            "score": 100,
-            "lcp": 757.7911999999999,
-            "tbt": 12.5,
-            "fcp": 757.7911999999999
+            "score": 94,
+            "lcp": 750.8599999999999,
+            "tbt": 287.56999999999994,
+            "fcp": 750.8599999999999
           }
         ]
       },
       "load": {
-        "rps": 5402.37,
+        "rps": 5138.8,
         "p50": 8,
-        "p975": 16,
+        "p975": 19,
         "errors": 0,
-        "peakRss": 202317824,
+        "peakRss": 196005888,
         "runs": [
           {
-            "rps": 4828.8,
+            "rps": 4659.55,
             "p50": 9,
-            "p975": 21,
-            "p99": 27,
+            "p975": 24,
+            "p99": 29,
             "errors": 0,
-            "peakRss": 202317824
+            "peakRss": 195829760
           },
           {
-            "rps": 5402.37,
+            "rps": 5138.8,
+            "p50": 8,
+            "p975": 19,
+            "p99": 23,
+            "errors": 0,
+            "peakRss": 196005888
+          },
+          {
+            "rps": 5574.73,
             "p50": 8,
             "p975": 16,
             "p99": 20,
             "errors": 0,
-            "peakRss": 202469376
-          },
-          {
-            "rps": 5512.55,
-            "p50": 8,
-            "p975": 14,
-            "p99": 16,
-            "errors": 0,
-            "peakRss": 197165056
+            "peakRss": 197316608
           }
         ]
-      }
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
+    },
+    {
+      "name": "zubra-stream",
+      "lines": {
+        "total": 202,
+        "files": {
+          "components/slice-item.zb": 14,
+          "components/slice-steps.zb": 12,
+          "live.js": 15,
+          "server.js": 161
+        }
+      },
+      "dependencies": {
+        "direct": 2,
+        "installed": 3,
+        "nodeModules": 6492160
+      },
+      "build": {
+        "ms": 0,
+        "runs": []
+      },
+      "runtimeSize": 6492160,
+      "start": {
+        "ms": 167.34711600000446,
+        "runs": [
+          166.25026400000206,
+          164.91230100000394,
+          175.74544400000013,
+          167.34711600000446,
+          185.32751600000483
+        ]
+      },
+      "idleRss": 91287552,
+      "payload": {
+        "scripts": 3,
+        "jsRaw": 40443,
+        "jsGzip": 15501,
+        "htmlRaw": 5199,
+        "htmlGzip": 1109,
+        "requests": 4,
+        "files": [
+          {
+            "url": "/_zubra/components/slice-item.js",
+            "raw": 2222,
+            "gzip": 866
+          },
+          {
+            "url": "/live.js",
+            "raw": 627,
+            "gzip": 353
+          },
+          {
+            "url": "/_zubra/runtime/zubra.js",
+            "raw": 37594,
+            "gzip": 14282
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 7.5,
+          "p90": 9,
+          "samples": [
+            14,
+            7,
+            9,
+            8,
+            6,
+            8,
+            6,
+            6,
+            6,
+            9,
+            8,
+            7
+          ]
+        },
+        "order": {
+          "median": 8,
+          "p90": 11,
+          "samples": [
+            12,
+            7,
+            8,
+            11,
+            7,
+            7,
+            11,
+            8,
+            11,
+            10,
+            8,
+            7
+          ]
+        }
+      },
+      "slow": {
+        "load": 323.79999999981374,
+        "add": 490,
+        "loads": [
+          388.79999999981374,
+          323.79999999981374,
+          388.3000000002794,
+          296.79999999981374,
+          225.39999999990687
+        ],
+        "adds": [
+          437,
+          481,
+          499,
+          551,
+          490
+        ]
+      },
+      "lighthouse": {
+        "score": 99,
+        "lcp": 753.5727999999999,
+        "tbt": 131.71360000000004,
+        "fcp": 753.5727999999999,
+        "runs": [
+          {
+            "score": 99,
+            "lcp": 752.8240000000001,
+            "tbt": 113.08799999999997,
+            "fcp": 752.8240000000001
+          },
+          {
+            "score": 97,
+            "lcp": 757.8979999999999,
+            "tbt": 189.55099999999993,
+            "fcp": 757.8979999999999
+          },
+          {
+            "score": 99,
+            "lcp": 753.5727999999999,
+            "tbt": 131.71360000000004,
+            "fcp": 753.5727999999999
+          }
+        ]
+      },
+      "load": {
+        "rps": 5137.28,
+        "p50": 8,
+        "p975": 18,
+        "errors": 0,
+        "peakRss": 198541312,
+        "runs": [
+          {
+            "rps": 4401.55,
+            "p50": 9,
+            "p975": 26,
+            "p99": 32,
+            "errors": 0,
+            "peakRss": 206655488
+          },
+          {
+            "rps": 5224.91,
+            "p50": 8,
+            "p975": 16,
+            "p99": 20,
+            "errors": 0,
+            "peakRss": 198541312
+          },
+          {
+            "rps": 5137.28,
+            "p50": 8,
+            "p975": 18,
+            "p99": 21,
+            "errors": 0,
+            "peakRss": 192905216
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
+    },
+    {
+      "name": "lit",
+      "lines": {
+        "total": 203,
+        "files": {
+          "client.js": 17,
+          "server.js": 157,
+          "slice-item.js": 18,
+          "slice-steps.js": 11
+        }
+      },
+      "dependencies": {
+        "direct": 4,
+        "installed": 47,
+        "nodeModules": 31383552
+      },
+      "build": {
+        "ms": 25.419668999995338,
+        "runs": [
+          31.394125999999233,
+          25.068987000006018,
+          25.419668999995338
+        ]
+      },
+      "runtimeSize": 31412224,
+      "start": {
+        "ms": 154.44380300000194,
+        "runs": [
+          146.0916440000001,
+          138.8999339999864,
+          164.48695600000792,
+          154.44380300000194,
+          159.28510199999437
+        ]
+      },
+      "idleRss": 85848064,
+      "payload": {
+        "scripts": 1,
+        "jsRaw": 22749,
+        "jsGzip": 8657,
+        "htmlRaw": 8885,
+        "htmlGzip": 1150,
+        "requests": 3,
+        "files": [
+          {
+            "url": "/client.js",
+            "raw": 22749,
+            "gzip": 8657
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 7,
+          "p90": 9,
+          "samples": [
+            8,
+            7,
+            8,
+            7,
+            9,
+            10,
+            6,
+            8,
+            6,
+            7,
+            7,
+            6
+          ]
+        },
+        "order": {
+          "median": 8,
+          "p90": 10,
+          "samples": [
+            7,
+            9,
+            8,
+            8,
+            8,
+            8,
+            13,
+            7,
+            10,
+            10,
+            6,
+            10
+          ]
+        }
+      },
+      "slow": {
+        "load": 329.3000000002794,
+        "add": 471,
+        "loads": [
+          365.39999999990687,
+          219.20000000018626,
+          329.3000000002794,
+          375.10000000009313,
+          268.89999999990687
+        ],
+        "adds": [
+          451,
+          471,
+          605,
+          461,
+          568
+        ]
+      },
+      "lighthouse": {
+        "score": 98,
+        "lcp": 753.0396000000001,
+        "tbt": 149.98019999999997,
+        "fcp": 753.0396000000001,
+        "runs": [
+          {
+            "score": 98,
+            "lcp": 753.0396000000001,
+            "tbt": 149.98019999999997,
+            "fcp": 753.0396000000001
+          },
+          {
+            "score": 99,
+            "lcp": 752.8820000000001,
+            "tbt": 109.55899999999997,
+            "fcp": 752.8820000000001
+          },
+          {
+            "score": 97,
+            "lcp": 810,
+            "tbt": 198.5,
+            "fcp": 810
+          }
+        ]
+      },
+      "load": {
+        "rps": 1464.73,
+        "p50": 31,
+        "p975": 59,
+        "errors": 0,
+        "peakRss": 175398912,
+        "runs": [
+          {
+            "rps": 1343.73,
+            "p50": 32,
+            "p975": 61,
+            "p99": 67,
+            "errors": 0,
+            "peakRss": 171655168
+          },
+          {
+            "rps": 1464.73,
+            "p50": 31,
+            "p975": 59,
+            "p99": 65,
+            "errors": 0,
+            "peakRss": 175398912
+          },
+          {
+            "rps": 1507.91,
+            "p50": 30,
+            "p975": 55,
+            "p99": 62,
+            "errors": 0,
+            "peakRss": 175443968
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
+    },
+    {
+      "name": "enhance",
+      "lines": {
+        "total": 204,
+        "files": {
+          "client.js": 21,
+          "server.js": 157,
+          "slice-item.js": 18,
+          "slice-steps.js": 8
+        }
+      },
+      "dependencies": {
+        "direct": 3,
+        "installed": 40,
+        "nodeModules": 14745600
+      },
+      "build": {
+        "ms": 30.66450100002112,
+        "runs": [
+          23.44177800003672,
+          30.66450100002112,
+          31.56039899995085
+        ]
+      },
+      "runtimeSize": 749568,
+      "start": {
+        "ms": 119.91390200000023,
+        "runs": [
+          119.91390200000023,
+          98.9597590000485,
+          129.31421700003557,
+          109.01202100003138,
+          163.21277400001418
+        ]
+      },
+      "idleRss": 78069760,
+      "payload": {
+        "scripts": 1,
+        "jsRaw": 13941,
+        "jsGzip": 5374,
+        "htmlRaw": 4329,
+        "htmlGzip": 935,
+        "requests": 3,
+        "files": [
+          {
+            "url": "/client.js",
+            "raw": 13941,
+            "gzip": 5374
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 7,
+          "p90": 9,
+          "samples": [
+            10,
+            8,
+            6,
+            9,
+            8,
+            9,
+            7,
+            7,
+            7,
+            6,
+            7,
+            6
+          ]
+        },
+        "order": {
+          "median": 9,
+          "p90": 13,
+          "samples": [
+            11,
+            8,
+            6,
+            16,
+            7,
+            7,
+            12,
+            8,
+            10,
+            10,
+            13,
+            8
+          ]
+        }
+      },
+      "slow": {
+        "load": 218.10000000009313,
+        "add": 411,
+        "loads": [
+          247.70000000018626,
+          244.70000000018626,
+          218.10000000009313,
+          203.10000000009313,
+          189.39999999990687
+        ],
+        "adds": [
+          406,
+          376,
+          411,
+          514,
+          491
+        ]
+      },
+      "lighthouse": {
+        "score": 100,
+        "lcp": 751.806,
+        "tbt": 51.235000000000014,
+        "fcp": 751.806,
+        "runs": [
+          {
+            "score": 100,
+            "lcp": 751.06,
+            "tbt": 51.235000000000014,
+            "fcp": 751.06
+          },
+          {
+            "score": 99,
+            "lcp": 751.806,
+            "tbt": 104.59699999999998,
+            "fcp": 751.806
+          },
+          {
+            "score": 100,
+            "lcp": 752.5840000000001,
+            "tbt": 40.20799999999997,
+            "fcp": 752.5840000000001
+          }
+        ]
+      },
+      "load": {
+        "rps": 2279.82,
+        "p50": 20,
+        "p975": 40,
+        "errors": 0,
+        "peakRss": 190361600,
+        "runs": [
+          {
+            "rps": 2161.91,
+            "p50": 20,
+            "p975": 47,
+            "p99": 57,
+            "errors": 0,
+            "peakRss": 177815552
+          },
+          {
+            "rps": 2279.82,
+            "p50": 20,
+            "p975": 40,
+            "p99": 44,
+            "errors": 0,
+            "peakRss": 190361600
+          },
+          {
+            "rps": 2397.6,
+            "p50": 19,
+            "p975": 35,
+            "p99": 41,
+            "errors": 0,
+            "peakRss": 198336512
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
+    },
+    {
+      "name": "stencil",
+      "lines": {
+        "total": 299,
+        "files": {
+          "client.js": 16,
+          "server.js": 166,
+          "src/components/slice-item/slice-item.tsx": 27,
+          "src/components/slice-steps/slice-steps.tsx": 16,
+          "src/components.d.ts": 69,
+          "stencil.config.ts": 5
+        }
+      },
+      "dependencies": {
+        "direct": 1,
+        "installed": 9,
+        "nodeModules": 26017792
+      },
+      "build": {
+        "ms": 4741.186391999945,
+        "runs": [
+          4958.928677999997,
+          4575.465865999984,
+          4741.186391999945
+        ]
+      },
+      "runtimeSize": 1638400,
+      "start": {
+        "ms": 140.42854200000875,
+        "runs": [
+          130.6208199999528,
+          187.86032600002363,
+          128.082052999991,
+          172.2514519999968,
+          140.42854200000875
+        ]
+      },
+      "idleRss": 87269376,
+      "payload": {
+        "scripts": 5,
+        "jsRaw": 23203,
+        "jsGzip": 10256,
+        "htmlRaw": 5873,
+        "htmlGzip": 1291,
+        "requests": 7,
+        "files": [
+          {
+            "url": "/build/slice.esm.js",
+            "raw": 401,
+            "gzip": 289
+          },
+          {
+            "url": "/client.js",
+            "raw": 697,
+            "gzip": 397
+          },
+          {
+            "url": "/build/p-DQuL1Twl.js",
+            "raw": 29,
+            "gzip": 49
+          },
+          {
+            "url": "/build/p-DWQe2eTL.js",
+            "raw": 21112,
+            "gzip": 8892
+          },
+          {
+            "url": "/build/p-7572ae00.entry.js",
+            "raw": 964,
+            "gzip": 629
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 7,
+          "p90": 9,
+          "samples": [
+            9,
+            9,
+            6,
+            6,
+            8,
+            8,
+            7,
+            6,
+            7,
+            8,
+            6,
+            6
+          ]
+        },
+        "order": {
+          "median": 10,
+          "p90": 11,
+          "samples": [
+            8,
+            10,
+            8,
+            12,
+            10,
+            10,
+            10,
+            8,
+            10,
+            11,
+            8,
+            6
+          ]
+        }
+      },
+      "slow": {
+        "load": 326.60000000009313,
+        "add": 492,
+        "loads": [
+          310.5,
+          309.09999999962747,
+          397.40000000037253,
+          326.60000000009313,
+          356.09999999962747
+        ],
+        "adds": [
+          558,
+          489,
+          438,
+          492,
+          536
+        ]
+      },
+      "lighthouse": {
+        "score": 100,
+        "lcp": 751.1076,
+        "tbt": 0,
+        "fcp": 751.1076,
+        "runs": [
+          {
+            "score": 100,
+            "lcp": 751.1076,
+            "tbt": 0,
+            "fcp": 751.1076
+          },
+          {
+            "score": 100,
+            "lcp": 783.44,
+            "tbt": 0,
+            "fcp": 783.44
+          },
+          {
+            "score": 100,
+            "lcp": 750.988,
+            "tbt": 13,
+            "fcp": 750.988
+          }
+        ]
+      },
+      "load": {
+        "rps": 354.37,
+        "p50": 125,
+        "p975": 230,
+        "errors": 0,
+        "peakRss": 269115392,
+        "runs": [
+          {
+            "rps": 354.37,
+            "p50": 125,
+            "p975": 230,
+            "p99": 414,
+            "errors": 0,
+            "peakRss": 269115392
+          },
+          {
+            "rps": 357.2,
+            "p50": 128,
+            "p975": 201,
+            "p99": 433,
+            "errors": 0,
+            "peakRss": 269230080
+          },
+          {
+            "rps": 352,
+            "p50": 122,
+            "p975": 234,
+            "p99": 426,
+            "errors": 0,
+            "peakRss": 250245120
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
+    },
+    {
+      "name": "fast",
+      "lines": {
+        "total": 276,
+        "files": {
+          "server.js": 129,
+          "src/index.html": 89,
+          "src/index.ts": 19,
+          "src/slice-item/slice-item.html": 12,
+          "src/slice-item/slice-item.ts": 11,
+          "src/slice-steps/slice-steps.html": 9,
+          "src/slice-steps/slice-steps.ts": 7
+        }
+      },
+      "dependencies": {
+        "direct": 3,
+        "installed": 35,
+        "nodeModules": 45756416
+      },
+      "build": {
+        "ms": 84.7100259999861,
+        "runs": [
+          85.29434999998193,
+          84.7100259999861,
+          73.94237600004999
+        ]
+      },
+      "runtimeSize": 30203904,
+      "start": {
+        "ms": 106.33274899999378,
+        "runs": [
+          104.4664009999833,
+          127.56526799994754,
+          154.700634000008,
+          82.87816700001713,
+          106.33274899999378
+        ]
+      },
+      "idleRss": 70627328,
+      "payload": {
+        "scripts": 1,
+        "jsRaw": 93097,
+        "jsGzip": 29136,
+        "htmlRaw": 9852,
+        "htmlGzip": 1743,
+        "requests": 3,
+        "files": [
+          {
+            "url": "/client.js",
+            "raw": 93097,
+            "gzip": 29136
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 7,
+          "p90": 8,
+          "samples": [
+            7,
+            7,
+            7,
+            6,
+            6,
+            6,
+            7,
+            7,
+            8,
+            7,
+            11,
+            7
+          ]
+        },
+        "order": {
+          "median": 10.5,
+          "p90": 12,
+          "samples": [
+            12,
+            8,
+            8,
+            12,
+            9,
+            8,
+            11,
+            10,
+            11,
+            11,
+            12,
+            9
+          ]
+        }
+      },
+      "slow": {
+        "load": 379.79999999981374,
+        "add": 537,
+        "loads": [
+          308.89999999990687,
+          379.79999999981374,
+          489.39999999990687,
+          388.60000000009313,
+          298
+        ],
+        "adds": [
+          537,
+          531,
+          557,
+          426,
+          580
+        ]
+      },
+      "lighthouse": {
+        "score": 93,
+        "lcp": 752.8320000000001,
+        "tbt": 305.5126,
+        "fcp": 752.8320000000001,
+        "runs": [
+          {
+            "score": 93,
+            "lcp": 752.8320000000001,
+            "tbt": 308.08400000000006,
+            "fcp": 752.8320000000001
+          },
+          {
+            "score": 99,
+            "lcp": 750.684,
+            "tbt": 107.15800000000002,
+            "fcp": 750.684
+          },
+          {
+            "score": 93,
+            "lcp": 752.9748,
+            "tbt": 305.5126,
+            "fcp": 752.9748
+          }
+        ]
+      },
+      "load": {
+        "rps": 4252,
+        "p50": 11,
+        "p975": 20,
+        "errors": 0,
+        "peakRss": 130465792,
+        "runs": [
+          {
+            "rps": 3744.7,
+            "p50": 12,
+            "p975": 25,
+            "p99": 30,
+            "errors": 0,
+            "peakRss": 122384384
+          },
+          {
+            "rps": 4252,
+            "p50": 11,
+            "p975": 20,
+            "p99": 23,
+            "errors": 0,
+            "peakRss": 130465792
+          },
+          {
+            "rps": 4472.55,
+            "p50": 10,
+            "p975": 19,
+            "p99": 21,
+            "errors": 0,
+            "peakRss": 144687104
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
+    },
+    {
+      "name": "webui",
+      "lines": {
+        "total": 265,
+        "files": {
+          "server.js": 129,
+          "src/index.html": 89,
+          "src/index.ts": 20,
+          "src/slice-item/slice-item.html": 7,
+          "src/slice-item/slice-item.ts": 10,
+          "src/slice-steps/slice-steps.html": 4,
+          "src/slice-steps/slice-steps.ts": 6
+        }
+      },
+      "dependencies": {
+        "direct": 3,
+        "installed": 35,
+        "nodeModules": 42749952
+      },
+      "build": {
+        "ms": 60.11646700010169,
+        "runs": [
+          60.11646700010169,
+          61.01657899993006,
+          58.5971300000092
+        ]
+      },
+      "runtimeSize": 30212096,
+      "start": {
+        "ms": 95.29550999996718,
+        "runs": [
+          90.83839300007094,
+          101.64017599995714,
+          88.54384499997832,
+          95.29550999996718,
+          116.94707399990875
+        ]
+      },
+      "idleRss": 70696960,
+      "payload": {
+        "scripts": 1,
+        "jsRaw": 95194,
+        "jsGzip": 31445,
+        "htmlRaw": 8471,
+        "htmlGzip": 2025,
+        "requests": 3,
+        "files": [
+          {
+            "url": "/client.js",
+            "raw": 95194,
+            "gzip": 31445
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 8,
+          "p90": 10,
+          "samples": [
+            8,
+            8,
+            10,
+            8,
+            11,
+            6,
+            6,
+            7,
+            6,
+            7,
+            8,
+            8
+          ]
+        },
+        "order": {
+          "median": 11,
+          "p90": 12,
+          "samples": [
+            16,
+            8,
+            11,
+            12,
+            10,
+            12,
+            11,
+            10,
+            12,
+            11,
+            12,
+            8
+          ]
+        }
+      },
+      "slow": {
+        "load": 273.5,
+        "add": 499,
+        "loads": [
+          327.29999999981374,
+          209.39999999990687,
+          273.5,
+          302.79999999981374,
+          266.8000000002794
+        ],
+        "adds": [
+          402,
+          499,
+          517,
+          458,
+          511
+        ]
+      },
+      "lighthouse": {
+        "score": 99,
+        "lcp": 750.8155999999999,
+        "tbt": 134.5,
+        "fcp": 750.8155999999999,
+        "runs": [
+          {
+            "score": 99,
+            "lcp": 810,
+            "tbt": 134.5,
+            "fcp": 810
+          },
+          {
+            "score": 100,
+            "lcp": 750.8155999999999,
+            "tbt": 57.59220000000005,
+            "fcp": 750.8155999999999
+          },
+          {
+            "score": 94,
+            "lcp": 750.0440000000001,
+            "tbt": 294.97800000000007,
+            "fcp": 750.0440000000001
+          }
+        ]
+      },
+      "load": {
+        "rps": 3813.64,
+        "p50": 11,
+        "p975": 26,
+        "errors": 0,
+        "peakRss": 126844928,
+        "runs": [
+          {
+            "rps": 3205.55,
+            "p50": 13,
+            "p975": 28,
+            "p99": 33,
+            "errors": 0,
+            "peakRss": 122482688
+          },
+          {
+            "rps": 3915.55,
+            "p50": 11,
+            "p975": 23,
+            "p99": 26,
+            "errors": 0,
+            "peakRss": 126844928
+          },
+          {
+            "rps": 3813.64,
+            "p50": 11,
+            "p975": 26,
+            "p99": 28,
+            "errors": 0,
+            "peakRss": 143593472
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
+    },
+    {
+      "name": "sveltekit",
+      "lines": {
+        "total": 313,
+        "files": {
+          "src/app.html": 12,
+          "src/lib/server/slice.js": 14,
+          "src/routes/+error.svelte": 5,
+          "src/routes/+layout.server.js": 5,
+          "src/routes/+layout.svelte": 11,
+          "src/routes/+page.server.js": 14,
+          "src/routes/+page.svelte": 38,
+          "src/routes/Notice.svelte": 8,
+          "src/routes/checkout/+page.server.js": 18,
+          "src/routes/checkout/+page.svelte": 21,
+          "src/routes/live/+server.js": 25,
+          "src/routes/live/orders/[key]/+server.js": 27,
+          "src/routes/order/+page.server.js": 19,
+          "src/routes/order/+page.svelte": 55,
+          "src/routes/orders/[key]/+page.server.js": 8,
+          "src/routes/orders/[key]/+page.svelte": 23,
+          "src/routes/slice.css/+server.js": 6,
+          "vite.config.js": 4
+        }
+      },
+      "dependencies": {
+        "direct": 4,
+        "installed": 79,
+        "nodeModules": 48504832
+      },
+      "build": {
+        "ms": 2390.130226999987,
+        "runs": [
+          2449.010879999958,
+          2209.4090550000547,
+          2390.130226999987
+        ]
+      },
+      "runtimeSize": 2002944,
+      "start": {
+        "ms": 149.60067900002468,
+        "runs": [
+          125.49906000006013,
+          185.77467799989972,
+          136.2958149999613,
+          172.46089400001802,
+          149.60067900002468
+        ]
+      },
+      "idleRss": 72269824,
+      "payload": {
+        "scripts": 12,
+        "jsRaw": 100069,
+        "jsGzip": 39176,
+        "htmlRaw": 6076,
+        "htmlGzip": 1575,
+        "requests": 14,
+        "files": [
+          {
+            "url": "/_app/immutable/chunks/CjUCT1ce.js",
+            "raw": 41919,
+            "gzip": 16056
+          },
+          {
+            "url": "/_app/immutable/chunks/CeNYcqv7.js",
+            "raw": 52,
+            "gzip": 69
+          },
+          {
+            "url": "/_app/immutable/chunks/DclECHGd.js",
+            "raw": 1630,
+            "gzip": 828
+          },
+          {
+            "url": "/_app/immutable/entry/payload.DSmR2FwN.js",
+            "raw": 65,
+            "gzip": 77
+          },
+          {
+            "url": "/_app/immutable/chunks/Bl-MC2aW.js",
+            "raw": 44093,
+            "gzip": 16045
+          },
+          {
+            "url": "/_app/immutable/entry/start.Dyt2eBDV.js",
+            "raw": 548,
+            "gzip": 321
+          },
+          {
+            "url": "/_app/immutable/entry/app.D0HRIFPJ.js",
+            "raw": 1514,
+            "gzip": 650
+          },
+          {
+            "url": "/_app/immutable/nodes/0.DTCUIca4.js",
+            "raw": 533,
+            "gzip": 370
+          },
+          {
+            "url": "/_app/immutable/chunks/BZcOkYJq.js",
+            "raw": 4620,
+            "gzip": 2069
+          },
+          {
+            "url": "/_app/immutable/nodes/1.BEfZZScp.js",
+            "raw": 349,
+            "gzip": 264
+          },
+          {
+            "url": "/_app/immutable/nodes/2.CfaeP_Rn.js",
+            "raw": 1860,
+            "gzip": 1082
+          },
+          {
+            "url": "/_app/immutable/chunks/CnN4mPrw.js",
+            "raw": 2886,
+            "gzip": 1345
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 9,
+          "p90": 10,
+          "samples": [
+            10,
+            10,
+            7,
+            9,
+            6,
+            10,
+            9,
+            9,
+            8,
+            10,
+            7,
+            8
+          ]
+        },
+        "order": {
+          "median": 10,
+          "p90": 11,
+          "samples": [
+            10,
+            9,
+            10,
+            8,
+            10,
+            8,
+            11,
+            7,
+            11,
+            10,
+            10,
+            8
+          ]
+        }
+      },
+      "slow": {
+        "load": 375.1999999997206,
+        "add": 321,
+        "loads": [
+          429,
+          440.89999999990687,
+          288.39999999990687,
+          370.8000000002794,
+          375.1999999997206
+        ],
+        "adds": [
+          307,
+          370,
+          321,
+          319,
+          369
+        ]
+      },
+      "lighthouse": {
+        "score": 95,
+        "lcp": 760.5235,
+        "tbt": 256.99749999999995,
+        "fcp": 760.5235,
+        "runs": [
+          {
+            "score": 95,
+            "lcp": 755.7349999999999,
+            "tbt": 270.13249999999994,
+            "fcp": 755.7349999999999
+          },
+          {
+            "score": 98,
+            "lcp": 760.5235,
+            "tbt": 150.73824999999988,
+            "fcp": 760.5235
+          },
+          {
+            "score": 95,
+            "lcp": 770.0050000000001,
+            "tbt": 256.99749999999995,
+            "fcp": 770.0050000000001
+          }
+        ]
+      },
+      "load": {
+        "rps": 1250,
+        "p50": 35,
+        "p975": 72,
+        "errors": 0,
+        "peakRss": 267763712,
+        "runs": [
+          {
+            "rps": 1068,
+            "p50": 42,
+            "p975": 83,
+            "p99": 95,
+            "errors": 0,
+            "peakRss": 232529920
+          },
+          {
+            "rps": 1250,
+            "p50": 35,
+            "p975": 72,
+            "p99": 81,
+            "errors": 0,
+            "peakRss": 267763712
+          },
+          {
+            "rps": 1334,
+            "p50": 34,
+            "p975": 70,
+            "p99": 86,
+            "errors": 0,
+            "peakRss": 281206784
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
     },
     {
       "name": "nextjs",
       "lines": {
-        "total": 221,
+        "total": 334,
         "files": {
-          "app/actions.js": 18,
+          "app/actions.js": 23,
+          "app/checkout/page.js": 35,
           "app/layout.js": 22,
+          "app/live/orders/[key]/route.js": 27,
           "app/live/route.js": 26,
           "app/live-menu.js": 37,
+          "app/not-found.js": 3,
           "app/notice.js": 5,
-          "app/order/page.js": 71,
+          "app/order/page.js": 72,
+          "app/orders/[key]/live-steps.js": 18,
+          "app/orders/[key]/page.js": 24,
           "app/page.js": 18,
           "app/slice.css/route.js": 6,
           "lib/slice.js": 17,
@@ -221,31 +1648,31 @@
         "nodeModules": 485990400
       },
       "build": {
-        "ms": 5468.757291999995,
+        "ms": 10456.581949000014,
         "runs": [
-          12833.977518,
-          5247.427660000001,
-          5468.757291999995
+          10456.581949000014,
+          10329.56659400009,
+          10606.359181999927
         ]
       },
-      "runtimeSize": 516775936,
+      "runtimeSize": 517779456,
       "start": {
-        "ms": 421.28354999999283,
+        "ms": 527.4886669999687,
         "runs": [
-          392.21204200001375,
-          445.0137699999905,
-          421.28354999999283,
-          468.742763000002,
-          398.66695700000855
+          659.2008930000011,
+          576.0562299999874,
+          450.10887300001923,
+          469.19342000002507,
+          527.4886669999687
         ]
       },
-      "idleRss": 109080576,
+      "idleRss": 112115712,
       "payload": {
         "scripts": 6,
         "jsRaw": 458346,
         "jsGzip": 135579,
-        "htmlRaw": 10815,
-        "htmlGzip": 2717,
+        "htmlRaw": 9621,
+        "htmlGzip": 2283,
         "requests": 8,
         "files": [
           {
@@ -259,9 +1686,9 @@
             "gzip": 3905
           },
           {
-            "url": "/_next/static/chunks/1jk5veq5817vj.js",
-            "raw": 186795,
-            "gzip": 49755
+            "url": "/_next/static/chunks/1ij75cysvgvz_.js",
+            "raw": 229277,
+            "gzip": 71749
           },
           {
             "url": "/_next/static/chunks/2mytc4ospshjk.js",
@@ -269,14 +1696,14 @@
             "gzip": 3508
           },
           {
+            "url": "/_next/static/chunks/1jk5veq5817vj.js",
+            "raw": 186795,
+            "gzip": 49755
+          },
+          {
             "url": "/_next/static/chunks/3-9zb0bt05ka3.js",
             "raw": 1278,
             "gzip": 701
-          },
-          {
-            "url": "/_next/static/chunks/1ij75cysvgvz_.js",
-            "raw": 229277,
-            "gzip": 71749
           }
         ]
       },
@@ -284,177 +1711,214 @@
         "menu": [],
         "bag": []
       },
+      "updates": {
+        "menu": {
+          "median": 9.5,
+          "p90": 13,
+          "samples": [
+            13,
+            10,
+            13,
+            10,
+            10,
+            9,
+            7,
+            10,
+            8,
+            7,
+            7,
+            6
+          ]
+        },
+        "order": {
+          "median": 9.5,
+          "p90": 12,
+          "samples": [
+            9,
+            12,
+            10,
+            11,
+            14,
+            7,
+            8,
+            7,
+            7,
+            8,
+            10,
+            11
+          ]
+        }
+      },
+      "slow": {
+        "load": 606.8999999999069,
+        "add": 565,
+        "loads": [
+          610.5,
+          533.6000000000931,
+          678.2000000001863,
+          606.8999999999069,
+          513.8999999999069
+        ],
+        "adds": [
+          565,
+          589,
+          458,
+          580,
+          459
+        ]
+      },
       "lighthouse": {
-        "score": 99,
-        "lcp": 614.9705,
-        "tbt": 131.5,
-        "fcp": 614.9705,
+        "score": 92,
+        "lcp": 644.15,
+        "tbt": 364,
+        "fcp": 644.15,
         "runs": [
           {
-            "score": 99,
-            "lcp": 635.2744,
-            "tbt": 131.5,
-            "fcp": 635.2744
+            "score": 86,
+            "lcp": 639.1265,
+            "tbt": 538.9999999999999,
+            "fcp": 639.1265
           },
           {
-            "score": 100,
-            "lcp": 614.9705,
-            "tbt": 88.5,
-            "fcp": 614.9705
+            "score": 92,
+            "lcp": 661.58005,
+            "tbt": 348,
+            "fcp": 661.58005
           },
           {
-            "score": 98,
-            "lcp": 613.6063,
-            "tbt": 154.5,
-            "fcp": 613.6063
+            "score": 92,
+            "lcp": 644.15,
+            "tbt": 364,
+            "fcp": 644.15
           }
         ]
       },
       "load": {
-        "rps": 423.8,
-        "p50": 108,
-        "p975": 192,
+        "rps": 393.4,
+        "p50": 115,
+        "p975": 224,
         "errors": 0,
-        "peakRss": 437862400,
+        "peakRss": 380801024,
         "runs": [
           {
-            "rps": 418,
-            "p50": 112,
-            "p975": 192,
-            "p99": 224,
+            "rps": 318.1,
+            "p50": 124,
+            "p975": 304,
+            "p99": 330,
             "errors": 0,
-            "peakRss": 437862400
+            "peakRss": 352571392
           },
           {
-            "rps": 423.8,
-            "p50": 108,
-            "p975": 197,
-            "p99": 217,
+            "rps": 393.4,
+            "p50": 115,
+            "p975": 224,
+            "p99": 292,
             "errors": 0,
-            "peakRss": 446541824
+            "peakRss": 380801024
           },
           {
-            "rps": 446.6,
-            "p50": 105,
-            "p975": 163,
-            "p99": 177,
+            "rps": 402.37,
+            "p50": 115,
+            "p975": 201,
+            "p99": 233,
             "errors": 0,
-            "peakRss": 422580224
+            "peakRss": 485265408
           }
         ]
-      }
+      },
+      "contractRun": {
+        "pass": 10,
+        "total": 11,
+        "failed": [
+          "S8 an order is only its guest's: another phone, or a made-up key, gets a 404"
+        ]
+      },
+      "contract": "10 (fails S8)"
     },
     {
-      "name": "sveltekit",
+      "name": "nextjs-tuned",
       "lines": {
-        "total": 210,
+        "total": 339,
         "files": {
-          "src/app.html": 12,
-          "src/lib/server/slice.js": 14,
-          "src/routes/+layout.server.js": 5,
-          "src/routes/+layout.svelte": 11,
-          "src/routes/+page.server.js": 14,
-          "src/routes/+page.svelte": 38,
-          "src/routes/Notice.svelte": 8,
-          "src/routes/live/+server.js": 25,
-          "src/routes/order/+page.server.js": 19,
-          "src/routes/order/+page.svelte": 54,
-          "src/routes/slice.css/+server.js": 6,
-          "vite.config.js": 4
+          "app/actions.js": 23,
+          "app/checkout/page.js": 35,
+          "app/layout.js": 22,
+          "app/live/orders/[key]/route.js": 27,
+          "app/live/route.js": 26,
+          "app/live-menu.js": 37,
+          "app/not-found.js": 3,
+          "app/notice.js": 5,
+          "app/order/page.js": 72,
+          "app/orders/[key]/live-steps.js": 18,
+          "app/orders/[key]/page.js": 24,
+          "app/page.js": 18,
+          "app/slice.css/route.js": 6,
+          "lib/slice.js": 17,
+          "next.config.mjs": 6
         }
       },
       "dependencies": {
         "direct": 4,
-        "installed": 79,
-        "nodeModules": 48504832
+        "installed": 55,
+        "nodeModules": 485998592
       },
       "build": {
-        "ms": 1769.9741309999954,
+        "ms": 11769.689585000044,
         "runs": [
-          3306.678893000004,
-          1742.4043240000028,
-          1769.9741309999954
+          11769.689585000044,
+          11438.93168899999,
+          12603.844891999965
         ]
       },
-      "runtimeSize": 1912832,
+      "runtimeSize": 70918144,
       "start": {
-        "ms": 125.56041199999163,
+        "ms": 540.406782999984,
         "runs": [
-          125.56041199999163,
-          137.97941999998875,
-          123.32486899997457,
-          121.24150299999746,
-          161.80423099998734
+          540.406782999984,
+          465.00067899993155,
+          554.105539000011,
+          590.0604370000074,
+          484.8760589999147
         ]
       },
-      "idleRss": 72429568,
+      "idleRss": 110641152,
       "payload": {
-        "scripts": 12,
-        "jsRaw": 99044,
-        "jsGzip": 38807,
-        "htmlRaw": 6076,
-        "htmlGzip": 1575,
-        "requests": 14,
+        "scripts": 6,
+        "jsRaw": 458388,
+        "jsGzip": 135620,
+        "htmlRaw": 9621,
+        "htmlGzip": 2280,
+        "requests": 8,
         "files": [
           {
-            "url": "/_app/immutable/entry/start.DMH8KdBE.js",
-            "raw": 548,
-            "gzip": 317
+            "url": "/_next/static/chunks/1-5j4l7nba72e.js",
+            "raw": 17055,
+            "gzip": 5970
           },
           {
-            "url": "/_app/immutable/entry/payload.DSmR2FwN.js",
-            "raw": 65,
-            "gzip": 77
+            "url": "/_next/static/chunks/3xim1q-fcv59q.js",
+            "raw": 1280,
+            "gzip": 701
           },
           {
-            "url": "/_app/immutable/chunks/DclECHGd.js",
-            "raw": 1630,
-            "gzip": 828
+            "url": "/_next/static/chunks/turbopack-2u1d16houkiyo.js",
+            "raw": 9974,
+            "gzip": 3905
           },
           {
-            "url": "/_app/immutable/chunks/wmppdBKq.js",
-            "raw": 52,
-            "gzip": 69
+            "url": "/_next/static/chunks/2b0dybw5t7swm.js",
+            "raw": 13994,
+            "gzip": 3513
           },
           {
-            "url": "/_app/immutable/chunks/CmX-pycB.js",
-            "raw": 44088,
-            "gzip": 16040
+            "url": "/_next/static/chunks/1guc7s5jqhv2b.js",
+            "raw": 186797,
+            "gzip": 49772
           },
           {
-            "url": "/_app/immutable/nodes/0.CoaV63mp.js",
-            "raw": 533,
-            "gzip": 370
-          },
-          {
-            "url": "/_app/immutable/entry/app.CClYCNKD.js",
-            "raw": 1251,
-            "gzip": 589
-          },
-          {
-            "url": "/_app/immutable/chunks/DyeZDrwb.js",
-            "raw": 4620,
-            "gzip": 2075
-          },
-          {
-            "url": "/_app/immutable/chunks/C_0WTZCs.js",
-            "raw": 2886,
-            "gzip": 1347
-          },
-          {
-            "url": "/_app/immutable/nodes/2.YrUyIzzF.js",
-            "raw": 1860,
-            "gzip": 1085
-          },
-          {
-            "url": "/_app/immutable/chunks/BKefdWn3.js",
-            "raw": 41189,
-            "gzip": 15765
-          },
-          {
-            "url": "/_app/immutable/nodes/1.DtYnJjv0.js",
-            "raw": 322,
-            "gzip": 245
+            "url": "/_next/static/chunks/15ut-hqomkay-.js",
+            "raw": 229288,
+            "gzip": 71759
           }
         ]
       },
@@ -462,82 +1926,153 @@
         "menu": [],
         "bag": []
       },
+      "updates": {
+        "menu": {
+          "median": 8,
+          "p90": 12,
+          "samples": [
+            11,
+            12,
+            10,
+            7,
+            8,
+            10,
+            12,
+            7,
+            7,
+            6,
+            8,
+            7
+          ]
+        },
+        "order": {
+          "median": 10.5,
+          "p90": 12,
+          "samples": [
+            9,
+            10,
+            7,
+            12,
+            11,
+            19,
+            8,
+            11,
+            11,
+            8,
+            11,
+            10
+          ]
+        }
+      },
+      "slow": {
+        "load": 652.3000000002794,
+        "add": 477,
+        "loads": [
+          761.3000000002794,
+          615,
+          596.6000000000931,
+          652.3000000002794,
+          805
+        ],
+        "adds": [
+          477,
+          504,
+          586,
+          459,
+          428
+        ]
+      },
       "lighthouse": {
-        "score": 100,
-        "lcp": 758.7066,
-        "tbt": 0,
-        "fcp": 758.7066,
+        "score": 89,
+        "lcp": 669.758,
+        "tbt": 453,
+        "fcp": 669.758,
         "runs": [
           {
-            "score": 100,
-            "lcp": 751.0404000000001,
-            "tbt": 0,
-            "fcp": 751.0404000000001
+            "score": 90,
+            "lcp": 643.4775,
+            "tbt": 428.5,
+            "fcp": 643.4775
           },
           {
-            "score": 100,
-            "lcp": 758.7066,
-            "tbt": 0,
-            "fcp": 758.7066
+            "score": 87,
+            "lcp": 669.758,
+            "tbt": 528,
+            "fcp": 669.758
           },
           {
-            "score": 100,
-            "lcp": 780.9132999999999,
-            "tbt": 1,
-            "fcp": 780.9132999999999
+            "score": 89,
+            "lcp": 692.05945,
+            "tbt": 453,
+            "fcp": 692.05945
           }
         ]
       },
       "load": {
-        "rps": 1547.8,
-        "p50": 30,
-        "p975": 51,
+        "rps": 346.2,
+        "p50": 132,
+        "p975": 249,
         "errors": 0,
-        "peakRss": 279478272,
+        "peakRss": 366243840,
         "runs": [
           {
-            "rps": 1371,
-            "p50": 34,
-            "p975": 59,
-            "p99": 74,
+            "rps": 295,
+            "p50": 160,
+            "p975": 290,
+            "p99": 385,
             "errors": 0,
-            "peakRss": 269746176
+            "peakRss": 346775552
           },
           {
-            "rps": 1547.8,
-            "p50": 30,
-            "p975": 51,
-            "p99": 60,
+            "rps": 361.2,
+            "p50": 125,
+            "p975": 243,
+            "p99": 267,
             "errors": 0,
-            "peakRss": 297787392
+            "peakRss": 366243840
           },
           {
-            "rps": 1613.4,
-            "p50": 29,
-            "p975": 51,
-            "p99": 57,
+            "rps": 346.2,
+            "p50": 132,
+            "p975": 249,
+            "p99": 285,
             "errors": 0,
-            "peakRss": 279478272
+            "peakRss": 374587392
           }
         ]
-      }
+      },
+      "contractRun": {
+        "pass": 10,
+        "total": 11,
+        "failed": [
+          "S8 an order is only its guest's: another phone, or a made-up key, gets a 404"
+        ]
+      },
+      "contract": "10 (fails S8)"
     },
     {
       "name": "nuxt",
       "lines": {
-        "total": 157,
+        "total": 246,
         "files": {
           "app/app.vue": 13,
           "app/components/SliceNotice.vue": 8,
+          "app/error.vue": 7,
+          "app/pages/checkout.vue": 24,
           "app/pages/index.vue": 33,
-          "app/pages/order.vue": 43,
+          "app/pages/order.vue": 44,
+          "app/pages/orders/[key].vue": 24,
           "nuxt.config.js": 5,
           "server/api/bag.get.js": 4,
+          "server/api/checkout.get.js": 8,
           "server/api/menu.get.js": 4,
+          "server/api/orders/[key].get.js": 6,
           "server/api/said.get.js": 4,
           "server/routes/add.post.js": 6,
           "server/routes/change.post.js": 6,
+          "server/routes/live/orders/[key].get.js": 13,
           "server/routes/live.get.js": 12,
+          "server/routes/place.post.js": 6,
           "server/routes/slice.css.get.js": 6,
           "server/routes/time.post.js": 5,
           "server/utils/slice.js": 8
@@ -546,60 +2081,50 @@
       "dependencies": {
         "direct": 2,
         "installed": 605,
-        "nodeModules": 205402112
+        "nodeModules": 206446592
       },
       "build": {
-        "ms": 5414.461378999986,
+        "ms": 8095.82021600008,
         "runs": [
-          12806.485856999992,
-          5376.995844999998,
-          5414.461378999986
+          8095.82021600008,
+          8457.865445999894,
+          7425.0147710000165
         ]
       },
-      "runtimeSize": 3465216,
+      "runtimeSize": 3436544,
       "start": {
-        "ms": 241.7351320000016,
+        "ms": 280.08917999989353,
         "runs": [
-          232.70703499999945,
-          241.7351320000016,
-          237.8773349999974,
-          246.25098300000536,
-          282.4432760000054
+          307.5201610000804,
+          280.08917999989353,
+          276.06182099995203,
+          304.72059100004844,
+          267.72902799979784
         ]
       },
-      "idleRss": 99545088,
+      "idleRss": 98099200,
       "payload": {
-        "scripts": 5,
-        "jsRaw": 213408,
-        "jsGzip": 81235,
-        "htmlRaw": 8282,
-        "htmlGzip": 2253,
-        "requests": 12,
+        "scripts": 3,
+        "jsRaw": 202089,
+        "jsGzip": 74789,
+        "htmlRaw": 7755,
+        "htmlGzip": 2150,
+        "requests": 5,
         "files": [
           {
-            "url": "/_nuxt/Bm-ewKuR.js",
-            "raw": 1580,
-            "gzip": 909
+            "url": "/_nuxt/CgX5rOXO.js",
+            "raw": 455,
+            "gzip": 310
           },
           {
-            "url": "/_nuxt/U24Y8gAk.js",
-            "raw": 78184,
-            "gzip": 28454
+            "url": "/_nuxt/D3vr4S1V.js",
+            "raw": 1544,
+            "gzip": 893
           },
           {
-            "url": "/_nuxt/MhaWXKJl.js",
-            "raw": 29856,
-            "gzip": 12015
-          },
-          {
-            "url": "/_nuxt/DLTvm1i5.js",
-            "raw": 509,
-            "gzip": 348
-          },
-          {
-            "url": "/_nuxt/D6CsybHI.js",
-            "raw": 103279,
-            "gzip": 39509
+            "url": "/_nuxt/BTbOJQGr.js",
+            "raw": 200090,
+            "gzip": 73586
           }
         ]
       },
@@ -607,113 +2132,199 @@
         "menu": [],
         "bag": []
       },
+      "updates": {
+        "menu": {
+          "median": 8.5,
+          "p90": 11,
+          "samples": [
+            17,
+            11,
+            6,
+            9,
+            8,
+            8,
+            8,
+            8,
+            10,
+            10,
+            8,
+            11
+          ]
+        },
+        "order": {
+          "median": 10,
+          "p90": 11,
+          "samples": [
+            17,
+            8,
+            10,
+            8,
+            11,
+            7,
+            10,
+            10,
+            11,
+            10,
+            10,
+            11
+          ]
+        }
+      },
+      "slow": {
+        "load": 322.79999999981374,
+        "add": 830,
+        "loads": [
+          378.89999999990687,
+          322.79999999981374,
+          318.20000000018626,
+          300.29999999981374,
+          480.29999999981374
+        ],
+        "adds": [
+          731,
+          863,
+          597,
+          860,
+          830
+        ]
+      },
       "lighthouse": {
-        "score": 100,
-        "lcp": 758.2737,
-        "tbt": 71.5,
-        "fcp": 758.2737,
+        "score": 85,
+        "lcp": 756.1940999999999,
+        "tbt": 594.22,
+        "fcp": 756.1940999999999,
         "runs": [
           {
-            "score": 100,
-            "lcp": 753.8367000000001,
-            "tbt": 71.5,
-            "fcp": 753.8367000000001
+            "score": 85,
+            "lcp": 759.56,
+            "tbt": 594.22,
+            "fcp": 759.56
           },
           {
-            "score": 100,
-            "lcp": 758.2737,
-            "tbt": 74.5,
-            "fcp": 758.2737
+            "score": 86,
+            "lcp": 753.681,
+            "tbt": 548.1594999999995,
+            "fcp": 753.681
           },
           {
-            "score": 100,
-            "lcp": 760.3327999999999,
-            "tbt": 62.5,
-            "fcp": 760.3327999999999
+            "score": 80,
+            "lcp": 756.1940999999999,
+            "tbt": 858.9999999999999,
+            "fcp": 756.1940999999999
           }
         ]
       },
       "load": {
-        "rps": 196.4,
-        "p50": 237,
-        "p975": 322,
+        "rps": 165,
+        "p50": 269,
+        "p975": 427,
         "errors": 0,
-        "peakRss": 345714688,
+        "peakRss": 310738944,
         "runs": [
           {
-            "rps": 193.4,
-            "p50": 238,
-            "p975": 321,
-            "p99": 563,
+            "rps": 142.81,
+            "p50": 303,
+            "p975": 517,
+            "p99": 1726,
             "errors": 0,
-            "peakRss": 344104960
+            "peakRss": 295096320
           },
           {
-            "rps": 196.4,
-            "p50": 237,
-            "p975": 346,
-            "p99": 830,
+            "rps": 165,
+            "p50": 265,
+            "p975": 427,
+            "p99": 1143,
             "errors": 0,
-            "peakRss": 345714688
+            "peakRss": 310738944
           },
           {
-            "rps": 208.8,
-            "p50": 218,
-            "p975": 322,
-            "p99": 895,
+            "rps": 168.7,
+            "p50": 269,
+            "p975": 426,
+            "p99": 1271,
             "errors": 0,
-            "peakRss": 345755648
+            "peakRss": 317784064
           }
         ]
-      }
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
     },
     {
-      "name": "lit",
+      "name": "nuxt-tuned",
       "lines": {
-        "total": 141,
+        "total": 237,
         "files": {
-          "client.js": 9,
-          "server.js": 114,
-          "slice-item.js": 18
+          "app/app.vue": 14,
+          "app/components/SliceNotice.vue": 8,
+          "app/error.vue": 7,
+          "app/pages/checkout.vue": 24,
+          "app/pages/index.vue": 33,
+          "app/pages/order.vue": 44,
+          "app/pages/orders/[key].vue": 23,
+          "nuxt.config.js": 5,
+          "server/api/view.get.js": 17,
+          "server/routes/add.post.js": 6,
+          "server/routes/change.post.js": 6,
+          "server/routes/live/orders/[key].get.js": 13,
+          "server/routes/live.get.js": 12,
+          "server/routes/place.post.js": 6,
+          "server/routes/slice.css.get.js": 6,
+          "server/routes/time.post.js": 5,
+          "server/utils/slice.js": 8
         }
       },
       "dependencies": {
-        "direct": 4,
-        "installed": 47,
-        "nodeModules": 31383552
+        "direct": 2,
+        "installed": 605,
+        "nodeModules": 238940160
       },
       "build": {
-        "ms": 40.20707100001164,
+        "ms": 7491.6190169998445,
         "runs": [
-          22.241122999985237,
-          40.20707100001164,
-          44.54123899998376
+          7415.5915510000195,
+          7491.6190169998445,
+          7795.48135999986
         ]
       },
-      "runtimeSize": 31412224,
+      "runtimeSize": 3403776,
       "start": {
-        "ms": 131.5252970000147,
+        "ms": 260.78429999994114,
         "runs": [
-          131.5252970000147,
-          128.5250239999732,
-          150.03576900000917,
-          150.00455399998464,
-          128.05729299999075
+          260.78429999994114,
+          246.79197499994189,
+          235.74197099986486,
+          283.1164740000386,
+          282.1169149999041
         ]
       },
-      "idleRss": 89808896,
+      "idleRss": 90492928,
       "payload": {
-        "scripts": 1,
-        "jsRaw": 22106,
-        "jsGzip": 8418,
-        "htmlRaw": 8885,
-        "htmlGzip": 1150,
-        "requests": 3,
+        "scripts": 3,
+        "jsRaw": 202279,
+        "jsGzip": 74794,
+        "htmlRaw": 5454,
+        "htmlGzip": 1592,
+        "requests": 5,
         "files": [
           {
-            "url": "/client.js",
-            "raw": 22106,
-            "gzip": 8418
+            "url": "/_nuxt/DuEqo6YX.js",
+            "raw": 365,
+            "gzip": 249
+          },
+          {
+            "url": "/_nuxt/Luz7AClB.js",
+            "raw": 1476,
+            "gzip": 849
+          },
+          {
+            "url": "/_nuxt/CowPxFgb.js",
+            "raw": 200438,
+            "gzip": 73696
           }
         ]
       },
@@ -721,547 +2332,127 @@
         "menu": [],
         "bag": []
       },
-      "lighthouse": {
-        "score": 100,
-        "lcp": 752.1574,
-        "tbt": 0,
-        "fcp": 752.1574,
-        "runs": [
-          {
-            "score": 100,
-            "lcp": 752.1574,
-            "tbt": 0,
-            "fcp": 752.1574
-          },
-          {
-            "score": 100,
-            "lcp": 751.6405,
-            "tbt": 4.5,
-            "fcp": 751.6405
-          },
-          {
-            "score": 100,
-            "lcp": 753.711,
-            "tbt": 0,
-            "fcp": 753.711
-          }
-        ]
-      },
-      "load": {
-        "rps": 1568,
-        "p50": 29,
-        "p975": 50,
-        "errors": 0,
-        "peakRss": 174358528,
-        "runs": [
-          {
-            "rps": 1392.4,
-            "p50": 32,
-            "p975": 59,
-            "p99": 66,
-            "errors": 0,
-            "peakRss": 168509440
-          },
-          {
-            "rps": 1568,
-            "p50": 29,
-            "p975": 50,
-            "p99": 58,
-            "errors": 0,
-            "peakRss": 174358528
-          },
-          {
-            "rps": 1693,
-            "p50": 28,
-            "p975": 49,
-            "p99": 56,
-            "errors": 0,
-            "peakRss": 177876992
-          }
-        ]
-      }
-    },
-    {
-      "name": "enhance",
-      "lines": {
-        "total": 144,
-        "files": {
-          "client.js": 12,
-          "server.js": 114,
-          "slice-item.js": 18
+      "updates": {
+        "menu": {
+          "median": 9.5,
+          "p90": 11,
+          "samples": [
+            11,
+            9,
+            6,
+            10,
+            6,
+            10,
+            13,
+            9,
+            10,
+            8,
+            8,
+            11
+          ]
+        },
+        "order": {
+          "median": 11,
+          "p90": 16,
+          "samples": [
+            16,
+            9,
+            14,
+            17,
+            11,
+            14,
+            7,
+            10,
+            11,
+            14,
+            7,
+            10
+          ]
         }
       },
-      "dependencies": {
-        "direct": 3,
-        "installed": 40,
-        "nodeModules": 14745600
-      },
-      "build": {
-        "ms": 16.996524000016507,
-        "runs": [
-          18.46550400002161,
-          16.905634000024293,
-          16.996524000016507
+      "slow": {
+        "load": 345.20000000018626,
+        "add": 819,
+        "loads": [
+          312.70000000018626,
+          352.39999999990687,
+          419.1999999997206,
+          337.39999999990687,
+          345.20000000018626
+        ],
+        "adds": [
+          1193,
+          868,
+          819,
+          746,
+          747
         ]
-      },
-      "runtimeSize": 749568,
-      "start": {
-        "ms": 105.63412000000244,
-        "runs": [
-          105.63412000000244,
-          101.40475899999728,
-          106.49613499996485,
-          116.01998400001321,
-          104.00323299999582
-        ]
-      },
-      "idleRss": 78434304,
-      "payload": {
-        "scripts": 1,
-        "jsRaw": 13343,
-        "jsGzip": 5119,
-        "htmlRaw": 4329,
-        "htmlGzip": 935,
-        "requests": 3,
-        "files": [
-          {
-            "url": "/client.js",
-            "raw": 13343,
-            "gzip": 5119
-          }
-        ]
-      },
-      "accessibility": {
-        "menu": [],
-        "bag": []
       },
       "lighthouse": {
-        "score": 100,
-        "lcp": 751.2868000000001,
-        "tbt": 1.5,
-        "fcp": 751.2868000000001,
+        "score": 86,
+        "lcp": 752.9057,
+        "tbt": 571.95685,
+        "fcp": 752.9057,
         "runs": [
           {
-            "score": 100,
-            "lcp": 751.2868000000001,
-            "tbt": 4.5,
-            "fcp": 751.2868000000001
+            "score": 86,
+            "lcp": 754.0862999999999,
+            "tbt": 571.95685,
+            "fcp": 754.0862999999999
           },
           {
-            "score": 100,
-            "lcp": 750.5899999999999,
-            "tbt": 1.5,
-            "fcp": 750.5899999999999
+            "score": 86,
+            "lcp": 752.9057,
+            "tbt": 552.54715,
+            "fcp": 752.9057
           },
           {
-            "score": 100,
-            "lcp": 810,
-            "tbt": 0,
-            "fcp": 810
+            "score": 85,
+            "lcp": 751.8532,
+            "tbt": 582.0734000000004,
+            "fcp": 751.8532
           }
         ]
       },
       "load": {
-        "rps": 2312.82,
-        "p50": 19,
-        "p975": 38,
+        "rps": 462.5,
+        "p50": 98,
+        "p975": 158,
         "errors": 0,
-        "peakRss": 182673408,
+        "peakRss": 279990272,
         "runs": [
           {
-            "rps": 1838.82,
-            "p50": 23,
-            "p975": 52,
-            "p99": 59,
+            "rps": 419.6,
+            "p50": 109,
+            "p975": 158,
+            "p99": 162,
             "errors": 0,
-            "peakRss": 176701440
+            "peakRss": 275365888
           },
           {
-            "rps": 2312.82,
-            "p50": 19,
-            "p975": 37,
-            "p99": 40,
+            "rps": 470,
+            "p50": 93,
+            "p975": 161,
+            "p99": 172,
             "errors": 0,
-            "peakRss": 182673408
+            "peakRss": 279990272
           },
           {
-            "rps": 2436.7,
-            "p50": 19,
-            "p975": 38,
-            "p99": 40,
+            "rps": 462.5,
+            "p50": 98,
+            "p975": 153,
+            "p99": 159,
             "errors": 0,
-            "peakRss": 183771136
-          }
-        ]
-      }
-    },
-    {
-      "name": "stencil",
-      "lines": {
-        "total": 216,
-        "files": {
-          "client.js": 9,
-          "server.js": 124,
-          "src/components/slice-item/slice-item.tsx": 27,
-          "src/components.d.ts": 51,
-          "stencil.config.ts": 5
-        }
-      },
-      "dependencies": {
-        "direct": 1,
-        "installed": 9,
-        "nodeModules": 26017792
-      },
-      "build": {
-        "ms": 2975.6689469999983,
-        "runs": [
-          2975.6689469999983,
-          2763.815719999955,
-          3015.47047
-        ]
-      },
-      "runtimeSize": 1634304,
-      "start": {
-        "ms": 135.64152699999977,
-        "runs": [
-          128.32796399999643,
-          123.46430099999998,
-          135.64152699999977,
-          143.8472339999862,
-          139.1557230000035
-        ]
-      },
-      "idleRss": 86863872,
-      "payload": {
-        "scripts": 5,
-        "jsRaw": 22868,
-        "jsGzip": 10130,
-        "htmlRaw": 5873,
-        "htmlGzip": 1289,
-        "requests": 7,
-        "files": [
-          {
-            "url": "/build/slice.esm.js",
-            "raw": 348,
-            "gzip": 265
-          },
-          {
-            "url": "/client.js",
-            "raw": 415,
-            "gzip": 295
-          },
-          {
-            "url": "/build/p-DWQe2eTL.js",
-            "raw": 21112,
-            "gzip": 8892
-          },
-          {
-            "url": "/build/p-DQuL1Twl.js",
-            "raw": 29,
-            "gzip": 49
-          },
-          {
-            "url": "/build/p-7572ae00.entry.js",
-            "raw": 964,
-            "gzip": 629
+            "peakRss": 281317376
           }
         ]
       },
-      "accessibility": {
-        "menu": [],
-        "bag": []
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
       },
-      "lighthouse": {
-        "score": 100,
-        "lcp": 810,
-        "tbt": 0,
-        "fcp": 810,
-        "runs": [
-          {
-            "score": 100,
-            "lcp": 810,
-            "tbt": 0,
-            "fcp": 810
-          },
-          {
-            "score": 100,
-            "lcp": 810,
-            "tbt": 0,
-            "fcp": 810
-          },
-          {
-            "score": 100,
-            "lcp": 750.8385000000001,
-            "tbt": 0,
-            "fcp": 750.8385000000001
-          }
-        ]
-      },
-      "load": {
-        "rps": 423.4,
-        "p50": 110,
-        "p975": 168,
-        "errors": 0,
-        "peakRss": 341655552,
-        "runs": [
-          {
-            "rps": 405,
-            "p50": 117,
-            "p975": 195,
-            "p99": 238,
-            "errors": 0,
-            "peakRss": 255533056
-          },
-          {
-            "rps": 423.4,
-            "p50": 108,
-            "p975": 160,
-            "p99": 269,
-            "errors": 0,
-            "peakRss": 341655552
-          },
-          {
-            "rps": 424.4,
-            "p50": 110,
-            "p975": 168,
-            "p99": 273,
-            "errors": 0,
-            "peakRss": 341737472
-          }
-        ]
-      }
-    },
-    {
-      "name": "fast",
-      "lines": {
-        "total": 197,
-        "files": {
-          "server.js": 95,
-          "src/index.html": 67,
-          "src/index.ts": 12,
-          "src/slice-item/slice-item.html": 12,
-          "src/slice-item/slice-item.ts": 11
-        }
-      },
-      "dependencies": {
-        "direct": 3,
-        "installed": 35,
-        "nodeModules": 45756416
-      },
-      "build": {
-        "ms": 76.03640099999029,
-        "runs": [
-          76.03640099999029,
-          77.34768299997086,
-          65.22586800000863
-        ]
-      },
-      "runtimeSize": 30203904,
-      "start": {
-        "ms": 98.34551600000123,
-        "runs": [
-          91.43766900000628,
-          105.31608599994797,
-          95.56882200000109,
-          98.34551600000123,
-          136.74982799997088
-        ]
-      },
-      "idleRss": 70590464,
-      "payload": {
-        "scripts": 1,
-        "jsRaw": 92610,
-        "jsGzip": 28991,
-        "htmlRaw": 8822,
-        "htmlGzip": 1591,
-        "requests": 3,
-        "files": [
-          {
-            "url": "/client.js",
-            "raw": 92610,
-            "gzip": 28991
-          }
-        ]
-      },
-      "accessibility": {
-        "menu": [],
-        "bag": []
-      },
-      "lighthouse": {
-        "score": 100,
-        "lcp": 750.5899999999999,
-        "tbt": 12,
-        "fcp": 750.5899999999999,
-        "runs": [
-          {
-            "score": 100,
-            "lcp": 750.5591999999999,
-            "tbt": 1.5,
-            "fcp": 750.5591999999999
-          },
-          {
-            "score": 100,
-            "lcp": 751.9075,
-            "tbt": 15,
-            "fcp": 751.9075
-          },
-          {
-            "score": 100,
-            "lcp": 750.5899999999999,
-            "tbt": 12,
-            "fcp": 750.5899999999999
-          }
-        ]
-      },
-      "load": {
-        "rps": 4278.64,
-        "p50": 10,
-        "p975": 21,
-        "errors": 0,
-        "peakRss": 147480576,
-        "runs": [
-          {
-            "rps": 4158.55,
-            "p50": 10,
-            "p975": 21,
-            "p99": 23,
-            "errors": 0,
-            "peakRss": 127557632
-          },
-          {
-            "rps": 4278.64,
-            "p50": 10,
-            "p975": 22,
-            "p99": 24,
-            "errors": 0,
-            "peakRss": 147480576
-          },
-          {
-            "rps": 4488.28,
-            "p50": 10,
-            "p975": 20,
-            "p99": 23,
-            "errors": 0,
-            "peakRss": 150708224
-          }
-        ]
-      }
-    },
-    {
-      "name": "webui",
-      "lines": {
-        "total": 192,
-        "files": {
-          "server.js": 95,
-          "src/index.html": 67,
-          "src/index.ts": 13,
-          "src/slice-item/slice-item.html": 7,
-          "src/slice-item/slice-item.ts": 10
-        }
-      },
-      "dependencies": {
-        "direct": 3,
-        "installed": 35,
-        "nodeModules": 42749952
-      },
-      "build": {
-        "ms": 64.71142900001723,
-        "runs": [
-          67.8661719999509,
-          59.949447000049986,
-          64.71142900001723
-        ]
-      },
-      "runtimeSize": 30208000,
-      "start": {
-        "ms": 94.5856550000608,
-        "runs": [
-          94.5856550000608,
-          83.92708299995866,
-          88.79001200001221,
-          111.93680100003257,
-          125.24025499995332
-        ]
-      },
-      "idleRss": 70762496,
-      "payload": {
-        "scripts": 1,
-        "jsRaw": 94855,
-        "jsGzip": 31339,
-        "htmlRaw": 7149,
-        "htmlGzip": 1806,
-        "requests": 3,
-        "files": [
-          {
-            "url": "/client.js",
-            "raw": 94855,
-            "gzip": 31339
-          }
-        ]
-      },
-      "accessibility": {
-        "menu": [],
-        "bag": []
-      },
-      "lighthouse": {
-        "score": 100,
-        "lcp": 751.9776999999999,
-        "tbt": 20.5,
-        "fcp": 751.9776999999999,
-        "runs": [
-          {
-            "score": 100,
-            "lcp": 751.9776999999999,
-            "tbt": 69,
-            "fcp": 751.9776999999999
-          },
-          {
-            "score": 100,
-            "lcp": 810,
-            "tbt": 3,
-            "fcp": 810
-          },
-          {
-            "score": 100,
-            "lcp": 750.3733,
-            "tbt": 20.5,
-            "fcp": 750.3733
-          }
-        ]
-      },
-      "load": {
-        "rps": 4263,
-        "p50": 10,
-        "p975": 21,
-        "errors": 0,
-        "peakRss": 134148096,
-        "runs": [
-          {
-            "rps": 4261.7,
-            "p50": 10,
-            "p975": 20,
-            "p99": 22,
-            "errors": 0,
-            "peakRss": 125898752
-          },
-          {
-            "rps": 4263,
-            "p50": 10,
-            "p975": 21,
-            "p99": 23,
-            "errors": 0,
-            "peakRss": 134148096
-          },
-          {
-            "rps": 4291.73,
-            "p50": 10,
-            "p975": 23,
-            "p99": 28,
-            "errors": 0,
-            "peakRss": 147660800
-          }
-        ]
-      }
+      "contract": "11"
     }
   ]
 }
