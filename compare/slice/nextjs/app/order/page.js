@@ -70,6 +70,7 @@ export default async function OrderPage({ searchParams }) {
         </form>
         {time && <p>Pickup: {time.day} at {time.label}</p>}
       </section>
+      {cart.lines.length > 0 && time && <a className="button" href="/checkout">Check out</a>}
     </>
   );
 }
