@@ -26,9 +26,15 @@ const BUILDS = {
   nextjs: { build: ['node_modules/next/dist/bin/next', 'build'], outputs: ['.next'], start: ['node_modules/next/dist/bin/next', 'start', '-p', String(PORT)], runtime: ['.next', 'node_modules'] },
   sveltekit: { build: ['node_modules/vite/bin/vite.js', 'build'], outputs: ['.svelte-kit', 'build'], start: ['build'], runtime: ['build'] },
   nuxt: { build: ['node_modules/nuxt/bin/nuxt.mjs', 'build'], outputs: ['.nuxt', '.output'], start: ['.output/server/index.mjs'], runtime: ['.output'] },
+  // Web component libraries, each on a plain Node server like the Zubra build.
+  lit: { build: ['node_modules/esbuild/bin/esbuild', 'client.js', '--bundle', '--minify', '--format=esm', '--outfile=dist/client.js'], outputs: ['dist'], start: ['server.js'], runtime: ['node_modules', 'dist'] },
+  enhance: { build: ['node_modules/esbuild/bin/esbuild', 'client.js', '--bundle', '--minify', '--format=esm', '--outfile=dist/client.js'], outputs: ['dist'], start: ['server.js'], runtime: ['node_modules/@enhance', 'node_modules/counter-slice-backend', 'dist'] },
+  stencil: { build: ['node_modules/@stencil/core/bin/stencil', 'build'], outputs: ['www', 'hydrate', '.stencil'], start: ['server.js'], runtime: ['www', 'hydrate'] },
+  fast: { build: ['../measure/webui-build.mjs', '--plugin=fast-v3'], outputs: ['dist'], start: ['server.js'], runtime: ['node_modules/@microsoft/webui', 'node_modules/@microsoft/webui-linux-x64', 'dist'] },
+  webui: { build: ['../measure/webui-build.mjs', '--plugin=webui', '--dom=light'], outputs: ['dist'], start: ['server.js'], runtime: ['node_modules/@microsoft/webui', 'node_modules/@microsoft/webui-linux-x64', 'dist'] },
 };
-const OWN = new Set(['.js', '.mjs', '.vue', '.svelte', '.zb', '.html']);
-const SKIP = new Set(['node_modules', '.next', '.svelte-kit', 'build', '.nuxt', '.output']);
+const OWN = new Set(['.js', '.mjs', '.ts', '.tsx', '.vue', '.svelte', '.zb', '.html']);
+const SKIP = new Set(['node_modules', '.next', '.svelte-kit', 'build', '.nuxt', '.output', 'dist', 'www', 'hydrate', '.stencil']);
 
 const median = (values) => {
   const sorted = [...values].sort((a, b) => a - b);
@@ -90,9 +96,19 @@ function dependencies(dir) {
   return { direct: direct.length, installed: installed.length, nodeModules: duSize(join(dir, 'node_modules')) };
 }
 
+/** A native binary (esbuild, webui) runs as itself; a script runs through node. */
+const native = (path) => {
+  try {
+    return readFileSync(path).subarray(0, 4).toString('latin1') === '\x7fELF';
+  } catch {
+    return false;
+  }
+};
+
 function run(dir, args, env = {}) {
+  const [command, ...rest] = native(join(dir, args[0])) ? [join(dir, args[0]), ...args.slice(1)] : [node, ...args];
   return new Promise((resolve, reject) => {
-    const child = spawn(node, args, { cwd: dir, env: { ...process.env, NODE_ENV: 'production', NEXT_TELEMETRY_DISABLED: '1', NUXT_TELEMETRY_DISABLED: '1', ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn(command, rest, { cwd: dir, env: { ...process.env, NODE_ENV: 'production', NEXT_TELEMETRY_DISABLED: '1', NUXT_TELEMETRY_DISABLED: '1', ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
     let out = '';
     child.stdout.on('data', (chunk) => (out += chunk));
     child.stderr.on('data', (chunk) => (out += chunk));
