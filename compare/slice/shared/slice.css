@@ -31,3 +31,11 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .line { grid-template-columns: 1fr auto; align-items: center; }
 .qty { display: flex; gap: 0.35rem; align-items: center; }
 .total { margin: 0; font-weight: 800; }
+/* Checkout and the order page */
+a.button { justify-self: start; padding: 0.55rem 1rem; border-radius: 0.5rem; background: var(--primary); color: var(--primary-foreground); font-weight: 700; text-decoration: none; }
+.summary { margin: 0; font-weight: 700; }
+form.panel { display: grid; grid-template-columns: max-content 1fr; gap: 0.6rem 0.8rem; max-width: 32rem; }
+form.panel button { grid-column: 1 / -1; justify-self: start; }
+.steps { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.steps li { padding: 0.35rem 0.8rem; border-radius: 999px; box-shadow: 0 0 0 1px var(--border); color: var(--muted-foreground); font-weight: 600; }
+.steps li.done { background: var(--primary); color: var(--primary-foreground); box-shadow: none; }

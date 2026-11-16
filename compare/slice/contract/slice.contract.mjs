@@ -158,7 +158,7 @@ for (const js of [false, true]) {
     assert.match(await page.locator('p.summary').innerText(), /2 items · \$18\.00 · pickup (today|tomorrow) at/);
     await fill(page, { name: '' });
     await page.locator('.notice.problem', { hasText: 'Give a name for the bag.' }).waitFor();
-    await fill(page, { email: 'not an email' });
+    await fill(page, { email: 'sam@localhost' }); // the browser accepts it, the server's check doesn't
     await page.locator('.notice.problem', { hasText: 'Give an email we can send the receipt to.' }).waitFor();
     await fill(page, { card: '4000 0000 0000 0002' });
     await page.locator('.notice.problem', { hasText: 'That card was declined. Try another.' }).waitFor();
