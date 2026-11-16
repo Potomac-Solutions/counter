@@ -20,7 +20,7 @@ h3 { margin: 0; font-size: 1.05rem; }
 .items, .lines { display: grid; gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
 .items { grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
 .item, .line, .panel { display: grid; gap: 0.5rem; padding: 1rem 1.1rem; border-radius: var(--radius); background: var(--card); box-shadow: 0 0 0 1px var(--border); }
-.item.out h3, .item h3.out { color: var(--muted-foreground); text-decoration: line-through; }
+.item.out h3, .item h3.out, .item[data-out] h3 { color: var(--muted-foreground); text-decoration: line-through; }
 .meta { margin: 0; color: var(--muted-foreground); }
 .left { font-weight: 700; color: var(--accent); }
 form { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0; }
