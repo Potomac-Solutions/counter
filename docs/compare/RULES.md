@@ -26,7 +26,10 @@ Chosen from the host list in the Enterprise Emulation Roadmap, one per branch:
 | `compare/sveltekit` | SvelteKit | Form actions and `load`, as its docs recommend |
 | `compare/nuxt` | Nuxt, Vue | Server routes and `useAsyncData`, as its docs recommend |
 
-More are added the same way. A clone uses no Zubra code. (An app that is *not*
+Added since, the same way: Lit, Enhance, Stencil, FAST and WebUI (web component libraries,
+each on a plain Node server), a Zubra build on the same event stream as the others, and tuned
+builds of Next.js and Nuxt beside their defaults. The work moved from whole-app clones to one
+slice of Counter, built in `compare/slice/` on these rules. More are added the same way. A clone uses no Zubra code. (An app that is *not*
 built on Zubra gets a Zubra clone instead, so the comparison runs both ways.)
 
 ## The parity contract

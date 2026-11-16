@@ -1,17 +1,24 @@
-# Counter's slice, nine ways
+# Counter's slice, twelve ways
 
-The same slice of Counter (menu with live stock, bag, pickup time) built in
-Zubra, three app frameworks (Next.js, SvelteKit, Nuxt) and five web component
-libraries (Lit, Enhance, Stencil, FAST, WebUI), on the same backend, stylesheet
-and contract. `SPEC.md` says what the slice is; `docs/compare/RULES.md` says how
-it's compared; `measure/RESULTS.md` has the numbers.
+The same slice of Counter (menu with live stock, bag, pickup time, checkout and
+a live order page) built in Zubra, three app frameworks (Next.js, SvelteKit,
+Nuxt) and five web component libraries (Lit, Enhance, Stencil, FAST, WebUI), on
+the same backend, stylesheet and contract. Zubra is built twice (with its own
+sync, and on the same event stream as the others), and Next.js and Nuxt each
+have a tuned build beside the default. `SPEC.md` says what the slice is; `docs/compare/RULES.md` says how
+it's compared; `measure/RESULTS.md` has the numbers, `measure/UPGRADE.md` the
+upgrade drill, `measure/FINDINGS.md` what it all shows, and
+`docs/compare/LOG.md` what each build took to write.
 
 | Build | Framework | Live updates through |
 | --- | --- | --- |
-| `zubra/` | `@zubra/server` 5.19.0, plain Node | `@zubra/sync`: each menu item is a sync document |
+| `zubra/` | `@zubra/server` 5.19.0, plain Node | `@zubra/sync`: each menu item and order is a sync document |
+| `zubra-stream/` | `@zubra/server` 5.19.0, plain Node | Server-sent events, as the others; no `@zubra/sync` |
 | `nextjs/` | Next.js 16.4.6, App Router, React 19.3.1 | A route handler streaming server-sent events, a client component |
 | `sveltekit/` | SvelteKit 3.2.0, Svelte 5.57.3, adapter-node | A `+server.js` streaming server-sent events, runes |
+| `nextjs-tuned/` | As `nextjs/`, with `output: 'standalone'` | As `nextjs/` |
 | `nuxt/` | Nuxt 4.6.4, Vue 3.5.45 | An h3 event stream, a ref |
+| `nuxt-tuned/` | As `nuxt/`, with one data call per page | As `nuxt/` |
 | `lit/` | Lit 3.3.3, `@lit-labs/ssr` 4.1.0, plain Node | Server-sent events, a hydrated Lit element |
 | `enhance/` | `@enhance/ssr` 4.0.3, `@enhance/element` 1.4.6, plain Node | Server-sent events, the same render function re-run in the browser |
 | `stencil/` | Stencil 4.45.3 hydrate script, plain Node | Server-sent events, a hydrated Stencil component |
@@ -33,14 +40,17 @@ Needs Node 26 and Counter's own `npm install` at the repo root.
 
 ```sh
 cd compare/slice
-for build in zubra nextjs sveltekit nuxt lit enhance stencil fast webui; do (cd $build && npm install && npm run build --if-present); done
+for build in zubra zubra-stream nextjs nextjs-tuned sveltekit nuxt nuxt-tuned lit enhance stencil fast webui; do (cd $build && npm install && npm run build --if-present); done
 
 # the contract, against one build
 (cd nextjs && SLICE_CONTROL_PORT=3199 PORT=3101 npm start) &
 BASE=http://localhost:3101 CONTROL=3199 node --test contract/
 
-# the measurements, all nine (about 30 minutes)
-cd measure && npm install && LOAD_SECONDS=10 node measure.mjs
+# the measurements, all twelve (about an hour), the server pinned to CPU 0
+cd measure && npm install && PIN=1 LOAD_SECONDS=10 taskset -c 1 node measure.mjs
+
+# the upgrade drill (about 40 minutes)
+node upgrade.mjs
 ```
 
 ## What each build needed that the others didn't
@@ -67,6 +77,6 @@ cd measure && npm install && LOAD_SECONDS=10 node measure.mjs
   `left = -1` rather than a separate flag.
 - **FAST** is WebUI's renderer with FAST's declarative templates. Its item lives
   in a shadow root, so the item links the shared stylesheet itself (as Lit's does).
-- **Zubra** keeps the menu live with its own sync, not the shared feed the
-  others use. The shared feed checks the store every 250 ms; Zubra's sync pushes
-  a write when it happens.
+- **Zubra** keeps the menu and orders live with its own sync. Every other build
+  reads the shared feed, which tells pages straight after each write (with a
+  250 ms check as a backstop), so update speed compares fairly.
