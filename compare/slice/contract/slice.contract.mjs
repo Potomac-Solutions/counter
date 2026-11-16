@@ -9,7 +9,11 @@ import { chromium } from 'playwright';
 const BASE = process.env.BASE ?? 'http://localhost:3101';
 const CONTROL = process.env.CONTROL ?? '3199';
 let browser;
-before(async () => { browser = await chromium.launch(); });
+before(async () => {
+  browser = await chromium.launch();
+  // One page first: a build may make its slice (and open the kitchen port) on its first request.
+  assert.equal((await fetch(`${BASE}/`)).status, 200, `${BASE} answers`);
+});
 after(async () => { await browser.close(); });
 
 const phone = async ({ js = true } = {}) => {
