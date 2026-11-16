@@ -19,7 +19,8 @@ const DRILLS = {
   nextjs: { next: '16.3.8' },
   'nextjs-tuned': { next: '16.3.8' },
   'nuxt-tuned': { nuxt: '4.5.2' },
-  sveltekit: { '@sveltejs/kit': '3.1.1', svelte: '5.56.10' },
+  // kit 3.1.1 needs svelte ^5.57.1, so svelte goes back to the lowest release it accepts.
+  sveltekit: { '@sveltejs/kit': '3.1.1', svelte: '5.57.1' },
   nuxt: { nuxt: '4.5.2' },
   lit: { lit: '3.2.1', '@lit-labs/ssr': '4.0.0' },
   enhance: { '@enhance/ssr': '3.5.2', '@enhance/element': '1.4.5' },
@@ -76,7 +77,9 @@ async function drill(name) {
   // The shared backend and Counter's own code are reached by relative paths, so copy the same layout.
   cpSync(join(slice, '..', '..', 'src'), join(temp, 'src'), { recursive: true });
   cpSync(join(slice, '..', '..', 'node_modules'), join(temp, 'node_modules'), { recursive: true });
-  cpSync(join(slice, '..', '..', 'package.json'), join(temp, 'package.json'));
+  // The repo's lockfile too: without it Next.js takes the app's folder as the whole project and can't
+  // follow the link to the shared backend.
+  for (const file of ['package.json', 'package-lock.json']) cpSync(join(slice, '..', '..', file), join(temp, file));
   cpSync(join(slice, 'shared'), join(temp, 'compare', 'slice', 'shared'), { recursive: true });
   cpSync(join(slice, 'measure'), join(temp, 'compare', 'slice', 'measure'), { recursive: true, filter: (path) => !path.includes('node_modules') });
   cpSync(join(slice, name), dir, { recursive: true, filter: (path) => !/node_modules|\/\.next|\/\.nuxt|\/\.output|\/build$|\/dist$|\/www$|\/hydrate$|\/\.stencil|\/\.svelte-kit/.test(path) });
@@ -99,8 +102,13 @@ async function drill(name) {
 }
 
 const names = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(DRILLS);
-const results = [];
+// Rerunning some builds keeps the others' earlier results.
+let results = [];
+try {
+  results = JSON.parse(readFileSync(join(here, 'upgrade.json'), 'utf8')).results.filter((one) => !names.includes(one.name));
+} catch {}
 for (const name of names) results.push(await drill(name));
+results.sort((a, b) => Object.keys(DRILLS).indexOf(a.name) - Object.keys(DRILLS).indexOf(b.name));
 writeFileSync(join(here, 'upgrade.json'), `${JSON.stringify({ date: new Date().toISOString(), results }, null, 2)}\n`);
 const cell = (side) => (side.error ? 'install failed' : !side.build?.ok ? 'build failed' : `${side.contract.pass} of ${side.contract.total}${side.contract.failed?.length ? ` (fails ${side.contract.failed.map((one) => one.split(' ')[0]).join(', ')})` : ''}`);
 writeFileSync(
