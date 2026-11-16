@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{title}} · {{shop}}</title>
   <link rel="stylesheet" href="/slice.css">
-  <if condition="page == 'menu'"><script type="module" src="/client.js"></script></if>
+  <if condition="live"><script type="module" src="/client.js"></script></if>
 </head>
 <body>
   <header class="site-head"><a href="/">{{shop}}</a><nav aria-label="Site"><a href="/">Menu</a><a href="/order">Your order<if condition="count"> ({{count}})</if></a></nav></header>
@@ -61,7 +61,29 @@
         </form>
         <if condition="pickup"><p>Pickup: {{pickup}}</p></if>
       </section>
+      <if condition="ready"><a class="button" href="/checkout">Check out</a></if>
     </if>
+    <if condition="page == 'checkout'">
+      <h1>Check out</h1>
+      <p class="summary">{{summary}}</p>
+      <form method="post" action="/place" class="panel">
+        <input type="hidden" name="checkout" value="{{checkout}}">
+        <label for="name">Name</label><input id="name" name="name" autocomplete="name">
+        <label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email">
+        <label for="card">Card number</label><input id="card" name="card" inputmode="numeric" autocomplete="cc-number">
+        <button>Place order · {{total}}</button>
+      </form>
+      <p class="meta">Test mode: 4242 4242 4242 4242 pays, 4000 0000 0000 0002 is declined.</p>
+    </if>
+    <if condition="page == 'placed'">
+      <h1>Order for {{order.when}}</h1>
+      <p>For {{order.name}} · {{order.total}}</p>
+      <slice-steps order="{{order.key}}" :status="{{order.status}}"></slice-steps>
+      <ul class="lines">
+        <for each="line in order.lines"><li>{{line.qty}} × {{line.name}}</li></for>
+      </ul>
+    </if>
+    <if condition="page == 'missing'"><h1>We can’t find that order.</h1></if>
   </main>
 </body>
 </html>
