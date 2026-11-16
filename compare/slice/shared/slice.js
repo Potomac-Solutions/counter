@@ -22,15 +22,17 @@ export async function createSlice({ db = process.env.SLICE_DB ?? ':memory:', sec
   const notices = createNotices({ secret });
   counter.identify((request) => cookies.session(request));
 
-  // What's left, and where each order is, as strings, so a change is one comparison. Polled from the same store every
-  // implementation reads, so no framework gets a faster feed than another.
+  // What's left, and where each order is, as strings, so a change is one comparison. Every build but
+  // Zubra's own reads this feed, so none gets a faster feed than another.
   const listeners = new Set();
   const orderListeners = new Map(); // order key → Set of fn(order)
   const snapshot = () => JSON.stringify(counter.store.under('items').map((item) => [item.key, item.left]));
   const stages = () => new Map(counter.store.under('orders').map((order) => [order.key, order.status]));
   let last = snapshot();
   let lastStages = stages();
-  const timer = setInterval(() => {
+  // Checked straight after every write this module makes (an order, the kitchen's stock or steps), so
+  // pages hear at once, as with Zubra's own sync; the interval is only a backstop for other writers.
+  const check = () => {
     const next = snapshot();
     if (next !== last) {
       last = next;
@@ -45,7 +47,14 @@ export async function createSlice({ db = process.env.SLICE_DB ?? ':memory:', sec
       for (const fn of fns) fn(view(order));
     }
     lastStages = now;
-  }, pollMs);
+  };
+  const timer = setInterval(check, pollMs);
+  /** Run a write, then tell the pages. */
+  const andTell = async (write) => {
+    const done = await write;
+    check();
+    return done;
+  };
   timer.unref();
 
   // The kitchen, for the contract: POST http://127.0.0.1:<control>/stock?item=rye&left=3 sets
@@ -56,7 +65,7 @@ export async function createSlice({ db = process.env.SLICE_DB ?? ':memory:', sec
       const url = new URL(req.url, 'http://control');
       if (req.method !== 'POST') return res.writeHead(404).end();
       // POST /advance?key=c…&to=making moves an order along, as the kitchen board does.
-      const done = url.pathname === '/stock' ? await counter.stock(url.searchParams) : url.pathname === '/advance' ? await counter.advance(url.searchParams.get('key'), url.searchParams.get('to')) : null;
+      const done = url.pathname === '/stock' ? await andTell(counter.stock(url.searchParams)) : url.pathname === '/advance' ? await andTell(counter.advance(url.searchParams.get('key'), url.searchParams.get('to'))) : null;
       if (!done) return res.writeHead(404).end();
       res.writeHead(done.ok ? 200 : 400, { 'content-type': 'application/json' }).end(JSON.stringify(done));
     });
@@ -94,7 +103,7 @@ export async function createSlice({ db = process.env.SLICE_DB ?? ':memory:', sec
       if (!name) return { error: 'Give a name for the bag.' };
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { error: 'Give an email we can send the receipt to.' };
       if (String(card ?? '').replace(/\D/g, '').length < 12) return { error: 'Give a card number (test mode: 4242 4242 4242 4242).' };
-      return counter.place(guest, form({ checkout, name, email, card }));
+      return andTell(counter.place(guest, form({ checkout, name, email, card })));
     },
     /** The guest's paid order as a page shows it, or null if it isn't theirs. */
     order(guest, key) {
