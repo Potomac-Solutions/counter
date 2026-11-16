@@ -54,8 +54,30 @@ ${slice
 <section class="panel"><h2>Pickup time</h2>
   <form method="post" action="/time"><label for="slot">When you’ll come by</label><select id="slot" name="slot"><option value="">Choose…</option>${options}</select><button>Set the time</button></form>
   ${chosen ? `<p>Pickup: ${escape(pickupWords(times, chosen))}</p>` : ''}
-</section>`;
+</section>
+${cart.lines.length && chosen ? '<a class="button" href="/checkout">Check out</a>' : ''}`;
   };
+
+  const checkoutPage = (guest, said) => {
+    const cart = slice.cart(guest);
+    const when = pickupWords(slice.times(), slice.pickup(guest));
+    return `${notice(said)}
+<h1>Check out</h1>
+<p class="summary">${cart.count} item${cart.count === 1 ? '' : 's'} · ${money(cart.cents)} · pickup ${escape(when)}</p>
+<form method="post" action="/place" class="panel">
+  <input type="hidden" name="checkout" value="${slice.checkoutKey()}">
+  <label for="name">Name</label><input id="name" name="name" autocomplete="name">
+  <label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email">
+  <label for="card">Card number</label><input id="card" name="card" inputmode="numeric" autocomplete="cc-number">
+  <button>Place order · ${money(cart.cents)}</button>
+</form>
+<p class="meta">Test mode: 4242 4242 4242 4242 pays, 4000 0000 0000 0002 is declined.</p>`;
+  };
+
+  const orderPage = (p, order) => `<h1>Order for ${escape(order.when)}</h1>
+<p>For ${escape(order.name)} · ${order.total}</p>
+${p.render('slice-steps', { order: order.key, statusNow: order.status })}
+<ul class="lines">${order.lines.map((line) => `<li>${line.qty} × ${escape(line.name)}</li>`).join('')}</ul>`;
 
   const readForm = (req) =>
     new Promise((resolve, reject) => {
@@ -89,6 +111,10 @@ ${slice
           const done = await slice.change(guest, { item: form.get('item'), qty: form.get('qty') });
           return back(res, slice.back('/order', done.ok ? {} : { problem: done.error }), cookie);
         }
+        if (url.pathname === '/place') {
+          const done = await slice.place(guest, { checkout: form.get('checkout'), name: form.get('name'), email: form.get('email'), card: form.get('card') });
+          return back(res, done.ok ? `/orders/${done.key}` : slice.back(done.back ?? '/checkout', { problem: done.error }), cookie);
+        }
         if (url.pathname === '/time') {
           const done = await slice.choose(guest, form.get('slot'));
           return back(res, slice.back('/order', done.ok ? {} : { problem: done.error }), cookie);
@@ -100,6 +126,18 @@ ${slice
       const p = zubra.page(); // one per request: it collects the components the page uses
       if (url.pathname === '/') return html(res, layout(p, 'Menu', count, menuPage(p, said)), cookie);
       if (url.pathname === '/order') return html(res, layout(p, 'Your order', count, bagPage(guest, said)), cookie);
+      if (url.pathname === '/checkout') {
+        const cart = slice.cart(guest);
+        if (!cart.lines.length) return back(res, slice.back('/order', { problem: 'Your bag is empty.' }), cookie);
+        if (!slice.pickup(guest)) return back(res, slice.back('/order', { problem: 'Choose a pickup time first.' }), cookie);
+        return html(res, layout(p, 'Check out', count, checkoutPage(guest, said)), cookie);
+      }
+      const ordered = /^\/orders\/([a-z0-9]+)$/.exec(url.pathname);
+      if (ordered) {
+        const order = slice.order(guest, ordered[1]);
+        if (!order) return res.writeHead(404, { 'content-type': 'text/html; charset=utf-8' }).end(layout(p, 'Not found', count, '<h1>We can’t find that order.</h1>'));
+        return html(res, layout(p, 'Your order', count, orderPage(p, order)), cookie);
+      }
       res.writeHead(404, { 'content-type': 'text/plain' }).end('Not found');
     } catch (error) {
       console.error(error);
