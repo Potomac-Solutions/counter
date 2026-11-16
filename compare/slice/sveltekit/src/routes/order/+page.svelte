@@ -56,3 +56,4 @@
   </form>
   {#if time}<p>Pickup: {time.day} at {time.label}</p>{/if}
 </section>
+{#if data.cart.lines.length && time}<a class="button" href="/checkout">Check out</a>{/if}
