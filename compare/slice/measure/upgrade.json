@@ -1,0 +1,452 @@
+{
+  "date": "2026-11-16T02:25:03.297Z",
+  "results": [
+    {
+      "name": "zubra",
+      "from": {
+        "@zubra/runtime": "5.18.0",
+        "@zubra/server": "5.18.0",
+        "@zubra/sync": "5.18.0"
+      },
+      "to": {
+        "@zubra/runtime": "5.19.0",
+        "@zubra/server": "5.19.0",
+        "@zubra/sync": "5.19.0"
+      },
+      "previous": {
+        "install": 2881,
+        "build": {
+          "ok": true,
+          "ms": 0
+        },
+        "contract": {
+          "pass": 9,
+          "total": 11,
+          "failed": [
+            "S8 the order page is live: the kitchen moves the order and an open page follows",
+            "S6 the menu is live: the kitchen's stock shows on an open page without a reload"
+          ]
+        }
+      },
+      "upgrade": {
+        "install": 857,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 0
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "firstInstall": 598
+    },
+    {
+      "name": "zubra-stream",
+      "from": {
+        "@zubra/runtime": "5.18.0",
+        "@zubra/server": "5.18.0"
+      },
+      "to": {
+        "@zubra/runtime": "5.19.0",
+        "@zubra/server": "5.19.0"
+      },
+      "previous": {
+        "install": 789,
+        "build": {
+          "ok": true,
+          "ms": 0
+        },
+        "contract": {
+          "pass": 9,
+          "total": 11,
+          "failed": [
+            "S8 the order page is live: the kitchen moves the order and an open page follows",
+            "S6 the menu is live: the kitchen's stock shows on an open page without a reload"
+          ]
+        }
+      },
+      "upgrade": {
+        "install": 863,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 0
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "firstInstall": 416
+    },
+    {
+      "name": "nextjs",
+      "from": {
+        "next": "16.3.8"
+      },
+      "to": {
+        "next": "16.4.6"
+      },
+      "previous": {
+        "install": 8463,
+        "build": {
+          "ok": true,
+          "ms": 9318
+        },
+        "contract": {
+          "pass": 10,
+          "total": 11,
+          "failed": [
+            "S8 an order is only its guest's: another phone, or a made-up key, gets a 404"
+          ]
+        }
+      },
+      "upgrade": {
+        "install": 7695,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 6443
+        },
+        "contract": {
+          "pass": 10,
+          "total": 11,
+          "failed": [
+            "S8 an order is only its guest's: another phone, or a made-up key, gets a 404"
+          ]
+        }
+      },
+      "firstInstall": 8268
+    },
+    {
+      "name": "nextjs-tuned",
+      "from": {
+        "next": "16.3.8"
+      },
+      "to": {
+        "next": "16.4.6"
+      },
+      "previous": {
+        "install": 8735,
+        "build": {
+          "ok": true,
+          "ms": 10933
+        },
+        "contract": {
+          "pass": 10,
+          "total": 11,
+          "failed": [
+            "S8 an order is only its guest's: another phone, or a made-up key, gets a 404"
+          ]
+        }
+      },
+      "upgrade": {
+        "install": 7259,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 8146
+        },
+        "contract": {
+          "pass": 10,
+          "total": 11,
+          "failed": [
+            "S8 an order is only its guest's: another phone, or a made-up key, gets a 404"
+          ]
+        }
+      },
+      "firstInstall": 9732
+    },
+    {
+      "name": "nuxt-tuned",
+      "from": {
+        "nuxt": "4.5.2"
+      },
+      "to": {
+        "nuxt": "4.6.4"
+      },
+      "previous": {
+        "install": 27153,
+        "build": {
+          "ok": true,
+          "ms": 6867
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "upgrade": {
+        "install": 7498,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 6506
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "firstInstall": 6903
+    },
+    {
+      "name": "sveltekit",
+      "from": {
+        "@sveltejs/kit": "3.1.1",
+        "svelte": "5.57.1"
+      },
+      "to": {
+        "@sveltejs/kit": "3.2.0",
+        "svelte": "5.57.3"
+      },
+      "previous": {
+        "install": 3807,
+        "build": {
+          "ok": true,
+          "ms": 2541
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "upgrade": {
+        "install": 2340,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 2089
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "firstInstall": 2073
+    },
+    {
+      "name": "nuxt",
+      "from": {
+        "nuxt": "4.5.2"
+      },
+      "to": {
+        "nuxt": "4.6.4"
+      },
+      "previous": {
+        "install": 7064,
+        "build": {
+          "ok": true,
+          "ms": 6698
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "upgrade": {
+        "install": 6593,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 6109
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "firstInstall": 7274
+    },
+    {
+      "name": "lit",
+      "from": {
+        "lit": "3.2.1",
+        "@lit-labs/ssr": "4.0.0"
+      },
+      "to": {
+        "lit": "3.3.3",
+        "@lit-labs/ssr": "4.1.0"
+      },
+      "previous": {
+        "install": 1008,
+        "build": {
+          "ok": true,
+          "ms": 145
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "upgrade": {
+        "install": 1034,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 150
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "firstInstall": 1513
+    },
+    {
+      "name": "enhance",
+      "from": {
+        "@enhance/ssr": "3.5.2",
+        "@enhance/element": "1.4.5"
+      },
+      "to": {
+        "@enhance/ssr": "4.0.3",
+        "@enhance/element": "1.4.6"
+      },
+      "previous": {
+        "install": 1244,
+        "build": {
+          "ok": true,
+          "ms": 143
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "upgrade": {
+        "install": 382,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 118
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "firstInstall": 645
+    },
+    {
+      "name": "stencil",
+      "from": {
+        "@stencil/core": "4.44.2"
+      },
+      "to": {
+        "@stencil/core": "4.45.3"
+      },
+      "previous": {
+        "install": 1119,
+        "build": {
+          "ok": true,
+          "ms": 3255
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "upgrade": {
+        "install": 777,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 3201
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "firstInstall": 955
+    },
+    {
+      "name": "fast",
+      "from": {
+        "@microsoft/fast-element": "3.0.4",
+        "@microsoft/webui": "3.0.5"
+      },
+      "to": {
+        "@microsoft/fast-element": "3.1.4",
+        "@microsoft/webui": "3.1.2"
+      },
+      "previous": {
+        "install": 3000,
+        "build": {
+          "ok": true,
+          "ms": 150
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "upgrade": {
+        "install": 1105,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 166
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "firstInstall": 1425
+    },
+    {
+      "name": "webui",
+      "from": {
+        "@microsoft/webui": "3.0.5",
+        "@microsoft/webui-framework": "3.0.5"
+      },
+      "to": {
+        "@microsoft/webui": "3.1.2",
+        "@microsoft/webui-framework": "3.1.2"
+      },
+      "previous": {
+        "install": 1312,
+        "build": {
+          "ok": false,
+          "ms": 142,
+          "out": "\n> build\n> webui build ./src --out ./dist --plugin=webui --dom=light && esbuild src/index.ts --bundle --minify --format=esm --outfile=dist/client.js\n\n\n  ⚡ WebUI Build\n\n  ▸ App        /tmp/drill-webui-yTv9AF/compare/slice/webui/src\n  ▸ Entry      index.html\n  ▸ Output     ./dist/protocol.bin\n  ▸ CSS        link\n  ▸ DOM        light\n  ▸ Plugin     webui\n\n  ✔ Registered 2 components\n  ✔ Parsed index.html (178 fragments)\n  ✔ Wrote protocol.bin\n\n  ✨ Build complete (1 file written) in 855µs\n\n✘ [ERROR] Could not resolve \"@microsoft/webui-framework/runtime.js\"\n\n    src/index.ts:2:29:\n      2 │ import { startRuntime } from '@microsoft/webui-framework/runtime.js';\n        ╵                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n  The path \"./runtime.js\" is not exported by package \"@microsoft/webui-framework\":\n\n    node_modules/@microsoft/webui-framework/package.json:10:13:\n      10 │   \"exports\": {\n         ╵              ^\n\n  You can mark the path \"@microsoft/webui-framework/runtime.js\" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.\n\n1 error\n"
+        },
+        "contract": null
+      },
+      "upgrade": {
+        "install": 1034,
+        "ok": true,
+        "build": {
+          "ok": true,
+          "ms": 198
+        },
+        "contract": {
+          "pass": 11,
+          "total": 11,
+          "failed": []
+        }
+      },
+      "firstInstall": 838
+    }
+  ]
+}
