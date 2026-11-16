@@ -41,4 +41,5 @@ const time = computed(() => data.value.times.find((one) => one.slot === data.val
     </form>
     <p v-if="time">Pickup: {{ time.day }} at {{ time.label }}</p>
   </section>
+  <a v-if="data.cart.lines.length && time" class="button" href="/checkout">Check out</a>
 </template>
