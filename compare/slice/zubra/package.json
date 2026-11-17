@@ -4,8 +4,9 @@
   "type": "module",
   "scripts": { "start": "NODE_ENV=production node server.js" },
   "dependencies": {
-    "@zubra/runtime": "5.20.0",
-    "@zubra/server": "5.20.0",
-    "@zubra/sync": "5.20.0"
+    "@zubra/actions": "5.21.0",
+    "@zubra/runtime": "5.21.0",
+    "@zubra/server": "5.21.0",
+    "@zubra/sync": "5.21.0"
   }
 }

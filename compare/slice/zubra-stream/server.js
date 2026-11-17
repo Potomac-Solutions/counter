@@ -3,11 +3,14 @@
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createZubra } from '@zubra/server';
 import { createSlice, money, pickupWords } from '../shared/slice.js';
 
 const here = import.meta.dirname;
 const css = readFileSync(join(here, '..', 'shared', 'slice.css'));
+// Plain form posts without the reload (the Add form names what it updates: data-zb-updates).
+const forms = readFileSync(fileURLToPath(import.meta.resolve('@zubra/actions/enhance-forms')));
 const live = readFileSync(join(here, 'live.js'));
 const rows = (menu) => JSON.stringify(menu.flatMap(({ items }) => items.map((item) => [item.key, item.left])));
 
@@ -40,13 +43,14 @@ export async function createApp(options = {}) {
   <link rel="stylesheet" href="/slice.css">
 </head>
 <body>
-  <header class="site-head"><a href="/">${escape(shop.name)}</a><nav aria-label="Site"><a href="/">Menu</a><a href="/order">Your order${count ? ` (${count})` : ''}</a></nav></header>
+  <header class="site-head"><a href="/">${escape(shop.name)}</a><nav aria-label="Site" id="site"><a href="/">Menu</a><a href="/order">Your order${count ? ` (${count})` : ''}</a></nav></header>
   <main>${body}</main>
   <script type="module" src="/live.js"></script>
+  <script type="module" src="/_zb/enhance-forms.js"></script>
 </body>
 </html>`);
 
-  const menuPage = (p, said) => `${notice(said)}
+  const menuPage = (p, said) => `<div id="said">${notice(said)}</div>
 <h1>Order ahead</h1>
 ${slice
   .menu()
@@ -119,6 +123,7 @@ ${p.render('slice-steps', { status: order.status })}
         if (!order) return res.writeHead(404).end();
         return stream(req, res, order, (send) => slice.watchOrder(order.key, send), (one) => JSON.stringify(one.status));
       }
+      if (url.pathname === '/_zb/enhance-forms.js') return res.writeHead(200, { 'content-type': 'text/javascript', 'cache-control': 'public, max-age=3600' }).end(forms);
       if (url.pathname === '/slice.css') return res.writeHead(200, { 'content-type': 'text/css', 'cache-control': 'public, max-age=3600' }).end(css);
       const { guest, setCookie } = slice.guest(req.headers.cookie);
       const cookie = setCookie ? { 'set-cookie': setCookie } : {};

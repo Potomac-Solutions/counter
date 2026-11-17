@@ -3,11 +3,14 @@
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createZubra } from '@zubra/server';
 import { createSlice, money, pickupWords } from '../shared/slice.js';
 
 const here = import.meta.dirname;
 const css = readFileSync(join(here, '..', 'shared', 'slice.css'));
+// Plain form posts without the reload (the Add form names what it updates: data-zb-updates).
+const forms = readFileSync(fileURLToPath(import.meta.resolve('@zubra/actions/enhance-forms')));
 const escape = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 export async function createApp(options = {}) {
@@ -26,13 +29,14 @@ export async function createApp(options = {}) {
   <link rel="stylesheet" href="/slice.css">
 </head>
 <body>
-  <header class="site-head"><a href="/">${escape(shop.name)}</a><nav aria-label="Site"><a href="/">Menu</a><a href="/order">Your order${count ? ` (${count})` : ''}</a></nav></header>
+  <header class="site-head"><a href="/">${escape(shop.name)}</a><nav aria-label="Site" id="site"><a href="/">Menu</a><a href="/order">Your order${count ? ` (${count})` : ''}</a></nav></header>
   <main>${body}</main>
-  <script type="module">import { connect } from '@zubra/sync/connect'; connect();</script>
+  <script type="module">import { follow } from '@zubra/sync/follow'; follow();</script>
+  <script type="module" src="/_zb/enhance-forms.js"></script>
 </body>
 </html>`);
 
-  const menuPage = (p, said) => `${notice(said)}
+  const menuPage = (p, said) => `<div id="said">${notice(said)}</div>
 <h1>Order ahead</h1>
 ${slice
   .menu()
@@ -98,6 +102,7 @@ ${p.render('slice-steps', { order: order.key, statusNow: order.status })}
       if (await slice.sync.handle(req, res)) return;
       if (zubra.handle(req, res)) return;
       const url = new URL(req.url, 'http://slice');
+      if (url.pathname === '/_zb/enhance-forms.js') return res.writeHead(200, { 'content-type': 'text/javascript', 'cache-control': 'public, max-age=3600' }).end(forms);
       if (url.pathname === '/slice.css') return res.writeHead(200, { 'content-type': 'text/css', 'cache-control': 'public, max-age=3600' }).end(css);
       const { guest, setCookie } = slice.guest(req.headers.cookie);
       const cookie = setCookie ? { 'set-cookie': setCookie } : {};
