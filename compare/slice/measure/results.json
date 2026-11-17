@@ -2,10 +2,10 @@
   "machine": {
     "pinned": true,
     "cpus": 2,
-    "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.30GHz",
     "memoryGb": 8,
     "node": "v26.13.1",
-    "date": "2026-11-16T01:46:12.050Z",
+    "date": "2026-11-16T20:35:31.783Z",
     "loadSeconds": 10,
     "runs": {
       "build": 3,
@@ -16,13 +16,44 @@
   },
   "versions": {
     "zubra": {
-      "@zubra/runtime": "5.19.0",
-      "@zubra/server": "5.19.0",
-      "@zubra/sync": "5.19.0"
+      "@zubra/runtime": "5.20.0",
+      "@zubra/server": "5.20.0",
+      "@zubra/sync": "5.20.0"
     },
     "zubra-stream": {
-      "@zubra/runtime": "5.19.0",
-      "@zubra/server": "5.19.0"
+      "@zubra/runtime": "5.20.0",
+      "@zubra/server": "5.20.0"
+    },
+    "nextjs": {
+      "counter-slice-backend": "file:../shared",
+      "next": "16.4.6",
+      "react": "19.3.1",
+      "react-dom": "19.3.1",
+      "server-only": "^0.0.1"
+    },
+    "sveltekit": {
+      "counter-slice-backend": "file:../shared",
+      "@sveltejs/adapter-node": "6.0.2",
+      "@sveltejs/kit": "3.2.0",
+      "svelte": "5.57.3",
+      "vite": "8.3.8"
+    },
+    "nuxt": {
+      "counter-slice-backend": "file:../shared",
+      "nuxt": "4.6.4",
+      "vue": "3.5.45"
+    },
+    "nextjs-tuned": {
+      "counter-slice-backend": "file:../shared",
+      "next": "16.4.6",
+      "react": "19.3.1",
+      "react-dom": "19.3.1",
+      "server-only": "^0.0.1"
+    },
+    "nuxt-tuned": {
+      "counter-slice-backend": "file:../shared",
+      "nuxt": "4.6.4",
+      "vue": "3.5.45"
     },
     "lit": {
       "@lit-labs/ssr": "4.1.0",
@@ -52,37 +83,6 @@
       "@microsoft/webui-framework": "3.1.2",
       "counter-slice-backend": "file:../shared",
       "esbuild": "0.28.2"
-    },
-    "sveltekit": {
-      "counter-slice-backend": "file:../shared",
-      "@sveltejs/adapter-node": "6.0.2",
-      "@sveltejs/kit": "3.2.0",
-      "svelte": "5.57.3",
-      "vite": "8.3.8"
-    },
-    "nextjs": {
-      "counter-slice-backend": "file:../shared",
-      "next": "16.4.6",
-      "react": "19.3.1",
-      "react-dom": "19.3.1",
-      "server-only": "^0.0.1"
-    },
-    "nextjs-tuned": {
-      "counter-slice-backend": "file:../shared",
-      "next": "16.4.6",
-      "react": "19.3.1",
-      "react-dom": "19.3.1",
-      "server-only": "^0.0.1"
-    },
-    "nuxt": {
-      "counter-slice-backend": "file:../shared",
-      "nuxt": "4.6.4",
-      "vue": "3.5.45"
-    },
-    "nuxt-tuned": {
-      "counter-slice-backend": "file:../shared",
-      "nuxt": "4.6.4",
-      "vue": "3.5.45"
     }
   },
   "results": [
@@ -99,56 +99,51 @@
       "dependencies": {
         "direct": 3,
         "installed": 4,
-        "nodeModules": 6647808
+        "nodeModules": 6770688
       },
       "build": {
         "ms": 0,
         "runs": []
       },
-      "runtimeSize": 6647808,
+      "runtimeSize": 6770688,
       "start": {
-        "ms": 173.95596699999987,
+        "ms": 165.26288899999986,
         "runs": [
-          200.33579100000009,
-          177.0712249999999,
-          145.99284899999998,
-          133.7367830000003,
-          173.95596699999987
+          209.9180379999999,
+          163.25407300000006,
+          165.26288899999986,
+          174.5537629999999,
+          164.73985100000027
         ]
       },
-      "idleRss": 91574272,
+      "idleRss": 93376512,
       "payload": {
-        "scripts": 5,
-        "jsRaw": 76873,
-        "jsGzip": 28180,
+        "scripts": 4,
+        "jsRaw": 51706,
+        "jsGzip": 20714,
         "htmlRaw": 5297,
         "htmlGzip": 1127,
-        "requests": 7,
+        "requests": 6,
         "files": [
           {
-            "url": "/_zubra/sync/connect.js",
-            "raw": 15517,
-            "gzip": 5516
-          },
-          {
             "url": "/_zubra/components/slice-item.js",
-            "raw": 2692,
-            "gzip": 1036
+            "raw": 2759,
+            "gzip": 1049
           },
           {
             "url": "/_zubra/sync/index.js",
-            "raw": 15121,
-            "gzip": 5136
+            "raw": 5477,
+            "gzip": 2430
           },
           {
             "url": "/_zubra/runtime/zubra.js",
-            "raw": 37594,
-            "gzip": 14282
+            "raw": 37746,
+            "gzip": 14623
           },
           {
-            "url": "/_zubra/sync/webrtc.js",
-            "raw": 5949,
-            "gzip": 2210
+            "url": "/_zubra/sync/connect.js",
+            "raw": 5724,
+            "gzip": 2612
           }
         ]
       },
@@ -158,116 +153,116 @@
       },
       "updates": {
         "menu": {
-          "median": 9,
-          "p90": 11,
+          "median": 8,
+          "p90": 9,
           "samples": [
-            14,
-            9,
-            10,
-            9,
+            13,
+            8,
+            8,
+            6,
             9,
             8,
             7,
-            9,
             7,
-            11,
             8,
-            8
+            8,
+            7,
+            7
           ]
         },
         "order": {
-          "median": 9,
-          "p90": 11,
+          "median": 10,
+          "p90": 12,
           "samples": [
-            9,
-            8,
+            11,
+            11,
+            6,
+            12,
+            10,
+            10,
+            12,
             7,
             10,
-            10,
-            6,
-            13,
-            9,
-            10,
             11,
-            8,
+            7,
             7
           ]
         }
       },
       "slow": {
-        "load": 432.89999999990687,
-        "add": 532,
+        "load": 358.20000000001164,
+        "add": 470,
         "loads": [
-          317.39999999990687,
-          432.89999999990687,
-          434.70000000018626,
-          421.09999999962747,
-          463.1999999997206
+          348.5999999999767,
+          357.8999999999651,
+          381.79999999998836,
+          358.20000000001164,
+          437
         ],
         "adds": [
-          466,
-          536,
-          532,
-          504,
-          756
+          444,
+          448,
+          470,
+          487,
+          486
         ]
       },
       "lighthouse": {
-        "score": 94,
-        "lcp": 752.4976999999999,
-        "tbt": 287.56999999999994,
-        "fcp": 752.4976999999999,
+        "score": 89,
+        "lcp": 755.594,
+        "tbt": 436.086,
+        "fcp": 755.594,
         "runs": [
           {
-            "score": 96,
-            "lcp": 752.4976999999999,
-            "tbt": 246.25115000000005,
-            "fcp": 752.4976999999999
+            "score": 84,
+            "lcp": 754.828,
+            "tbt": 632,
+            "fcp": 754.828
+          },
+          {
+            "score": 89,
+            "lcp": 817.828,
+            "tbt": 436.086,
+            "fcp": 817.828
           },
           {
             "score": 91,
-            "lcp": 753.9970000000001,
-            "tbt": 391.0015000000001,
-            "fcp": 753.9970000000001
-          },
-          {
-            "score": 94,
-            "lcp": 750.8599999999999,
-            "tbt": 287.56999999999994,
-            "fcp": 750.8599999999999
+            "lcp": 755.594,
+            "tbt": 376,
+            "fcp": 755.594
           }
         ]
       },
       "load": {
-        "rps": 5138.8,
-        "p50": 8,
-        "p975": 19,
+        "rps": 6006.37,
+        "p50": 7,
+        "p975": 13,
         "errors": 0,
-        "peakRss": 196005888,
+        "peakRss": 208809984,
         "runs": [
           {
-            "rps": 4659.55,
-            "p50": 9,
-            "p975": 24,
-            "p99": 29,
+            "rps": 4828.9,
+            "p50": 8,
+            "p975": 25,
+            "p99": 31,
             "errors": 0,
-            "peakRss": 195829760
+            "peakRss": 209031168
           },
           {
-            "rps": 5138.8,
-            "p50": 8,
-            "p975": 19,
-            "p99": 23,
+            "rps": 6011.46,
+            "p50": 7,
+            "p975": 13,
+            "p99": 19,
             "errors": 0,
-            "peakRss": 196005888
+            "peakRss": 208809984
           },
           {
-            "rps": 5574.73,
-            "p50": 8,
-            "p975": 16,
+            "rps": 6006.37,
+            "p50": 7,
+            "p975": 13,
             "p99": 20,
             "errors": 0,
-            "peakRss": 197316608
+            "peakRss": 197242880
           }
         ]
       },
@@ -292,46 +287,46 @@
       "dependencies": {
         "direct": 2,
         "installed": 3,
-        "nodeModules": 6492160
+        "nodeModules": 6582272
       },
       "build": {
         "ms": 0,
         "runs": []
       },
-      "runtimeSize": 6492160,
+      "runtimeSize": 6582272,
       "start": {
-        "ms": 167.34711600000446,
+        "ms": 129.8021860000008,
         "runs": [
-          166.25026400000206,
-          164.91230100000394,
-          175.74544400000013,
-          167.34711600000446,
-          185.32751600000483
+          125.43447700000252,
+          129.8021860000008,
+          141.06400299999223,
+          129.73481699998956,
+          135.35615300000063
         ]
       },
-      "idleRss": 91287552,
+      "idleRss": 93413376,
       "payload": {
         "scripts": 3,
-        "jsRaw": 40443,
-        "jsGzip": 15501,
+        "jsRaw": 40662,
+        "jsGzip": 15856,
         "htmlRaw": 5199,
         "htmlGzip": 1109,
         "requests": 4,
         "files": [
           {
             "url": "/_zubra/components/slice-item.js",
-            "raw": 2222,
-            "gzip": 866
+            "raw": 2289,
+            "gzip": 880
+          },
+          {
+            "url": "/_zubra/runtime/zubra.js",
+            "raw": 37746,
+            "gzip": 14623
           },
           {
             "url": "/live.js",
             "raw": 627,
             "gzip": 353
-          },
-          {
-            "url": "/_zubra/runtime/zubra.js",
-            "raw": 37594,
-            "gzip": 14282
           }
         ]
       },
@@ -341,116 +336,1196 @@
       },
       "updates": {
         "menu": {
-          "median": 7.5,
-          "p90": 9,
+          "median": 6,
+          "p90": 8,
           "samples": [
-            14,
+            10,
+            8,
+            8,
             7,
+            6,
+            6,
+            6,
+            6,
+            5,
+            6,
+            6,
+            5
+          ]
+        },
+        "order": {
+          "median": 10,
+          "p90": 11,
+          "samples": [
+            10,
+            6,
+            7,
+            10,
+            10,
+            7,
+            8,
+            16,
+            10,
+            11,
+            9,
+            10
+          ]
+        }
+      },
+      "slow": {
+        "load": 249.29999999998836,
+        "add": 444,
+        "loads": [
+          242.60000000003492,
+          284.3999999999651,
+          195.09999999997672,
+          249.29999999998836,
+          303.6000000000349
+        ],
+        "adds": [
+          451,
+          399,
+          365,
+          506,
+          444
+        ]
+      },
+      "lighthouse": {
+        "score": 100,
+        "lcp": 751.0840000000001,
+        "tbt": 18.5,
+        "fcp": 751.0840000000001,
+        "runs": [
+          {
+            "score": 100,
+            "lcp": 790.568,
+            "tbt": 18.5,
+            "fcp": 790.568
+          },
+          {
+            "score": 100,
+            "lcp": 751.0840000000001,
+            "tbt": 17.5,
+            "fcp": 751.0840000000001
+          },
+          {
+            "score": 98,
+            "lcp": 750.894,
+            "tbt": 158.5530000000001,
+            "fcp": 750.894
+          }
+        ]
+      },
+      "load": {
+        "rps": 6146.73,
+        "p50": 7,
+        "p975": 14,
+        "errors": 0,
+        "peakRss": 202616832,
+        "runs": [
+          {
+            "rps": 4895,
+            "p50": 8,
+            "p975": 22,
+            "p99": 27,
+            "errors": 0,
+            "peakRss": 202616832
+          },
+          {
+            "rps": 6146.73,
+            "p50": 7,
+            "p975": 14,
+            "p99": 18,
+            "errors": 0,
+            "peakRss": 202878976
+          },
+          {
+            "rps": 6461.64,
+            "p50": 7,
+            "p975": 10,
+            "p99": 17,
+            "errors": 0,
+            "peakRss": 194662400
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
+    },
+    {
+      "name": "nextjs",
+      "lines": {
+        "total": 334,
+        "files": {
+          "app/actions.js": 23,
+          "app/checkout/page.js": 35,
+          "app/layout.js": 22,
+          "app/live/orders/[key]/route.js": 27,
+          "app/live/route.js": 26,
+          "app/live-menu.js": 37,
+          "app/not-found.js": 3,
+          "app/notice.js": 5,
+          "app/order/page.js": 72,
+          "app/orders/[key]/live-steps.js": 18,
+          "app/orders/[key]/page.js": 24,
+          "app/page.js": 18,
+          "app/slice.css/route.js": 6,
+          "lib/slice.js": 17,
+          "next.config.mjs": 1
+        }
+      },
+      "dependencies": {
+        "direct": 4,
+        "installed": 55,
+        "nodeModules": 485998592
+      },
+      "build": {
+        "ms": 8782.548005999997,
+        "runs": [
+          8900.214731000015,
+          8782.548005999997,
+          8573.549631000002
+        ]
+      },
+      "runtimeSize": 517779456,
+      "start": {
+        "ms": 440.9513159999915,
+        "runs": [
+          475.0189240000036,
+          432.70009699999355,
+          526.507214000012,
+          403.6846300000034,
+          440.9513159999915
+        ]
+      },
+      "idleRss": 112664576,
+      "payload": {
+        "scripts": 6,
+        "jsRaw": 458346,
+        "jsGzip": 135579,
+        "htmlRaw": 9621,
+        "htmlGzip": 2283,
+        "requests": 8,
+        "files": [
+          {
+            "url": "/_next/static/chunks/042bdxchplu36.js",
+            "raw": 17041,
+            "gzip": 5961
+          },
+          {
+            "url": "/_next/static/chunks/1jk5veq5817vj.js",
+            "raw": 186795,
+            "gzip": 49755
+          },
+          {
+            "url": "/_next/static/chunks/1ij75cysvgvz_.js",
+            "raw": 229277,
+            "gzip": 71749
+          },
+          {
+            "url": "/_next/static/chunks/turbopack-2u1d16houkiyo.js",
+            "raw": 9974,
+            "gzip": 3905
+          },
+          {
+            "url": "/_next/static/chunks/3-9zb0bt05ka3.js",
+            "raw": 1278,
+            "gzip": 701
+          },
+          {
+            "url": "/_next/static/chunks/2mytc4ospshjk.js",
+            "raw": 13981,
+            "gzip": 3508
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 8,
+          "p90": 10,
+          "samples": [
+            8,
+            11,
+            9,
+            9,
+            8,
+            8,
+            7,
+            6,
+            6,
+            7,
+            10,
+            7
+          ]
+        },
+        "order": {
+          "median": 7.5,
+          "p90": 12,
+          "samples": [
             9,
             8,
             6,
+            7,
+            14,
+            6,
+            7,
+            7,
+            11,
             8,
-            6,
-            6,
-            6,
+            12,
+            6
+          ]
+        }
+      },
+      "slow": {
+        "load": 494.29999999993015,
+        "add": 395,
+        "loads": [
+          520.2999999999302,
+          515.8000000000466,
+          462.5,
+          464.4000000000233,
+          494.29999999993015
+        ],
+        "adds": [
+          455,
+          392,
+          402,
+          395,
+          379
+        ]
+      },
+      "lighthouse": {
+        "score": 92,
+        "lcp": 654.852,
+        "tbt": 362.4999999999999,
+        "fcp": 654.852,
+        "runs": [
+          {
+            "score": 93,
+            "lcp": 638.7357,
+            "tbt": 314,
+            "fcp": 638.7357
+          },
+          {
+            "score": 87,
+            "lcp": 658.5635,
+            "tbt": 497,
+            "fcp": 658.5635
+          },
+          {
+            "score": 92,
+            "lcp": 654.852,
+            "tbt": 362.4999999999999,
+            "fcp": 654.852
+          }
+        ]
+      },
+      "load": {
+        "rps": 503.8,
+        "p50": 88,
+        "p975": 185,
+        "errors": 0,
+        "peakRss": 387313664,
+        "runs": [
+          {
+            "rps": 452.4,
+            "p50": 96,
+            "p975": 232,
+            "p99": 267,
+            "errors": 0,
+            "peakRss": 375382016
+          },
+          {
+            "rps": 503.8,
+            "p50": 88,
+            "p975": 185,
+            "p99": 301,
+            "errors": 0,
+            "peakRss": 387313664
+          },
+          {
+            "rps": 545,
+            "p50": 83,
+            "p975": 159,
+            "p99": 169,
+            "errors": 0,
+            "peakRss": 388079616
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 10,
+        "total": 11,
+        "failed": [
+          "S8 an order is only its guest's: another phone, or a made-up key, gets a 404"
+        ]
+      },
+      "contract": "10 (fails S8)"
+    },
+    {
+      "name": "sveltekit",
+      "lines": {
+        "total": 313,
+        "files": {
+          "src/app.html": 12,
+          "src/lib/server/slice.js": 14,
+          "src/routes/+error.svelte": 5,
+          "src/routes/+layout.server.js": 5,
+          "src/routes/+layout.svelte": 11,
+          "src/routes/+page.server.js": 14,
+          "src/routes/+page.svelte": 38,
+          "src/routes/Notice.svelte": 8,
+          "src/routes/checkout/+page.server.js": 18,
+          "src/routes/checkout/+page.svelte": 21,
+          "src/routes/live/+server.js": 25,
+          "src/routes/live/orders/[key]/+server.js": 27,
+          "src/routes/order/+page.server.js": 19,
+          "src/routes/order/+page.svelte": 55,
+          "src/routes/orders/[key]/+page.server.js": 8,
+          "src/routes/orders/[key]/+page.svelte": 23,
+          "src/routes/slice.css/+server.js": 6,
+          "vite.config.js": 4
+        }
+      },
+      "dependencies": {
+        "direct": 4,
+        "installed": 79,
+        "nodeModules": 79781888
+      },
+      "build": {
+        "ms": 1939.2824370000162,
+        "runs": [
+          1840.7869980000542,
+          1939.2824370000162,
+          2403.546193999995
+        ]
+      },
+      "runtimeSize": 2002944,
+      "start": {
+        "ms": 109.05771799996728,
+        "runs": [
+          146.845186999999,
+          108.05824300000677,
+          109.05771799996728,
+          108.18054400000256,
+          110.66681800002698
+        ]
+      },
+      "idleRss": 73195520,
+      "payload": {
+        "scripts": 12,
+        "jsRaw": 100069,
+        "jsGzip": 39176,
+        "htmlRaw": 6076,
+        "htmlGzip": 1576,
+        "requests": 14,
+        "files": [
+          {
+            "url": "/_app/immutable/chunks/CeNYcqv7.js",
+            "raw": 52,
+            "gzip": 69
+          },
+          {
+            "url": "/_app/immutable/entry/start.Dyt2eBDV.js",
+            "raw": 548,
+            "gzip": 321
+          },
+          {
+            "url": "/_app/immutable/entry/payload.DSmR2FwN.js",
+            "raw": 65,
+            "gzip": 77
+          },
+          {
+            "url": "/_app/immutable/chunks/DclECHGd.js",
+            "raw": 1630,
+            "gzip": 828
+          },
+          {
+            "url": "/_app/immutable/chunks/Bl-MC2aW.js",
+            "raw": 44093,
+            "gzip": 16045
+          },
+          {
+            "url": "/_app/immutable/chunks/CjUCT1ce.js",
+            "raw": 41919,
+            "gzip": 16056
+          },
+          {
+            "url": "/_app/immutable/entry/app.D0HRIFPJ.js",
+            "raw": 1514,
+            "gzip": 650
+          },
+          {
+            "url": "/_app/immutable/chunks/BZcOkYJq.js",
+            "raw": 4620,
+            "gzip": 2069
+          },
+          {
+            "url": "/_app/immutable/nodes/2.CfaeP_Rn.js",
+            "raw": 1860,
+            "gzip": 1082
+          },
+          {
+            "url": "/_app/immutable/nodes/0.DTCUIca4.js",
+            "raw": 533,
+            "gzip": 370
+          },
+          {
+            "url": "/_app/immutable/chunks/CnN4mPrw.js",
+            "raw": 2886,
+            "gzip": 1345
+          },
+          {
+            "url": "/_app/immutable/nodes/1.BEfZZScp.js",
+            "raw": 349,
+            "gzip": 264
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 8,
+          "p90": 11,
+          "samples": [
+            12,
+            8,
+            8,
+            7,
+            8,
             9,
+            10,
+            7,
             8,
+            11,
+            9,
             7
           ]
         },
         "order": {
           "median": 8,
-          "p90": 11,
+          "p90": 10,
           "samples": [
-            12,
+            10,
+            5,
             7,
+            9,
             8,
-            11,
-            7,
-            7,
-            11,
             8,
-            11,
+            14,
+            7,
+            6,
             10,
             8,
+            5
+          ]
+        }
+      },
+      "slow": {
+        "load": 244.80000000004657,
+        "add": 298,
+        "loads": [
+          223.30000000004657,
+          244.80000000004657,
+          213.89999999990687,
+          289.20000000006985,
+          321
+        ],
+        "adds": [
+          285,
+          238,
+          346,
+          371,
+          298
+        ]
+      },
+      "lighthouse": {
+        "score": 93,
+        "lcp": 765.3979999999999,
+        "tbt": 303.80099999999993,
+        "fcp": 765.3979999999999,
+        "runs": [
+          {
+            "score": 96,
+            "lcp": 761.3966,
+            "tbt": 217,
+            "fcp": 761.3966
+          },
+          {
+            "score": 88,
+            "lcp": 887,
+            "tbt": 469.5,
+            "fcp": 887
+          },
+          {
+            "score": 93,
+            "lcp": 765.3979999999999,
+            "tbt": 303.80099999999993,
+            "fcp": 765.3979999999999
+          }
+        ]
+      },
+      "load": {
+        "rps": 1865.37,
+        "p50": 24,
+        "p975": 51,
+        "errors": 0,
+        "peakRss": 275939328,
+        "runs": [
+          {
+            "rps": 1290.46,
+            "p50": 35,
+            "p975": 74,
+            "p99": 89,
+            "errors": 0,
+            "peakRss": 266891264
+          },
+          {
+            "rps": 1865.37,
+            "p50": 24,
+            "p975": 51,
+            "p99": 58,
+            "errors": 0,
+            "peakRss": 275939328
+          },
+          {
+            "rps": 2135.64,
+            "p50": 20,
+            "p975": 43,
+            "p99": 54,
+            "errors": 0,
+            "peakRss": 285298688
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
+    },
+    {
+      "name": "nuxt",
+      "lines": {
+        "total": 246,
+        "files": {
+          "app/app.vue": 13,
+          "app/components/SliceNotice.vue": 8,
+          "app/error.vue": 7,
+          "app/pages/checkout.vue": 24,
+          "app/pages/index.vue": 33,
+          "app/pages/order.vue": 44,
+          "app/pages/orders/[key].vue": 24,
+          "nuxt.config.js": 5,
+          "server/api/bag.get.js": 4,
+          "server/api/checkout.get.js": 8,
+          "server/api/menu.get.js": 4,
+          "server/api/orders/[key].get.js": 6,
+          "server/api/said.get.js": 4,
+          "server/routes/add.post.js": 6,
+          "server/routes/change.post.js": 6,
+          "server/routes/live/orders/[key].get.js": 13,
+          "server/routes/live.get.js": 12,
+          "server/routes/place.post.js": 6,
+          "server/routes/slice.css.get.js": 6,
+          "server/routes/time.post.js": 5,
+          "server/utils/slice.js": 8
+        }
+      },
+      "dependencies": {
+        "direct": 2,
+        "installed": 605,
+        "nodeModules": 238940160
+      },
+      "build": {
+        "ms": 5540.8065179999685,
+        "runs": [
+          6252.010290000006,
+          5540.8065179999685,
+          5516.765459999966
+        ]
+      },
+      "runtimeSize": 3436544,
+      "start": {
+        "ms": 211.63756000000285,
+        "runs": [
+          211.63756000000285,
+          209.04330599994864,
+          251.7624300000025,
+          205.94627299997956,
+          258.0509889999521
+        ]
+      },
+      "idleRss": 100012032,
+      "payload": {
+        "scripts": 3,
+        "jsRaw": 202089,
+        "jsGzip": 74789,
+        "htmlRaw": 7755,
+        "htmlGzip": 2149,
+        "requests": 5,
+        "files": [
+          {
+            "url": "/_nuxt/D3vr4S1V.js",
+            "raw": 1544,
+            "gzip": 893
+          },
+          {
+            "url": "/_nuxt/CgX5rOXO.js",
+            "raw": 455,
+            "gzip": 310
+          },
+          {
+            "url": "/_nuxt/BTbOJQGr.js",
+            "raw": 200090,
+            "gzip": 73586
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 6,
+          "p90": 8,
+          "samples": [
+            8,
+            6,
+            6,
+            6,
+            5,
+            7,
+            8,
+            6,
+            7,
+            6,
+            6,
+            5
+          ]
+        },
+        "order": {
+          "median": 8,
+          "p90": 12,
+          "samples": [
+            7,
+            7,
+            7,
+            9,
+            7,
+            8,
+            15,
+            7,
+            11,
+            12,
+            8,
+            9
+          ]
+        }
+      },
+      "slow": {
+        "load": 308.30000000004657,
+        "add": 522,
+        "loads": [
+          344,
+          308.30000000004657,
+          343.80000000004657,
+          293.5999999999767,
+          251.70000000006985
+        ],
+        "adds": [
+          564,
+          576,
+          490,
+          493,
+          522
+        ]
+      },
+      "lighthouse": {
+        "score": 93,
+        "lcp": 753.4469999999999,
+        "tbt": 330.5,
+        "fcp": 753.4469999999999,
+        "runs": [
+          {
+            "score": 93,
+            "lcp": 753.4469999999999,
+            "tbt": 330.5,
+            "fcp": 753.4469999999999
+          },
+          {
+            "score": 87,
+            "lcp": 756.2844,
+            "tbt": 501.85779999999954,
+            "fcp": 756.2844
+          },
+          {
+            "score": 94,
+            "lcp": 751.6975,
+            "tbt": 285.15125,
+            "fcp": 751.6975
+          }
+        ]
+      },
+      "load": {
+        "rps": 189.7,
+        "p50": 247,
+        "p975": 366,
+        "errors": 0,
+        "peakRss": 322981888,
+        "runs": [
+          {
+            "rps": 200,
+            "p50": 235,
+            "p975": 340,
+            "p99": 370,
+            "errors": 0,
+            "peakRss": 319635456
+          },
+          {
+            "rps": 184.1,
+            "p50": 258,
+            "p975": 366,
+            "p99": 941,
+            "errors": 0,
+            "peakRss": 322981888
+          },
+          {
+            "rps": 189.7,
+            "p50": 247,
+            "p975": 405,
+            "p99": 918,
+            "errors": 0,
+            "peakRss": 326111232
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 11,
+        "total": 11,
+        "failed": []
+      },
+      "contract": "11"
+    },
+    {
+      "name": "nextjs-tuned",
+      "lines": {
+        "total": 339,
+        "files": {
+          "app/actions.js": 23,
+          "app/checkout/page.js": 35,
+          "app/layout.js": 22,
+          "app/live/orders/[key]/route.js": 27,
+          "app/live/route.js": 26,
+          "app/live-menu.js": 37,
+          "app/not-found.js": 3,
+          "app/notice.js": 5,
+          "app/order/page.js": 72,
+          "app/orders/[key]/live-steps.js": 18,
+          "app/orders/[key]/page.js": 24,
+          "app/page.js": 18,
+          "app/slice.css/route.js": 6,
+          "lib/slice.js": 17,
+          "next.config.mjs": 6
+        }
+      },
+      "dependencies": {
+        "direct": 4,
+        "installed": 55,
+        "nodeModules": 485990400
+      },
+      "build": {
+        "ms": 8954.239889999968,
+        "runs": [
+          8954.239889999968,
+          8926.558473999961,
+          9094.524316999945
+        ]
+      },
+      "runtimeSize": 70918144,
+      "start": {
+        "ms": 441.72886499995366,
+        "runs": [
+          370.7993710000301,
+          418.9901649999665,
+          457.39688200003,
+          491.8588930000551,
+          441.72886499995366
+        ]
+      },
+      "idleRss": 112951296,
+      "payload": {
+        "scripts": 6,
+        "jsRaw": 458388,
+        "jsGzip": 135620,
+        "htmlRaw": 9621,
+        "htmlGzip": 2281,
+        "requests": 8,
+        "files": [
+          {
+            "url": "/_next/static/chunks/2b0dybw5t7swm.js",
+            "raw": 13994,
+            "gzip": 3513
+          },
+          {
+            "url": "/_next/static/chunks/turbopack-2u1d16houkiyo.js",
+            "raw": 9974,
+            "gzip": 3905
+          },
+          {
+            "url": "/_next/static/chunks/1-5j4l7nba72e.js",
+            "raw": 17055,
+            "gzip": 5970
+          },
+          {
+            "url": "/_next/static/chunks/1guc7s5jqhv2b.js",
+            "raw": 186797,
+            "gzip": 49772
+          },
+          {
+            "url": "/_next/static/chunks/15ut-hqomkay-.js",
+            "raw": 229288,
+            "gzip": 71759
+          },
+          {
+            "url": "/_next/static/chunks/3xim1q-fcv59q.js",
+            "raw": 1280,
+            "gzip": 701
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 6.5,
+          "p90": 8,
+          "samples": [
+            8,
+            7,
+            7,
+            6,
+            6,
+            7,
+            8,
+            5,
+            5,
+            6,
+            8,
+            5
+          ]
+        },
+        "order": {
+          "median": 7,
+          "p90": 10,
+          "samples": [
+            8,
+            15,
+            9,
+            7,
+            7,
+            9,
+            6,
+            6,
+            10,
+            7,
+            5,
+            6
+          ]
+        }
+      },
+      "slow": {
+        "load": 425.69999999995343,
+        "add": 358,
+        "loads": [
+          437.9000000000233,
+          425.69999999995343,
+          413,
+          391.20000000006985,
+          462.0999999999767
+        ],
+        "adds": [
+          358,
+          351,
+          343,
+          372,
+          425
+        ]
+      },
+      "lighthouse": {
+        "score": 94,
+        "lcp": 644.4765,
+        "tbt": 276,
+        "fcp": 644.4765,
+        "runs": [
+          {
+            "score": 91,
+            "lcp": 670.04965,
+            "tbt": 388.9999999999999,
+            "fcp": 670.04965
+          },
+          {
+            "score": 94,
+            "lcp": 644.4765,
+            "tbt": 276,
+            "fcp": 644.4765
+          },
+          {
+            "score": 95,
+            "lcp": 643.304,
+            "tbt": 265.5,
+            "fcp": 643.304
+          }
+        ]
+      },
+      "load": {
+        "rps": 385,
+        "p50": 119,
+        "p975": 221,
+        "errors": 0,
+        "peakRss": 367566848,
+        "runs": [
+          {
+            "rps": 331.4,
+            "p50": 137,
+            "p975": 248,
+            "p99": 264,
+            "errors": 0,
+            "peakRss": 352690176
+          },
+          {
+            "rps": 405,
+            "p50": 115,
+            "p975": 195,
+            "p99": 218,
+            "errors": 0,
+            "peakRss": 367566848
+          },
+          {
+            "rps": 385,
+            "p50": 119,
+            "p975": 221,
+            "p99": 234,
+            "errors": 0,
+            "peakRss": 367882240
+          }
+        ]
+      },
+      "contractRun": {
+        "pass": 10,
+        "total": 11,
+        "failed": [
+          "S8 an order is only its guest's: another phone, or a made-up key, gets a 404"
+        ]
+      },
+      "contract": "10 (fails S8)"
+    },
+    {
+      "name": "nuxt-tuned",
+      "lines": {
+        "total": 237,
+        "files": {
+          "app/app.vue": 14,
+          "app/components/SliceNotice.vue": 8,
+          "app/error.vue": 7,
+          "app/pages/checkout.vue": 24,
+          "app/pages/index.vue": 33,
+          "app/pages/order.vue": 44,
+          "app/pages/orders/[key].vue": 23,
+          "nuxt.config.js": 5,
+          "server/api/view.get.js": 17,
+          "server/routes/add.post.js": 6,
+          "server/routes/change.post.js": 6,
+          "server/routes/live/orders/[key].get.js": 13,
+          "server/routes/live.get.js": 12,
+          "server/routes/place.post.js": 6,
+          "server/routes/slice.css.get.js": 6,
+          "server/routes/time.post.js": 5,
+          "server/utils/slice.js": 8
+        }
+      },
+      "dependencies": {
+        "direct": 2,
+        "installed": 605,
+        "nodeModules": 238940160
+      },
+      "build": {
+        "ms": 5968.778584000072,
+        "runs": [
+          6785.887531999964,
+          5968.778584000072,
+          5325.548461999977
+        ]
+      },
+      "runtimeSize": 3403776,
+      "start": {
+        "ms": 183.6071890000021,
+        "runs": [
+          178.58915999997407,
+          177.80878399999347,
+          183.6071890000021,
+          185.45158199989237,
+          186.99952299997676
+        ]
+      },
+      "idleRss": 91738112,
+      "payload": {
+        "scripts": 3,
+        "jsRaw": 202279,
+        "jsGzip": 74794,
+        "htmlRaw": 5454,
+        "htmlGzip": 1593,
+        "requests": 5,
+        "files": [
+          {
+            "url": "/_nuxt/Luz7AClB.js",
+            "raw": 1476,
+            "gzip": 849
+          },
+          {
+            "url": "/_nuxt/DuEqo6YX.js",
+            "raw": 365,
+            "gzip": 249
+          },
+          {
+            "url": "/_nuxt/CowPxFgb.js",
+            "raw": 200438,
+            "gzip": 73696
+          }
+        ]
+      },
+      "accessibility": {
+        "menu": [],
+        "bag": []
+      },
+      "updates": {
+        "menu": {
+          "median": 8,
+          "p90": 11,
+          "samples": [
+            11,
+            8,
+            8,
+            9,
+            6,
+            6,
+            9,
+            6,
+            18,
+            7,
+            8,
+            7
+          ]
+        },
+        "order": {
+          "median": 8.5,
+          "p90": 10,
+          "samples": [
+            10,
+            8,
+            10,
+            7,
+            10,
+            10,
+            9,
+            6,
+            7,
+            6,
+            10,
             7
           ]
         }
       },
       "slow": {
-        "load": 323.79999999981374,
-        "add": 490,
+        "load": 286.19999999995343,
+        "add": 526,
         "loads": [
-          388.79999999981374,
-          323.79999999981374,
-          388.3000000002794,
-          296.79999999981374,
-          225.39999999990687
+          277.60000000009313,
+          357.19999999995343,
+          346.80000000004657,
+          275.0999999999767,
+          286.19999999995343
         ],
         "adds": [
-          437,
-          481,
-          499,
-          551,
-          490
+          606,
+          730,
+          517,
+          500,
+          526
         ]
       },
       "lighthouse": {
-        "score": 99,
-        "lcp": 753.5727999999999,
-        "tbt": 131.71360000000004,
-        "fcp": 753.5727999999999,
+        "score": 92,
+        "lcp": 752.31,
+        "tbt": 361.61840000000007,
+        "fcp": 752.31,
         "runs": [
           {
-            "score": 99,
-            "lcp": 752.8240000000001,
-            "tbt": 113.08799999999997,
-            "fcp": 752.8240000000001
+            "score": 92,
+            "lcp": 752.31,
+            "tbt": 340.345,
+            "fcp": 752.31
           },
           {
-            "score": 97,
-            "lcp": 757.8979999999999,
-            "tbt": 189.55099999999993,
-            "fcp": 757.8979999999999
+            "score": 92,
+            "lcp": 776.7632000000001,
+            "tbt": 361.61840000000007,
+            "fcp": 776.7632000000001
           },
           {
-            "score": 99,
-            "lcp": 753.5727999999999,
-            "tbt": 131.71360000000004,
-            "fcp": 753.5727999999999
+            "score": 91,
+            "lcp": 752.308,
+            "tbt": 374.5,
+            "fcp": 752.308
           }
         ]
       },
       "load": {
-        "rps": 5137.28,
-        "p50": 8,
-        "p975": 18,
+        "rps": 535,
+        "p50": 89,
+        "p975": 149,
         "errors": 0,
-        "peakRss": 198541312,
+        "peakRss": 290181120,
         "runs": [
           {
-            "rps": 4401.55,
-            "p50": 9,
-            "p975": 26,
-            "p99": 32,
+            "rps": 508.46,
+            "p50": 89,
+            "p975": 149,
+            "p99": 171,
             "errors": 0,
-            "peakRss": 206655488
+            "peakRss": 278126592
           },
           {
-            "rps": 5224.91,
-            "p50": 8,
-            "p975": 16,
-            "p99": 20,
+            "rps": 585,
+            "p50": 77,
+            "p975": 139,
+            "p99": 147,
             "errors": 0,
-            "peakRss": 198541312
+            "peakRss": 290181120
           },
           {
-            "rps": 5137.28,
-            "p50": 8,
-            "p975": 18,
-            "p99": 21,
+            "rps": 535,
+            "p50": 90,
+            "p975": 153,
+            "p99": 209,
             "errors": 0,
-            "peakRss": 192905216
+            "peakRss": 291758080
           }
         ]
       },
@@ -478,25 +1553,25 @@
         "nodeModules": 31383552
       },
       "build": {
-        "ms": 25.419668999995338,
+        "ms": 22.63017999997828,
         "runs": [
-          31.394125999999233,
-          25.068987000006018,
-          25.419668999995338
+          23.28136599995196,
+          22.63017999997828,
+          22.605953999911435
         ]
       },
       "runtimeSize": 31412224,
       "start": {
-        "ms": 154.44380300000194,
+        "ms": 133.40359599993099,
         "runs": [
-          146.0916440000001,
-          138.8999339999864,
-          164.48695600000792,
-          154.44380300000194,
-          159.28510199999437
+          118.2002560000401,
+          122.33606299990788,
+          155.45983100007288,
+          133.40359599993099,
+          176.70215099991765
         ]
       },
-      "idleRss": 85848064,
+      "idleRss": 87650304,
       "payload": {
         "scripts": 1,
         "jsRaw": 22749,
@@ -518,116 +1593,116 @@
       },
       "updates": {
         "menu": {
-          "median": 7,
-          "p90": 9,
+          "median": 6,
+          "p90": 7,
           "samples": [
-            8,
-            7,
-            8,
             7,
             9,
-            10,
+            7,
             6,
-            8,
+            6,
+            6,
+            6,
             6,
             7,
-            7,
-            6
+            6,
+            6,
+            7
           ]
         },
         "order": {
           "median": 8,
           "p90": 10,
           "samples": [
-            7,
-            9,
-            8,
-            8,
-            8,
-            8,
-            13,
-            7,
-            10,
             10,
             6,
-            10
+            10,
+            11,
+            8,
+            6,
+            8,
+            6,
+            7,
+            10,
+            10,
+            6
           ]
         }
       },
       "slow": {
-        "load": 329.3000000002794,
-        "add": 471,
+        "load": 262.80000000004657,
+        "add": 499,
         "loads": [
-          365.39999999990687,
-          219.20000000018626,
-          329.3000000002794,
-          375.10000000009313,
-          268.89999999990687
+          262.80000000004657,
+          239,
+          243.5999999998603,
+          377,
+          293.29999999981374
         ],
         "adds": [
-          451,
-          471,
-          605,
-          461,
-          568
+          417,
+          515,
+          596,
+          498,
+          499
         ]
       },
       "lighthouse": {
         "score": 98,
-        "lcp": 753.0396000000001,
-        "tbt": 149.98019999999997,
-        "fcp": 753.0396000000001,
+        "lcp": 753.0129999999999,
+        "tbt": 156.15200000000004,
+        "fcp": 753.0129999999999,
         "runs": [
           {
-            "score": 98,
-            "lcp": 753.0396000000001,
-            "tbt": 149.98019999999997,
-            "fcp": 753.0396000000001
-          },
-          {
             "score": 99,
-            "lcp": 752.8820000000001,
-            "tbt": 109.55899999999997,
-            "fcp": 752.8820000000001
+            "lcp": 753.0129999999999,
+            "tbt": 110.49350000000004,
+            "fcp": 753.0129999999999
           },
           {
-            "score": 97,
-            "lcp": 810,
-            "tbt": 198.5,
-            "fcp": 810
+            "score": 98,
+            "lcp": 753.6959999999999,
+            "tbt": 156.15200000000004,
+            "fcp": 753.6959999999999
+          },
+          {
+            "score": 96,
+            "lcp": 750.3420000000001,
+            "tbt": 213.32899999999995,
+            "fcp": 750.3420000000001
           }
         ]
       },
       "load": {
-        "rps": 1464.73,
-        "p50": 31,
-        "p975": 59,
+        "rps": 1728.1,
+        "p50": 26,
+        "p975": 47,
         "errors": 0,
-        "peakRss": 175398912,
+        "peakRss": 187514880,
         "runs": [
           {
-            "rps": 1343.73,
-            "p50": 32,
-            "p975": 61,
-            "p99": 67,
+            "rps": 1765.1,
+            "p50": 25,
+            "p975": 43,
+            "p99": 50,
             "errors": 0,
-            "peakRss": 171655168
+            "peakRss": 183111680
           },
           {
-            "rps": 1464.73,
-            "p50": 31,
-            "p975": 59,
-            "p99": 65,
+            "rps": 1582.73,
+            "p50": 29,
+            "p975": 54,
+            "p99": 61,
             "errors": 0,
-            "peakRss": 175398912
+            "peakRss": 187514880
           },
           {
-            "rps": 1507.91,
-            "p50": 30,
-            "p975": 55,
-            "p99": 62,
+            "rps": 1728.1,
+            "p50": 26,
+            "p975": 47,
+            "p99": 52,
             "errors": 0,
-            "peakRss": 175443968
+            "peakRss": 188755968
           }
         ]
       },
@@ -655,25 +1730,25 @@
         "nodeModules": 14745600
       },
       "build": {
-        "ms": 30.66450100002112,
+        "ms": 18.05480499996338,
         "runs": [
-          23.44177800003672,
-          30.66450100002112,
-          31.56039899995085
+          20.062510999967344,
+          18.05480499996338,
+          17.417123000021093
         ]
       },
       "runtimeSize": 749568,
       "start": {
-        "ms": 119.91390200000023,
+        "ms": 101.95190400001593,
         "runs": [
-          119.91390200000023,
-          98.9597590000485,
-          129.31421700003557,
-          109.01202100003138,
-          163.21277400001418
+          98.93952100002207,
+          104.08108699996956,
+          103.66106799989939,
+          93.62354499998037,
+          101.95190400001593
         ]
       },
-      "idleRss": 78069760,
+      "idleRss": 79699968,
       "payload": {
         "scripts": 1,
         "jsRaw": 13941,
@@ -695,116 +1770,116 @@
       },
       "updates": {
         "menu": {
-          "median": 7,
-          "p90": 9,
+          "median": 6,
+          "p90": 8,
           "samples": [
-            10,
+            9,
             8,
             6,
-            9,
+            6,
             8,
-            9,
-            7,
-            7,
-            7,
+            6,
+            6,
+            6,
+            6,
             6,
             7,
             6
           ]
         },
         "order": {
-          "median": 9,
-          "p90": 13,
+          "median": 7,
+          "p90": 11,
           "samples": [
+            9,
+            7,
+            7,
             11,
-            8,
+            7,
+            5,
+            9,
             6,
-            16,
-            7,
-            7,
+            10,
             12,
-            8,
-            10,
-            10,
-            13,
-            8
+            7,
+            7
           ]
         }
       },
       "slow": {
-        "load": 218.10000000009313,
-        "add": 411,
+        "load": 220.5,
+        "add": 437,
         "loads": [
-          247.70000000018626,
-          244.70000000018626,
-          218.10000000009313,
-          203.10000000009313,
-          189.39999999990687
+          220.5,
+          282.60000000009313,
+          184.80000000004657,
+          199.80000000004657,
+          272.19999999995343
         ],
         "adds": [
-          406,
-          376,
-          411,
-          514,
-          491
+          437,
+          388,
+          405,
+          491,
+          569
         ]
       },
       "lighthouse": {
-        "score": 100,
-        "lcp": 751.806,
-        "tbt": 51.235000000000014,
-        "fcp": 751.806,
+        "score": 99,
+        "lcp": 752.7719999999999,
+        "tbt": 128.11400000000003,
+        "fcp": 752.7719999999999,
         "runs": [
           {
-            "score": 100,
-            "lcp": 751.06,
-            "tbt": 51.235000000000014,
-            "fcp": 751.06
-          },
-          {
             "score": 99,
-            "lcp": 751.806,
-            "tbt": 104.59699999999998,
-            "fcp": 751.806
+            "lcp": 752.7719999999999,
+            "tbt": 128.11400000000003,
+            "fcp": 752.7719999999999
           },
           {
             "score": 100,
-            "lcp": 752.5840000000001,
-            "tbt": 40.20799999999997,
-            "fcp": 752.5840000000001
+            "lcp": 750.1006,
+            "tbt": 63.94970000000001,
+            "fcp": 750.1006
+          },
+          {
+            "score": 97,
+            "lcp": 754.1479999999999,
+            "tbt": 182.42599999999993,
+            "fcp": 754.1479999999999
           }
         ]
       },
       "load": {
-        "rps": 2279.82,
-        "p50": 20,
-        "p975": 40,
+        "rps": 2658.46,
+        "p50": 16,
+        "p975": 31,
         "errors": 0,
-        "peakRss": 190361600,
+        "peakRss": 188932096,
         "runs": [
           {
-            "rps": 2161.91,
-            "p50": 20,
-            "p975": 47,
-            "p99": 57,
+            "rps": 2630.64,
+            "p50": 16,
+            "p975": 31,
+            "p99": 39,
             "errors": 0,
-            "peakRss": 177815552
+            "peakRss": 150847488
           },
           {
-            "rps": 2279.82,
-            "p50": 20,
-            "p975": 40,
-            "p99": 44,
+            "rps": 2780.82,
+            "p50": 16,
+            "p975": 31,
+            "p99": 34,
             "errors": 0,
-            "peakRss": 190361600
+            "peakRss": 188932096
           },
           {
-            "rps": 2397.6,
-            "p50": 19,
-            "p975": 35,
-            "p99": 41,
+            "rps": 2658.46,
+            "p50": 17,
+            "p975": 29,
+            "p99": 35,
             "errors": 0,
-            "peakRss": 198336512
+            "peakRss": 194273280
           }
         ]
       },
@@ -831,28 +1906,28 @@
       "dependencies": {
         "direct": 1,
         "installed": 9,
-        "nodeModules": 26017792
+        "nodeModules": 28696576
       },
       "build": {
-        "ms": 4741.186391999945,
+        "ms": 4151.360151999979,
         "runs": [
-          4958.928677999997,
-          4575.465865999984,
-          4741.186391999945
+          4639.8977599999635,
+          4151.360151999979,
+          4019.0627059999388
         ]
       },
       "runtimeSize": 1638400,
       "start": {
-        "ms": 140.42854200000875,
+        "ms": 123.65841200004797,
         "runs": [
-          130.6208199999528,
-          187.86032600002363,
-          128.082052999991,
-          172.2514519999968,
-          140.42854200000875
+          123.9275520000374,
+          113.01310999994166,
+          115.8831019999925,
+          123.65841200004797,
+          134.88396700005978
         ]
       },
-      "idleRss": 87269376,
+      "idleRss": 88903680,
       "payload": {
         "scripts": 5,
         "jsRaw": 23203,
@@ -894,116 +1969,116 @@
       },
       "updates": {
         "menu": {
-          "median": 7,
-          "p90": 9,
+          "median": 6,
+          "p90": 8,
           "samples": [
             9,
-            9,
-            6,
-            6,
-            8,
-            8,
-            7,
-            6,
             7,
             8,
             6,
+            6,
+            6,
+            7,
+            6,
+            5,
+            6,
+            7,
             6
           ]
         },
         "order": {
-          "median": 10,
-          "p90": 11,
+          "median": 7,
+          "p90": 10,
           "samples": [
-            8,
-            10,
-            8,
             12,
-            10,
-            10,
-            10,
             8,
+            7,
+            9,
+            5,
+            6,
             10,
-            11,
-            8,
+            7,
+            7,
+            10,
+            7,
             6
           ]
         }
       },
       "slow": {
-        "load": 326.60000000009313,
-        "add": 492,
+        "load": 339,
+        "add": 519,
         "loads": [
-          310.5,
-          309.09999999962747,
-          397.40000000037253,
-          326.60000000009313,
-          356.09999999962747
+          265.30000000004657,
+          279.30000000004657,
+          388.89999999990687,
+          348.19999999995343,
+          339
         ],
         "adds": [
-          558,
-          489,
-          438,
-          492,
-          536
+          450,
+          416,
+          519,
+          532,
+          552
         ]
       },
       "lighthouse": {
         "score": 100,
-        "lcp": 751.1076,
-        "tbt": 0,
-        "fcp": 751.1076,
+        "lcp": 750.9559999999999,
+        "tbt": 90,
+        "fcp": 750.9559999999999,
         "runs": [
           {
             "score": 100,
-            "lcp": 751.1076,
-            "tbt": 0,
-            "fcp": 751.1076
+            "lcp": 751.634,
+            "tbt": 90,
+            "fcp": 751.634
+          },
+          {
+            "score": 99,
+            "lcp": 750.142,
+            "tbt": 119.5,
+            "fcp": 750.142
           },
           {
             "score": 100,
-            "lcp": 783.44,
-            "tbt": 0,
-            "fcp": 783.44
-          },
-          {
-            "score": 100,
-            "lcp": 750.988,
-            "tbt": 13,
-            "fcp": 750.988
+            "lcp": 750.9559999999999,
+            "tbt": 19,
+            "fcp": 750.9559999999999
           }
         ]
       },
       "load": {
-        "rps": 354.37,
-        "p50": 125,
-        "p975": 230,
+        "rps": 357.1,
+        "p50": 126,
+        "p975": 195,
         "errors": 0,
-        "peakRss": 269115392,
+        "peakRss": 281337856,
         "runs": [
           {
-            "rps": 354.37,
-            "p50": 125,
-            "p975": 230,
-            "p99": 414,
+            "rps": 357.1,
+            "p50": 126,
+            "p975": 180,
+            "p99": 285,
             "errors": 0,
-            "peakRss": 269115392
-          },
-          {
-            "rps": 357.2,
-            "p50": 128,
-            "p975": 201,
-            "p99": 433,
-            "errors": 0,
-            "peakRss": 269230080
+            "peakRss": 243056640
           },
           {
             "rps": 352,
-            "p50": 122,
-            "p975": 234,
-            "p99": 426,
+            "p50": 130,
+            "p975": 212,
+            "p99": 331,
             "errors": 0,
-            "peakRss": 250245120
+            "peakRss": 281337856
+          },
+          {
+            "rps": 359.3,
+            "p50": 126,
+            "p975": 195,
+            "p99": 411,
+            "errors": 0,
+            "peakRss": 281702400
           }
         ]
       },
@@ -1034,25 +2109,25 @@
         "nodeModules": 45756416
       },
       "build": {
-        "ms": 84.7100259999861,
+        "ms": 83.4291240000166,
         "runs": [
-          85.29434999998193,
-          84.7100259999861,
-          73.94237600004999
+          83.7460410001222,
+          83.4291240000166,
+          77.04331900016405
         ]
       },
       "runtimeSize": 30203904,
       "start": {
-        "ms": 106.33274899999378,
+        "ms": 93.78512999997474,
         "runs": [
-          104.4664009999833,
-          127.56526799994754,
-          154.700634000008,
-          82.87816700001713,
-          106.33274899999378
+          111.76285099983215,
+          93.78512999997474,
+          85.63114199996926,
+          115.53653399995528,
+          85.40636099991389
         ]
       },
-      "idleRss": 70627328,
+      "idleRss": 71917568,
       "payload": {
         "scripts": 1,
         "jsRaw": 93097,
@@ -1074,116 +2149,116 @@
       },
       "updates": {
         "menu": {
-          "median": 7,
-          "p90": 8,
+          "median": 6,
+          "p90": 7,
           "samples": [
-            7,
-            7,
+            10,
+            6,
             7,
             6,
             6,
             6,
             7,
+            6,
             7,
-            8,
-            7,
-            11,
+            6,
+            6,
             7
           ]
         },
         "order": {
-          "median": 10.5,
+          "median": 11,
           "p90": 12,
           "samples": [
-            12,
-            8,
-            8,
-            12,
+            11,
             9,
             8,
-            11,
-            10,
+            9,
+            7,
+            6,
+            12,
             11,
             11,
             12,
-            9
+            12,
+            12
           ]
         }
       },
       "slow": {
-        "load": 379.79999999981374,
-        "add": 537,
+        "load": 398.69999999995343,
+        "add": 579,
         "loads": [
-          308.89999999990687,
-          379.79999999981374,
-          489.39999999990687,
-          388.60000000009313,
-          298
+          398.69999999995343,
+          389.5,
+          398.9000000001397,
+          472.30000000004657,
+          294.80000000004657
         ],
         "adds": [
-          537,
-          531,
-          557,
-          426,
-          580
+          597,
+          596,
+          579,
+          481,
+          459
         ]
       },
       "lighthouse": {
-        "score": 93,
-        "lcp": 752.8320000000001,
-        "tbt": 305.5126,
-        "fcp": 752.8320000000001,
+        "score": 100,
+        "lcp": 751.6538,
+        "tbt": 57.5,
+        "fcp": 751.6538,
         "runs": [
           {
-            "score": 93,
-            "lcp": 752.8320000000001,
-            "tbt": 308.08400000000006,
-            "fcp": 752.8320000000001
+            "score": 100,
+            "lcp": 810,
+            "tbt": 57.5,
+            "fcp": 810
           },
           {
-            "score": 99,
-            "lcp": 750.684,
-            "tbt": 107.15800000000002,
-            "fcp": 750.684
+            "score": 100,
+            "lcp": 751.6043999999999,
+            "tbt": 36.5,
+            "fcp": 751.6043999999999
           },
           {
-            "score": 93,
-            "lcp": 752.9748,
-            "tbt": 305.5126,
-            "fcp": 752.9748
+            "score": 98,
+            "lcp": 751.6538,
+            "tbt": 158.67309999999998,
+            "fcp": 751.6538
           }
         ]
       },
       "load": {
-        "rps": 4252,
-        "p50": 11,
-        "p975": 20,
+        "rps": 5560.55,
+        "p50": 8,
+        "p975": 9,
         "errors": 0,
-        "peakRss": 130465792,
+        "peakRss": 145477632,
         "runs": [
           {
-            "rps": 3744.7,
-            "p50": 12,
-            "p975": 25,
-            "p99": 30,
+            "rps": 5082.1,
+            "p50": 9,
+            "p975": 15,
+            "p99": 20,
             "errors": 0,
-            "peakRss": 122384384
+            "peakRss": 125251584
           },
           {
-            "rps": 4252,
-            "p50": 11,
-            "p975": 20,
-            "p99": 23,
+            "rps": 5560.55,
+            "p50": 8,
+            "p975": 9,
+            "p99": 11,
             "errors": 0,
-            "peakRss": 130465792
+            "peakRss": 145477632
           },
           {
-            "rps": 4472.55,
-            "p50": 10,
-            "p975": 19,
-            "p99": 21,
+            "rps": 5667.46,
+            "p50": 8,
+            "p975": 9,
+            "p99": 9,
             "errors": 0,
-            "peakRss": 144687104
+            "peakRss": 146718720
           }
         ]
       },
@@ -1214,25 +2289,25 @@
         "nodeModules": 42749952
       },
       "build": {
-        "ms": 60.11646700010169,
+        "ms": 57.15282900002785,
         "runs": [
-          60.11646700010169,
-          61.01657899993006,
-          58.5971300000092
+          60.843201000010595,
+          56.86725899996236,
+          57.15282900002785
         ]
       },
       "runtimeSize": 30212096,
       "start": {
-        "ms": 95.29550999996718,
+        "ms": 87.47972299996763,
         "runs": [
-          90.83839300007094,
-          101.64017599995714,
-          88.54384499997832,
-          95.29550999996718,
-          116.94707399990875
+          83.37026100000367,
+          105.17353200004436,
+          86.87231899984181,
+          87.7603919999674,
+          87.47972299996763
         ]
       },
-      "idleRss": 70696960,
+      "idleRss": 71938048,
       "payload": {
         "scripts": 1,
         "jsRaw": 95194,
@@ -1254,1196 +2329,116 @@
       },
       "updates": {
         "menu": {
-          "median": 8,
-          "p90": 10,
+          "median": 6,
+          "p90": 8,
           "samples": [
-            8,
-            8,
-            10,
-            8,
-            11,
+            5,
+            6,
+            5,
             6,
             6,
+            8,
+            8,
             7,
             6,
-            7,
-            8,
-            8
-          ]
-        },
-        "order": {
-          "median": 11,
-          "p90": 12,
-          "samples": [
-            16,
-            8,
-            11,
-            12,
-            10,
-            12,
-            11,
-            10,
-            12,
-            11,
-            12,
-            8
-          ]
-        }
-      },
-      "slow": {
-        "load": 273.5,
-        "add": 499,
-        "loads": [
-          327.29999999981374,
-          209.39999999990687,
-          273.5,
-          302.79999999981374,
-          266.8000000002794
-        ],
-        "adds": [
-          402,
-          499,
-          517,
-          458,
-          511
-        ]
-      },
-      "lighthouse": {
-        "score": 99,
-        "lcp": 750.8155999999999,
-        "tbt": 134.5,
-        "fcp": 750.8155999999999,
-        "runs": [
-          {
-            "score": 99,
-            "lcp": 810,
-            "tbt": 134.5,
-            "fcp": 810
-          },
-          {
-            "score": 100,
-            "lcp": 750.8155999999999,
-            "tbt": 57.59220000000005,
-            "fcp": 750.8155999999999
-          },
-          {
-            "score": 94,
-            "lcp": 750.0440000000001,
-            "tbt": 294.97800000000007,
-            "fcp": 750.0440000000001
-          }
-        ]
-      },
-      "load": {
-        "rps": 3813.64,
-        "p50": 11,
-        "p975": 26,
-        "errors": 0,
-        "peakRss": 126844928,
-        "runs": [
-          {
-            "rps": 3205.55,
-            "p50": 13,
-            "p975": 28,
-            "p99": 33,
-            "errors": 0,
-            "peakRss": 122482688
-          },
-          {
-            "rps": 3915.55,
-            "p50": 11,
-            "p975": 23,
-            "p99": 26,
-            "errors": 0,
-            "peakRss": 126844928
-          },
-          {
-            "rps": 3813.64,
-            "p50": 11,
-            "p975": 26,
-            "p99": 28,
-            "errors": 0,
-            "peakRss": 143593472
-          }
-        ]
-      },
-      "contractRun": {
-        "pass": 11,
-        "total": 11,
-        "failed": []
-      },
-      "contract": "11"
-    },
-    {
-      "name": "sveltekit",
-      "lines": {
-        "total": 313,
-        "files": {
-          "src/app.html": 12,
-          "src/lib/server/slice.js": 14,
-          "src/routes/+error.svelte": 5,
-          "src/routes/+layout.server.js": 5,
-          "src/routes/+layout.svelte": 11,
-          "src/routes/+page.server.js": 14,
-          "src/routes/+page.svelte": 38,
-          "src/routes/Notice.svelte": 8,
-          "src/routes/checkout/+page.server.js": 18,
-          "src/routes/checkout/+page.svelte": 21,
-          "src/routes/live/+server.js": 25,
-          "src/routes/live/orders/[key]/+server.js": 27,
-          "src/routes/order/+page.server.js": 19,
-          "src/routes/order/+page.svelte": 55,
-          "src/routes/orders/[key]/+page.server.js": 8,
-          "src/routes/orders/[key]/+page.svelte": 23,
-          "src/routes/slice.css/+server.js": 6,
-          "vite.config.js": 4
-        }
-      },
-      "dependencies": {
-        "direct": 4,
-        "installed": 79,
-        "nodeModules": 48504832
-      },
-      "build": {
-        "ms": 2390.130226999987,
-        "runs": [
-          2449.010879999958,
-          2209.4090550000547,
-          2390.130226999987
-        ]
-      },
-      "runtimeSize": 2002944,
-      "start": {
-        "ms": 149.60067900002468,
-        "runs": [
-          125.49906000006013,
-          185.77467799989972,
-          136.2958149999613,
-          172.46089400001802,
-          149.60067900002468
-        ]
-      },
-      "idleRss": 72269824,
-      "payload": {
-        "scripts": 12,
-        "jsRaw": 100069,
-        "jsGzip": 39176,
-        "htmlRaw": 6076,
-        "htmlGzip": 1575,
-        "requests": 14,
-        "files": [
-          {
-            "url": "/_app/immutable/chunks/CjUCT1ce.js",
-            "raw": 41919,
-            "gzip": 16056
-          },
-          {
-            "url": "/_app/immutable/chunks/CeNYcqv7.js",
-            "raw": 52,
-            "gzip": 69
-          },
-          {
-            "url": "/_app/immutable/chunks/DclECHGd.js",
-            "raw": 1630,
-            "gzip": 828
-          },
-          {
-            "url": "/_app/immutable/entry/payload.DSmR2FwN.js",
-            "raw": 65,
-            "gzip": 77
-          },
-          {
-            "url": "/_app/immutable/chunks/Bl-MC2aW.js",
-            "raw": 44093,
-            "gzip": 16045
-          },
-          {
-            "url": "/_app/immutable/entry/start.Dyt2eBDV.js",
-            "raw": 548,
-            "gzip": 321
-          },
-          {
-            "url": "/_app/immutable/entry/app.D0HRIFPJ.js",
-            "raw": 1514,
-            "gzip": 650
-          },
-          {
-            "url": "/_app/immutable/nodes/0.DTCUIca4.js",
-            "raw": 533,
-            "gzip": 370
-          },
-          {
-            "url": "/_app/immutable/chunks/BZcOkYJq.js",
-            "raw": 4620,
-            "gzip": 2069
-          },
-          {
-            "url": "/_app/immutable/nodes/1.BEfZZScp.js",
-            "raw": 349,
-            "gzip": 264
-          },
-          {
-            "url": "/_app/immutable/nodes/2.CfaeP_Rn.js",
-            "raw": 1860,
-            "gzip": 1082
-          },
-          {
-            "url": "/_app/immutable/chunks/CnN4mPrw.js",
-            "raw": 2886,
-            "gzip": 1345
-          }
-        ]
-      },
-      "accessibility": {
-        "menu": [],
-        "bag": []
-      },
-      "updates": {
-        "menu": {
-          "median": 9,
-          "p90": 10,
-          "samples": [
-            10,
-            10,
-            7,
-            9,
             6,
-            10,
-            9,
-            9,
-            8,
-            10,
-            7,
-            8
-          ]
-        },
-        "order": {
-          "median": 10,
-          "p90": 11,
-          "samples": [
-            10,
-            9,
-            10,
-            8,
-            10,
-            8,
-            11,
-            7,
-            11,
-            10,
-            10,
-            8
-          ]
-        }
-      },
-      "slow": {
-        "load": 375.1999999997206,
-        "add": 321,
-        "loads": [
-          429,
-          440.89999999990687,
-          288.39999999990687,
-          370.8000000002794,
-          375.1999999997206
-        ],
-        "adds": [
-          307,
-          370,
-          321,
-          319,
-          369
-        ]
-      },
-      "lighthouse": {
-        "score": 95,
-        "lcp": 760.5235,
-        "tbt": 256.99749999999995,
-        "fcp": 760.5235,
-        "runs": [
-          {
-            "score": 95,
-            "lcp": 755.7349999999999,
-            "tbt": 270.13249999999994,
-            "fcp": 755.7349999999999
-          },
-          {
-            "score": 98,
-            "lcp": 760.5235,
-            "tbt": 150.73824999999988,
-            "fcp": 760.5235
-          },
-          {
-            "score": 95,
-            "lcp": 770.0050000000001,
-            "tbt": 256.99749999999995,
-            "fcp": 770.0050000000001
-          }
-        ]
-      },
-      "load": {
-        "rps": 1250,
-        "p50": 35,
-        "p975": 72,
-        "errors": 0,
-        "peakRss": 267763712,
-        "runs": [
-          {
-            "rps": 1068,
-            "p50": 42,
-            "p975": 83,
-            "p99": 95,
-            "errors": 0,
-            "peakRss": 232529920
-          },
-          {
-            "rps": 1250,
-            "p50": 35,
-            "p975": 72,
-            "p99": 81,
-            "errors": 0,
-            "peakRss": 267763712
-          },
-          {
-            "rps": 1334,
-            "p50": 34,
-            "p975": 70,
-            "p99": 86,
-            "errors": 0,
-            "peakRss": 281206784
-          }
-        ]
-      },
-      "contractRun": {
-        "pass": 11,
-        "total": 11,
-        "failed": []
-      },
-      "contract": "11"
-    },
-    {
-      "name": "nextjs",
-      "lines": {
-        "total": 334,
-        "files": {
-          "app/actions.js": 23,
-          "app/checkout/page.js": 35,
-          "app/layout.js": 22,
-          "app/live/orders/[key]/route.js": 27,
-          "app/live/route.js": 26,
-          "app/live-menu.js": 37,
-          "app/not-found.js": 3,
-          "app/notice.js": 5,
-          "app/order/page.js": 72,
-          "app/orders/[key]/live-steps.js": 18,
-          "app/orders/[key]/page.js": 24,
-          "app/page.js": 18,
-          "app/slice.css/route.js": 6,
-          "lib/slice.js": 17,
-          "next.config.mjs": 1
-        }
-      },
-      "dependencies": {
-        "direct": 4,
-        "installed": 55,
-        "nodeModules": 485990400
-      },
-      "build": {
-        "ms": 10456.581949000014,
-        "runs": [
-          10456.581949000014,
-          10329.56659400009,
-          10606.359181999927
-        ]
-      },
-      "runtimeSize": 517779456,
-      "start": {
-        "ms": 527.4886669999687,
-        "runs": [
-          659.2008930000011,
-          576.0562299999874,
-          450.10887300001923,
-          469.19342000002507,
-          527.4886669999687
-        ]
-      },
-      "idleRss": 112115712,
-      "payload": {
-        "scripts": 6,
-        "jsRaw": 458346,
-        "jsGzip": 135579,
-        "htmlRaw": 9621,
-        "htmlGzip": 2283,
-        "requests": 8,
-        "files": [
-          {
-            "url": "/_next/static/chunks/042bdxchplu36.js",
-            "raw": 17041,
-            "gzip": 5961
-          },
-          {
-            "url": "/_next/static/chunks/turbopack-2u1d16houkiyo.js",
-            "raw": 9974,
-            "gzip": 3905
-          },
-          {
-            "url": "/_next/static/chunks/1ij75cysvgvz_.js",
-            "raw": 229277,
-            "gzip": 71749
-          },
-          {
-            "url": "/_next/static/chunks/2mytc4ospshjk.js",
-            "raw": 13981,
-            "gzip": 3508
-          },
-          {
-            "url": "/_next/static/chunks/1jk5veq5817vj.js",
-            "raw": 186795,
-            "gzip": 49755
-          },
-          {
-            "url": "/_next/static/chunks/3-9zb0bt05ka3.js",
-            "raw": 1278,
-            "gzip": 701
-          }
-        ]
-      },
-      "accessibility": {
-        "menu": [],
-        "bag": []
-      },
-      "updates": {
-        "menu": {
-          "median": 9.5,
-          "p90": 13,
-          "samples": [
-            13,
-            10,
-            13,
-            10,
-            10,
-            9,
-            7,
-            10,
-            8,
-            7,
-            7,
+            6,
             6
           ]
         },
         "order": {
-          "median": 9.5,
-          "p90": 12,
-          "samples": [
-            9,
-            12,
-            10,
-            11,
-            14,
-            7,
-            8,
-            7,
-            7,
-            8,
-            10,
-            11
-          ]
-        }
-      },
-      "slow": {
-        "load": 606.8999999999069,
-        "add": 565,
-        "loads": [
-          610.5,
-          533.6000000000931,
-          678.2000000001863,
-          606.8999999999069,
-          513.8999999999069
-        ],
-        "adds": [
-          565,
-          589,
-          458,
-          580,
-          459
-        ]
-      },
-      "lighthouse": {
-        "score": 92,
-        "lcp": 644.15,
-        "tbt": 364,
-        "fcp": 644.15,
-        "runs": [
-          {
-            "score": 86,
-            "lcp": 639.1265,
-            "tbt": 538.9999999999999,
-            "fcp": 639.1265
-          },
-          {
-            "score": 92,
-            "lcp": 661.58005,
-            "tbt": 348,
-            "fcp": 661.58005
-          },
-          {
-            "score": 92,
-            "lcp": 644.15,
-            "tbt": 364,
-            "fcp": 644.15
-          }
-        ]
-      },
-      "load": {
-        "rps": 393.4,
-        "p50": 115,
-        "p975": 224,
-        "errors": 0,
-        "peakRss": 380801024,
-        "runs": [
-          {
-            "rps": 318.1,
-            "p50": 124,
-            "p975": 304,
-            "p99": 330,
-            "errors": 0,
-            "peakRss": 352571392
-          },
-          {
-            "rps": 393.4,
-            "p50": 115,
-            "p975": 224,
-            "p99": 292,
-            "errors": 0,
-            "peakRss": 380801024
-          },
-          {
-            "rps": 402.37,
-            "p50": 115,
-            "p975": 201,
-            "p99": 233,
-            "errors": 0,
-            "peakRss": 485265408
-          }
-        ]
-      },
-      "contractRun": {
-        "pass": 10,
-        "total": 11,
-        "failed": [
-          "S8 an order is only its guest's: another phone, or a made-up key, gets a 404"
-        ]
-      },
-      "contract": "10 (fails S8)"
-    },
-    {
-      "name": "nextjs-tuned",
-      "lines": {
-        "total": 339,
-        "files": {
-          "app/actions.js": 23,
-          "app/checkout/page.js": 35,
-          "app/layout.js": 22,
-          "app/live/orders/[key]/route.js": 27,
-          "app/live/route.js": 26,
-          "app/live-menu.js": 37,
-          "app/not-found.js": 3,
-          "app/notice.js": 5,
-          "app/order/page.js": 72,
-          "app/orders/[key]/live-steps.js": 18,
-          "app/orders/[key]/page.js": 24,
-          "app/page.js": 18,
-          "app/slice.css/route.js": 6,
-          "lib/slice.js": 17,
-          "next.config.mjs": 6
-        }
-      },
-      "dependencies": {
-        "direct": 4,
-        "installed": 55,
-        "nodeModules": 485998592
-      },
-      "build": {
-        "ms": 11769.689585000044,
-        "runs": [
-          11769.689585000044,
-          11438.93168899999,
-          12603.844891999965
-        ]
-      },
-      "runtimeSize": 70918144,
-      "start": {
-        "ms": 540.406782999984,
-        "runs": [
-          540.406782999984,
-          465.00067899993155,
-          554.105539000011,
-          590.0604370000074,
-          484.8760589999147
-        ]
-      },
-      "idleRss": 110641152,
-      "payload": {
-        "scripts": 6,
-        "jsRaw": 458388,
-        "jsGzip": 135620,
-        "htmlRaw": 9621,
-        "htmlGzip": 2280,
-        "requests": 8,
-        "files": [
-          {
-            "url": "/_next/static/chunks/1-5j4l7nba72e.js",
-            "raw": 17055,
-            "gzip": 5970
-          },
-          {
-            "url": "/_next/static/chunks/3xim1q-fcv59q.js",
-            "raw": 1280,
-            "gzip": 701
-          },
-          {
-            "url": "/_next/static/chunks/turbopack-2u1d16houkiyo.js",
-            "raw": 9974,
-            "gzip": 3905
-          },
-          {
-            "url": "/_next/static/chunks/2b0dybw5t7swm.js",
-            "raw": 13994,
-            "gzip": 3513
-          },
-          {
-            "url": "/_next/static/chunks/1guc7s5jqhv2b.js",
-            "raw": 186797,
-            "gzip": 49772
-          },
-          {
-            "url": "/_next/static/chunks/15ut-hqomkay-.js",
-            "raw": 229288,
-            "gzip": 71759
-          }
-        ]
-      },
-      "accessibility": {
-        "menu": [],
-        "bag": []
-      },
-      "updates": {
-        "menu": {
-          "median": 8,
-          "p90": 12,
-          "samples": [
-            11,
-            12,
-            10,
-            7,
-            8,
-            10,
-            12,
-            7,
-            7,
-            6,
-            8,
-            7
-          ]
-        },
-        "order": {
-          "median": 10.5,
-          "p90": 12,
-          "samples": [
-            9,
-            10,
-            7,
-            12,
-            11,
-            19,
-            8,
-            11,
-            11,
-            8,
-            11,
-            10
-          ]
-        }
-      },
-      "slow": {
-        "load": 652.3000000002794,
-        "add": 477,
-        "loads": [
-          761.3000000002794,
-          615,
-          596.6000000000931,
-          652.3000000002794,
-          805
-        ],
-        "adds": [
-          477,
-          504,
-          586,
-          459,
-          428
-        ]
-      },
-      "lighthouse": {
-        "score": 89,
-        "lcp": 669.758,
-        "tbt": 453,
-        "fcp": 669.758,
-        "runs": [
-          {
-            "score": 90,
-            "lcp": 643.4775,
-            "tbt": 428.5,
-            "fcp": 643.4775
-          },
-          {
-            "score": 87,
-            "lcp": 669.758,
-            "tbt": 528,
-            "fcp": 669.758
-          },
-          {
-            "score": 89,
-            "lcp": 692.05945,
-            "tbt": 453,
-            "fcp": 692.05945
-          }
-        ]
-      },
-      "load": {
-        "rps": 346.2,
-        "p50": 132,
-        "p975": 249,
-        "errors": 0,
-        "peakRss": 366243840,
-        "runs": [
-          {
-            "rps": 295,
-            "p50": 160,
-            "p975": 290,
-            "p99": 385,
-            "errors": 0,
-            "peakRss": 346775552
-          },
-          {
-            "rps": 361.2,
-            "p50": 125,
-            "p975": 243,
-            "p99": 267,
-            "errors": 0,
-            "peakRss": 366243840
-          },
-          {
-            "rps": 346.2,
-            "p50": 132,
-            "p975": 249,
-            "p99": 285,
-            "errors": 0,
-            "peakRss": 374587392
-          }
-        ]
-      },
-      "contractRun": {
-        "pass": 10,
-        "total": 11,
-        "failed": [
-          "S8 an order is only its guest's: another phone, or a made-up key, gets a 404"
-        ]
-      },
-      "contract": "10 (fails S8)"
-    },
-    {
-      "name": "nuxt",
-      "lines": {
-        "total": 246,
-        "files": {
-          "app/app.vue": 13,
-          "app/components/SliceNotice.vue": 8,
-          "app/error.vue": 7,
-          "app/pages/checkout.vue": 24,
-          "app/pages/index.vue": 33,
-          "app/pages/order.vue": 44,
-          "app/pages/orders/[key].vue": 24,
-          "nuxt.config.js": 5,
-          "server/api/bag.get.js": 4,
-          "server/api/checkout.get.js": 8,
-          "server/api/menu.get.js": 4,
-          "server/api/orders/[key].get.js": 6,
-          "server/api/said.get.js": 4,
-          "server/routes/add.post.js": 6,
-          "server/routes/change.post.js": 6,
-          "server/routes/live/orders/[key].get.js": 13,
-          "server/routes/live.get.js": 12,
-          "server/routes/place.post.js": 6,
-          "server/routes/slice.css.get.js": 6,
-          "server/routes/time.post.js": 5,
-          "server/utils/slice.js": 8
-        }
-      },
-      "dependencies": {
-        "direct": 2,
-        "installed": 605,
-        "nodeModules": 206446592
-      },
-      "build": {
-        "ms": 8095.82021600008,
-        "runs": [
-          8095.82021600008,
-          8457.865445999894,
-          7425.0147710000165
-        ]
-      },
-      "runtimeSize": 3436544,
-      "start": {
-        "ms": 280.08917999989353,
-        "runs": [
-          307.5201610000804,
-          280.08917999989353,
-          276.06182099995203,
-          304.72059100004844,
-          267.72902799979784
-        ]
-      },
-      "idleRss": 98099200,
-      "payload": {
-        "scripts": 3,
-        "jsRaw": 202089,
-        "jsGzip": 74789,
-        "htmlRaw": 7755,
-        "htmlGzip": 2150,
-        "requests": 5,
-        "files": [
-          {
-            "url": "/_nuxt/CgX5rOXO.js",
-            "raw": 455,
-            "gzip": 310
-          },
-          {
-            "url": "/_nuxt/D3vr4S1V.js",
-            "raw": 1544,
-            "gzip": 893
-          },
-          {
-            "url": "/_nuxt/BTbOJQGr.js",
-            "raw": 200090,
-            "gzip": 73586
-          }
-        ]
-      },
-      "accessibility": {
-        "menu": [],
-        "bag": []
-      },
-      "updates": {
-        "menu": {
-          "median": 8.5,
-          "p90": 11,
-          "samples": [
-            17,
-            11,
-            6,
-            9,
-            8,
-            8,
-            8,
-            8,
-            10,
-            10,
-            8,
-            11
-          ]
-        },
-        "order": {
           "median": 10,
           "p90": 11,
           "samples": [
-            17,
-            8,
-            10,
-            8,
-            11,
+            12,
             7,
             10,
-            10,
-            11,
-            10,
-            10,
-            11
-          ]
-        }
-      },
-      "slow": {
-        "load": 322.79999999981374,
-        "add": 830,
-        "loads": [
-          378.89999999990687,
-          322.79999999981374,
-          318.20000000018626,
-          300.29999999981374,
-          480.29999999981374
-        ],
-        "adds": [
-          731,
-          863,
-          597,
-          860,
-          830
-        ]
-      },
-      "lighthouse": {
-        "score": 85,
-        "lcp": 756.1940999999999,
-        "tbt": 594.22,
-        "fcp": 756.1940999999999,
-        "runs": [
-          {
-            "score": 85,
-            "lcp": 759.56,
-            "tbt": 594.22,
-            "fcp": 759.56
-          },
-          {
-            "score": 86,
-            "lcp": 753.681,
-            "tbt": 548.1594999999995,
-            "fcp": 753.681
-          },
-          {
-            "score": 80,
-            "lcp": 756.1940999999999,
-            "tbt": 858.9999999999999,
-            "fcp": 756.1940999999999
-          }
-        ]
-      },
-      "load": {
-        "rps": 165,
-        "p50": 269,
-        "p975": 427,
-        "errors": 0,
-        "peakRss": 310738944,
-        "runs": [
-          {
-            "rps": 142.81,
-            "p50": 303,
-            "p975": 517,
-            "p99": 1726,
-            "errors": 0,
-            "peakRss": 295096320
-          },
-          {
-            "rps": 165,
-            "p50": 265,
-            "p975": 427,
-            "p99": 1143,
-            "errors": 0,
-            "peakRss": 310738944
-          },
-          {
-            "rps": 168.7,
-            "p50": 269,
-            "p975": 426,
-            "p99": 1271,
-            "errors": 0,
-            "peakRss": 317784064
-          }
-        ]
-      },
-      "contractRun": {
-        "pass": 11,
-        "total": 11,
-        "failed": []
-      },
-      "contract": "11"
-    },
-    {
-      "name": "nuxt-tuned",
-      "lines": {
-        "total": 237,
-        "files": {
-          "app/app.vue": 14,
-          "app/components/SliceNotice.vue": 8,
-          "app/error.vue": 7,
-          "app/pages/checkout.vue": 24,
-          "app/pages/index.vue": 33,
-          "app/pages/order.vue": 44,
-          "app/pages/orders/[key].vue": 23,
-          "nuxt.config.js": 5,
-          "server/api/view.get.js": 17,
-          "server/routes/add.post.js": 6,
-          "server/routes/change.post.js": 6,
-          "server/routes/live/orders/[key].get.js": 13,
-          "server/routes/live.get.js": 12,
-          "server/routes/place.post.js": 6,
-          "server/routes/slice.css.get.js": 6,
-          "server/routes/time.post.js": 5,
-          "server/utils/slice.js": 8
-        }
-      },
-      "dependencies": {
-        "direct": 2,
-        "installed": 605,
-        "nodeModules": 238940160
-      },
-      "build": {
-        "ms": 7491.6190169998445,
-        "runs": [
-          7415.5915510000195,
-          7491.6190169998445,
-          7795.48135999986
-        ]
-      },
-      "runtimeSize": 3403776,
-      "start": {
-        "ms": 260.78429999994114,
-        "runs": [
-          260.78429999994114,
-          246.79197499994189,
-          235.74197099986486,
-          283.1164740000386,
-          282.1169149999041
-        ]
-      },
-      "idleRss": 90492928,
-      "payload": {
-        "scripts": 3,
-        "jsRaw": 202279,
-        "jsGzip": 74794,
-        "htmlRaw": 5454,
-        "htmlGzip": 1592,
-        "requests": 5,
-        "files": [
-          {
-            "url": "/_nuxt/DuEqo6YX.js",
-            "raw": 365,
-            "gzip": 249
-          },
-          {
-            "url": "/_nuxt/Luz7AClB.js",
-            "raw": 1476,
-            "gzip": 849
-          },
-          {
-            "url": "/_nuxt/CowPxFgb.js",
-            "raw": 200438,
-            "gzip": 73696
-          }
-        ]
-      },
-      "accessibility": {
-        "menu": [],
-        "bag": []
-      },
-      "updates": {
-        "menu": {
-          "median": 9.5,
-          "p90": 11,
-          "samples": [
-            11,
             9,
-            6,
-            10,
-            6,
-            10,
-            13,
-            9,
-            10,
-            8,
-            8,
-            11
-          ]
-        },
-        "order": {
-          "median": 11,
-          "p90": 16,
-          "samples": [
-            16,
-            9,
-            14,
-            17,
             11,
-            14,
             7,
+            11,
             10,
             11,
-            14,
-            7,
+            11,
+            10,
             10
           ]
         }
       },
       "slow": {
-        "load": 345.20000000018626,
-        "add": 819,
+        "load": 322.80000000004657,
+        "add": 545,
         "loads": [
-          312.70000000018626,
-          352.39999999990687,
-          419.1999999997206,
-          337.39999999990687,
-          345.20000000018626
+          322.80000000004657,
+          326.10000000009313,
+          318.80000000004657,
+          294.60000000009313,
+          331.80000000004657
         ],
         "adds": [
-          1193,
-          868,
-          819,
-          746,
-          747
+          545,
+          495,
+          604,
+          485,
+          591
         ]
       },
       "lighthouse": {
-        "score": 86,
-        "lcp": 752.9057,
-        "tbt": 571.95685,
-        "fcp": 752.9057,
+        "score": 100,
+        "lcp": 751.8520000000001,
+        "tbt": 67.30999999999995,
+        "fcp": 751.8520000000001,
         "runs": [
           {
-            "score": 86,
-            "lcp": 754.0862999999999,
-            "tbt": 571.95685,
-            "fcp": 754.0862999999999
+            "score": 94,
+            "lcp": 751.8119999999999,
+            "tbt": 300.09400000000005,
+            "fcp": 751.8119999999999
           },
           {
-            "score": 86,
-            "lcp": 752.9057,
-            "tbt": 552.54715,
-            "fcp": 752.9057
+            "score": 100,
+            "lcp": 751.8520000000001,
+            "tbt": 33,
+            "fcp": 751.8520000000001
           },
           {
-            "score": 85,
-            "lcp": 751.8532,
-            "tbt": 582.0734000000004,
-            "fcp": 751.8532
+            "score": 100,
+            "lcp": 752.3800000000001,
+            "tbt": 67.30999999999995,
+            "fcp": 752.3800000000001
           }
         ]
       },
       "load": {
-        "rps": 462.5,
-        "p50": 98,
-        "p975": 158,
+        "rps": 4627.7,
+        "p50": 10,
+        "p975": 17,
         "errors": 0,
-        "peakRss": 279990272,
+        "peakRss": 146178048,
         "runs": [
           {
-            "rps": 419.6,
-            "p50": 109,
-            "p975": 158,
-            "p99": 162,
+            "rps": 4519.91,
+            "p50": 10,
+            "p975": 19,
+            "p99": 24,
             "errors": 0,
-            "peakRss": 275365888
+            "peakRss": 125345792
           },
           {
-            "rps": 470,
-            "p50": 93,
-            "p975": 161,
-            "p99": 172,
+            "rps": 4627.7,
+            "p50": 10,
+            "p975": 17,
+            "p99": 25,
             "errors": 0,
-            "peakRss": 279990272
+            "peakRss": 146178048
           },
           {
-            "rps": 462.5,
-            "p50": 98,
-            "p975": 153,
-            "p99": 159,
+            "rps": 5562,
+            "p50": 8,
+            "p975": 10,
+            "p99": 13,
             "errors": 0,
-            "peakRss": 281317376
+            "peakRss": 147718144
           }
         ]
       },
