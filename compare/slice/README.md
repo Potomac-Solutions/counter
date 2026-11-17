@@ -12,8 +12,8 @@ upgrade drill, `measure/FINDINGS.md` what it all shows, and
 
 | Build | Framework | Live updates through |
 | --- | --- | --- |
-| `zubra/` | `@zubra/server` 5.19.0, plain Node | `@zubra/sync`: each menu item and order is a sync document |
-| `zubra-stream/` | `@zubra/server` 5.19.0, plain Node | Server-sent events, as the others; no `@zubra/sync` |
+| `zubra/` | `@zubra/server` 5.20.0, plain Node | `@zubra/sync`: each menu item and order is a sync document |
+| `zubra-stream/` | `@zubra/server` 5.20.0, plain Node | Server-sent events, as the others; no `@zubra/sync` |
 | `nextjs/` | Next.js 16.4.6, App Router, React 19.3.1 | A route handler streaming server-sent events, a client component |
 | `sveltekit/` | SvelteKit 3.2.0, Svelte 5.57.3, adapter-node | A `+server.js` streaming server-sent events, runes |
 | `nextjs-tuned/` | As `nextjs/`, with `output: 'standalone'` | As `nextjs/` |
