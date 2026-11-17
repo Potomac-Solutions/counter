@@ -10,7 +10,8 @@ import { createSlice, money, pickupWords } from '../shared/slice.js';
 const here = import.meta.dirname;
 const css = readFileSync(join(here, '..', 'shared', 'slice.css'));
 // Plain form posts without the reload (the Add form names what it updates: data-zb-updates).
-const forms = readFileSync(fileURLToPath(import.meta.resolve('@zubra/actions/enhance-forms')));
+// The package's minified build (dist/production), as its own createActions serves in production.
+const forms = readFileSync(join(fileURLToPath(import.meta.resolve('@zubra/actions/enhance-forms')), '..', '..', 'dist', 'production', 'enhance-forms.js'));
 const escape = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 export async function createApp(options = {}) {
