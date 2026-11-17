@@ -23,31 +23,33 @@ appears when JavaScript draws it. It happens with a bare one-line `notFound()` p
 
 ## What the numbers show
 
-Measured again on 2026-11-17 with Zubra 5.21.1, every build on one machine. The other eleven
-builds are on the versions they had. Both Zubra builds use two things 5.21.0 added: the Add form
-names the parts of the page it updates (`data-zb-updates`), so its post doesn't reload the page, and
-the sync build's pages follow the log read-only (`follow()`). 5.21.1 sends the form script minified.
-The machine's speed moves between runs (this run and the 5.21.0 one earlier the same day differ by
-up to a third on the same build), so compare builds within a run, not across runs.
+Measured again on 2026-11-17 with Zubra 5.22.0, every build on one machine. The other eleven
+builds are on the versions they had. Both Zubra builds use what 5.21 added: the Add form names the
+parts of the page it updates (`data-zb-updates`), so its post doesn't reload the page, and the sync
+build's pages follow the log read-only (`follow()`). 5.22.0 sends a page the runtime's base and
+only the rest its components use; the slice's two components use none of the rest, and nothing in
+the builds changed for it. The machine's speed moves between runs (the same build has differed by
+up to a third within a day), so compare builds within a run, not across runs.
 
-- **A slow phone (CPU 6× slower): Zubra answers the Add button fastest.** Both Zubra builds take
-  about 235 ms, then SvelteKit (333) and Next.js (426). The rest take 489 to 766. On 5.20.0 Zubra
-  was behind SvelteKit, Next.js tuned and Enhance.
-- **Download size.** Without sync Zubra sends 16.5 KB in 4 files; with sync 19.9 KB in 5. On
-  5.20.0 these were 15.5 KB in 3 and 20.2 KB in 4: the form script adds 1 KB to both, and
-  `follow()` takes about 1.4 KB off the sync build. Enhance (5.2 KB), Lit (8.5) and Stencil (10)
-  send less. FAST (28.5), WebUI (30.7), SvelteKit (38.3), Nuxt (73) and Next.js (132.4) send more.
+- **Download size.** Without sync Zubra sends 14 KB in 4 files; with sync 17.4 KB in 5. On 5.21.1
+  these were 16.5 and 19.9 KB, and on 5.20.0 15.5 and 20.2 KB (before the form script, 1 KB, was
+  on the page). Enhance (5.2 KB), Lit (8.5) and Stencil (10) send less. FAST (28.5), WebUI (30.7),
+  SvelteKit (38.3), Nuxt (73) and Next.js (132.4) send more.
+- **A slow phone (CPU 6× slower): Zubra answers the Add button fastest.** Zubra with sync takes
+  241 ms and on the stream 281, then SvelteKit (315) and Next.js (477). The rest take 488 to 782.
+  On 5.20.0 Zubra was behind SvelteKit, Next.js tuned and Enhance.
 - **Update speed is a tie.** An update shows on an open page in 6 to 10 ms (median) in all twelve.
-- **Menu load.** Lit (283 ms) and Enhance (286) load the menu fastest, then Zubra with sync (325),
-  WebUI (326), SvelteKit (332) and Zubra on the stream (342). Next.js is slowest (556 to 606).
-  Zubra runs about 20 ms more script than Lit or Enhance while loading (a CPU profile: about 67 ms
-  against 47, spread across the runtime with no one slow function), and the rest of the gap is
-  inside the run-to-run noise of this measure.
-- **Blocking time still isn't ranked.** It has moved too much between runs of the same build:
-  both Zubra builds gave about 400 ms on the 5.21.0 run and about 200 on this one.
+- **Menu load.** Lit (280 ms), Enhance (302), WebUI (313), SvelteKit (314) and Stencil (316) load
+  the menu fastest; Zubra takes 350 with sync and 402 on the stream (325 and 342 on the last run,
+  with a larger runtime file, so this is the machine, not the release). Next.js is slowest (577
+  to 680). Zubra runs about 20 ms more script than Lit or Enhance while loading (a CPU profile on
+  5.21: about 67 ms against 47, spread across the runtime with no one slow function); the rest of
+  the gap is inside the run-to-run noise of this measure.
+- **Blocking time still isn't ranked.** It has moved too much between runs of the same build: in
+  this run Zubra with sync gave 360 ms and Zubra on the stream 123, from the same runtime.
 - **Pages served.** On one pinned CPU, both Zubra builds served the most menu pages a second
-  (about 4,700), then WebUI (3,754) and FAST (3,286), Enhance (1,817), Lit (1,254) and SvelteKit
-  (1,112). Nuxt tuned (480), Next.js (336 to 342), Stencil (305) and Nuxt untuned (210) were well
+  (about 4,500), then WebUI (3,532) and FAST (3,492), Enhance (2,001), Lit (1,366) and SvelteKit
+  (1,334). Nuxt tuned (447), Next.js (339 to 370), Stencil (311) and Nuxt untuned (171) were well
   behind.
 - **5.20.0 didn't slow the server.** The audit of Zubra's `main` (`AUDIT-2026-11-16.md`) saw up to
   20% fewer pages a second. On this machine 5.19.0 served 6,139 (sync) and 5,836 (stream), and
@@ -99,9 +101,10 @@ up to a third on the same build), so compare builds within a run, not across run
 1. Get each build and each tuned setting reviewed against its framework's docs, and record the
    review in the branch.
 2. Rerun throughput at full length with the load generator on its own machine.
-3. Zubra: the size of its runtime (14.6 KB of the 16.5) is the one size question still open. The
-   read-only connection (journey-to-code-org/zubra#319) shipped in 5.21.0 and the minified form
-   script in 5.21.1.
+3. Zubra: nothing raised here is open. The read-only connection (journey-to-code-org/zubra#319)
+   shipped in 5.21.0, the minified form script in 5.21.1 and the smaller runtime file in 5.22.0.
+   What is left between Zubra and Lit or Enhance on size is the Signals implementation and the
+   element's core, which run on every page.
 4. Report Next.js's empty 404 page upstream with a minimal reproduction, if it reproduces in a fresh
    app.
 5. Measure the cost of growth: add pages and components, and compare what each one adds.
