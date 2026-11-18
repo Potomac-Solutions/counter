@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createZubra } from '@zubra/server';
+import { buildRuntime } from '@zubra/server/build';
 import { createSlice, money, pickupWords } from '../shared/slice.js';
 
 const here = import.meta.dirname;
@@ -30,7 +31,10 @@ const escape = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&':
 
 export async function createApp(options = {}) {
   const slice = await createSlice(options);
-  const zubra = createZubra({ components: join(here, 'components') });
+  // In production the runtime is built for this app (esbuild): one file with only what its
+  // components use. It takes a fraction of a second, so it is done here, when the server starts.
+  const components = join(here, 'components');
+  const zubra = createZubra({ components, runtime: process.env.NODE_ENV === 'production' ? await buildRuntime({ components }) : null });
   const { shop } = slice;
 
   const notice = ({ done, problem }) => (problem ? `<p class="notice problem" role="alert">${escape(problem)}</p>` : done ? `<p class="notice" role="status">${escape(done)}</p>` : '');
