@@ -3,16 +3,24 @@
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createZubra } from '@zubra/server';
+import { buildRuntime } from '@zubra/server/build';
 import { createSlice, money, pickupWords } from '../shared/slice.js';
 
 const here = import.meta.dirname;
 const css = readFileSync(join(here, '..', 'shared', 'slice.css'));
+// Plain form posts without the reload (the Add form names what it updates: data-zb-updates).
+// The package's minified build (dist/production), as its own createActions serves in production.
+const forms = readFileSync(join(fileURLToPath(import.meta.resolve('@zubra/actions/enhance-forms')), '..', '..', 'dist', 'production', 'enhance-forms.js'));
 const escape = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 export async function createApp(options = {}) {
   const slice = await createSlice(options);
-  const zubra = createZubra({ components: join(here, 'components') });
+  // In production the runtime is built for this app (esbuild): one file with only what its
+  // components use. It takes a fraction of a second, so it is done here, when the server starts.
+  const components = join(here, 'components');
+  const zubra = createZubra({ components, runtime: process.env.NODE_ENV === 'production' ? await buildRuntime({ components }) : null });
   const { shop } = slice;
 
   const notice = ({ done, problem }) => (problem ? `<p class="notice problem" role="alert">${escape(problem)}</p>` : done ? `<p class="notice" role="status">${escape(done)}</p>` : '');
@@ -26,13 +34,14 @@ export async function createApp(options = {}) {
   <link rel="stylesheet" href="/slice.css">
 </head>
 <body>
-  <header class="site-head"><a href="/">${escape(shop.name)}</a><nav aria-label="Site"><a href="/">Menu</a><a href="/order">Your order${count ? ` (${count})` : ''}</a></nav></header>
+  <header class="site-head"><a href="/">${escape(shop.name)}</a><nav aria-label="Site" id="site"><a href="/">Menu</a><a href="/order">Your order${count ? ` (${count})` : ''}</a></nav></header>
   <main>${body}</main>
-  <script type="module">import { connect } from '@zubra/sync/connect'; connect();</script>
+  <script type="module">import { follow } from '@zubra/sync/follow'; follow();</script>
+  <script type="module" src="/_zb/enhance-forms.js"></script>
 </body>
 </html>`);
 
-  const menuPage = (p, said) => `${notice(said)}
+  const menuPage = (p, said) => `<div id="said">${notice(said)}</div>
 <h1>Order ahead</h1>
 ${slice
   .menu()
@@ -98,6 +107,7 @@ ${p.render('slice-steps', { order: order.key, statusNow: order.status })}
       if (await slice.sync.handle(req, res)) return;
       if (zubra.handle(req, res)) return;
       const url = new URL(req.url, 'http://slice');
+      if (url.pathname === '/_zb/enhance-forms.js') return res.writeHead(200, { 'content-type': 'text/javascript', 'cache-control': 'public, max-age=3600' }).end(forms);
       if (url.pathname === '/slice.css') return res.writeHead(200, { 'content-type': 'text/css', 'cache-control': 'public, max-age=3600' }).end(css);
       const { guest, setCookie } = slice.guest(req.headers.cookie);
       const cookie = setCookie ? { 'set-cookie': setCookie } : {};
