@@ -1,6 +1,6 @@
 # Counter
 
-Order ahead, for a shop people pick food up from: a bakery, a café, a pizza or sub shop, a deli counter. The menu shows what's left, live. A guest fills a bag, picks a pickup time and pays once; the kitchen moves the order along and the guest's phone follows. A Potomac Solutions platform, built on the [kit](https://github.com/Potomac-Solutions/kit) and [Zubra](https://github.com/journey-to-code-org/zubra).
+Order ahead, for a shop people pick food up from: a bakery, a café, a pizza or sub shop, a deli counter. The menu shows what's left, live. A guest fills a bag, picks a pickup time and pays once; the kitchen moves the order along and the guest's phone follows. A Potomac Solutions platform, built on the [kit](https://github.com/Potomac-Solutions/kit) and [Zubra](https://github.com/zubra-js/zubra).
 
 The shop it starts with, Hickory Hollow Bakehouse in Oakland, Maryland, is made up. Nothing here is really for sale, and payments are in test mode.
 
