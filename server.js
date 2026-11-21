@@ -363,10 +363,16 @@ ${note(url)}
       else res.end();
     }
   });
+  const stop = server.close.bind(server);
+  server.close = (cb) => stop((error) => {
+    try { counter.close(); } finally { cb?.(error); }
+  });
   return Object.assign(server, { counter, staff, customers, sent: mail.sent });
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  // 6.0 runs in production unless this is set. `--dev` works in cmd, where a NODE_ENV= prefix does not.
+  if (process.argv.includes('--dev')) process.env.NODE_ENV = 'development';
   const port = Number(process.env.PORT ?? 3000);
   const server = await createApp();
   if (server.staff.needsOwner()) console.log(`Set up the first owner (works once, for a day): http://localhost:${port}/staff/accept?token=${await server.staff.setup()}`);

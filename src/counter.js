@@ -64,8 +64,9 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
   let who = () => null;
   const owns = (guest, order) => Boolean(guest && order && (order.owner === guest.pub || (guest.customer && order.customer === guest.customer)));
   const ordersOf = (guest) => store.under('orders').filter((order) => owns(guest, order)).map((order) => order.key);
+  const log = await sqliteLog(db);
   const sync = createSyncServer({
-    log: await sqliteLog(db),
+    log,
     // Pages write nothing: every collection here is the server's.
     authorize: serverOnly([...SERVER_ONLY, 'orders', 'slots', 'slot-holds', 'pickups', 'notes', 'settings', 'audit'], ({ kind }) => kind === 'read'),
     // A page reads the menu and the note, and its own orders: nobody else's name or basket.
@@ -113,6 +114,10 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
     sync,
     store,
     shop,
+    // node:sqlite keeps the file until this runs; Windows won't delete it otherwise.
+    close() {
+      log.close();
+    },
     sections: SECTIONS,
     identify(fn) {
       who = fn;
