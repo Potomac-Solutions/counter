@@ -6,7 +6,7 @@
   "description": "Order ahead: a live menu, a pickup time, one payment, and a kitchen the customer follows. A Potomac Solutions platform, built on the kit and Zubra.",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
+    "dev": "node --watch server.js --dev",
     "seed": "node bin/seed.js",
     "demo": "node bin/seed.js --fresh && node server.js",
     "test": "node --test --test-concurrency=1 \"test/*.test.js\""
@@ -14,10 +14,10 @@
   "dependencies": {
     "@journey-to-code/symbology": "0.2.0",
     "@potomac-solutions/kit": "github:Potomac-Solutions/kit#2b0f615563f5ce7bb85cbd9f2c10ac06776c0d90",
-    "@zubra/compiler": "^5.13.1",
-    "@zubra/runtime": "^5.13.1",
-    "@zubra/server": "^5.13.1",
-    "@zubra/sync": "^5.13.1"
+    "@zubra/compiler": "6.0.3",
+    "@zubra/runtime": "6.0.3",
+    "@zubra/server": "6.0.3",
+    "@zubra/sync": "6.0.3"
   },
   "devDependencies": {
     "playwright": "1.63.0"
