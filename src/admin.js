@@ -1,7 +1,8 @@
 // The admin pages: the bakery at a glance, every order, customers, reports and settings.
 //
 // Staff see the overview, orders and customers. Owners also see reports, settings and the
-// outbox, and can turn a customer's account off. Every page is plain HTML and forms.
+// outbox, and can turn a customer's account off. Every page is plain HTML and forms; each
+// function returns the page's body, and src/shell.js puts the sidebar around it.
 import { series, totals, breakdown, csv } from '@potomac-solutions/kit/reports';
 import { barChart, rankBars } from '@potomac-solutions/kit/charts';
 import { escape } from './layout.js';
@@ -43,22 +44,34 @@ export function createAdmin({ counter, customers, sent, now = Date.now }) {
     return pages > 1 ? `<p class="pager">${page > 1 ? `<a href="${escape(at(page - 1))}">Newer</a>` : ''}<span>Page ${page} of ${pages}</span>${page < pages ? `<a href="${escape(at(page + 1))}">Older</a>` : ''}</p>` : '';
   };
 
-  function nav(here, owner) {
-    const link = (href, words) => `<a href="${href}"${here === href ? ' aria-current="page"' : ''}>${words}</a>`;
-    return `<nav class="admin-nav" aria-label="Admin"><small>Shop</small>${link('/admin', 'Overview')}${link('/admin/orders', 'Orders')}${link('/admin/customers', 'Customers')}${link('/kitchen', 'The kitchen')}${link('/kitchen/menu', 'Stock and note')}${
-      owner ? `<small>Owner</small>${link('/admin/reports', 'Reports')}${link('/admin/settings', 'Settings')}${link('/staff/people', 'Staff')}${link('/admin/outbox', 'Outbox')}` : ''
-    }</nav>`;
-  }
-  const frame = (here, owner, bar, body) => `<div class="admin">${nav(here, owner)}<div class="admin-body">${bar}${body}</div></div>`;
-  const orderRows = (list) =>
+  /** A column heading that sorts by `key`: a link, so it works without JavaScript and stays in the address. */
+  const sorter = (url, base, key, words, { num = false, first = 'desc' } = {}) => {
+    const now = url.searchParams.get('sort') ?? '';
+    const dir = url.searchParams.get('dir') === 'asc' ? 'asc' : 'desc';
+    const next = new URLSearchParams(url.searchParams);
+    next.set('sort', key);
+    next.set('dir', now === key ? (dir === 'asc' ? 'desc' : 'asc') : first);
+    next.delete('page');
+    return `<th scope="col"${num ? ' class="num"' : ''}${now === key ? ` aria-sort="${dir === 'asc' ? 'ascending' : 'descending'}"` : ''}><a href="${base}?${escape(String(next))}">${words}</a></th>`;
+  };
+  const sorted = (url, list, keys) => {
+    const by = keys[url.searchParams.get('sort')];
+    if (!by) return list;
+    const sign = url.searchParams.get('dir') === 'asc' ? 1 : -1;
+    return list.slice().sort((a, b) => (by(a) < by(b) ? -sign : by(a) > by(b) ? sign : 0));
+  };
+  // Each page used to wrap itself in the admin's navigation; the shell does that now.
+  const frame = (_here, _owner, _bar, body) => body;
+  const head = (title, lede, tools = '') => `<section class="page-head"><h1>${title}</h1><p class="lede">${lede}</p>${tools ? `<div class="tools">${tools}</div>` : ''}</section>`;
+  const orderRows = (list, heads = '<th scope="col">Pickup</th><th scope="col">Who</th><th scope="col">What</th><th scope="col">Status</th><th scope="col" class="num">Paid</th>') =>
     list.length
-      ? `<div class="table-wrap"><table><thead><tr><th scope="col">Pickup</th><th scope="col">Who</th><th scope="col">What</th><th scope="col">Status</th><th scope="col" class="num">Paid</th></tr></thead><tbody>${list
+      ? `<div class="table-wrap"><table class="cards"><thead><tr>${heads}</tr></thead><tbody>${list
           .map(
             (order) =>
-              `<tr><td><a href="/admin/orders/${order.key}">${escape(pickup(order))}</a><br><small class="muted">${escape(order.key)}</small></td><td>${escape(order.name)}${order.customer ? ` <a class="muted" href="/admin/customers/${escape(order.customer)}">(account)</a>` : ''}<br><small class="muted">${escape(order.phone || order.email || '')}</small></td><td>${what(order)}</td><td>${badge(order.status)}</td><td class="num">${money(order.cents)}</td></tr>`,
+              `<tr><td class="lead" data-label="Pickup"><a href="/admin/orders/${order.key}">${escape(pickup(order))}</a><small class="muted">${escape(order.key.slice(-6).toUpperCase())}</small></td><td data-label="Who">${escape(order.name)}${order.customer ? ` <a class="muted" href="/admin/customers/${escape(order.customer)}">(account)</a>` : ''}<small class="muted">${escape(order.phone || order.email || '')}</small></td><td data-label="What">${what(order)}</td><td data-label="Status">${badge(order.status)}</td><td class="num" data-label="Paid">${money(order.cents)}</td></tr>`,
           )
           .join('')}</tbody></table></div>`
-      : '<p>None.</p>';
+      : '<p class="muted">No orders here.</p>';
 
   function filterOrders(url) {
     const q = (url.searchParams.get('q') ?? '').trim().toLowerCase().slice(0, 80);
@@ -88,9 +101,7 @@ export function createAdmin({ counter, customers, sent, now = Date.now }) {
   };
 
   return {
-    nav,
-
-    dashboard({ who, owner, bar }) {
+    dashboard({ who, owner }) {
       const at = now();
       const all = counter.allOrders();
       const today = localDate(at);
@@ -103,22 +114,28 @@ export function createAdmin({ counter, customers, sent, now = Date.now }) {
       const open = counter.kitchen();
       const days = series(all, { at: (order) => order.placedAt, amount: (order) => order.cents, by: 'day', zone, from: at - 29 * DAY, to: at });
       const activity = counter.activity(8);
-      return frame(
-        '/admin',
-        owner,
-        bar,
-        `<section><h1>Overview</h1><p class="lede">${escape(shop.name)}, ${escape(day(today))}. Good to see you, ${escape(who.name.split(' ')[0])}.</p></section>
+      const todays = all.filter((order) => order.slot.startsWith(today));
+      const todayTakings = totals(todays, { amount: (order) => order.cents }).amount;
+      const count = (status) => open.filter((order) => order.status === status).length;
+      const change = earlier ? Math.round(((revenue - earlier) / earlier) * 100) : null;
+      const low = counter.menu().flatMap(({ items }) => items).filter((item) => item.left !== null && item.left > 0 && item.left <= 5);
+      return `${head('Overview', `${escape(day(today))}. Good to see you, ${escape(who.name.split(' ')[0])}.`)}
+<section class="stack" aria-label="Right now"><div class="section-title"><h2>Right now</h2><a href="/kitchen">Open the kitchen</a></div>
 <div class="tiles">
-  <div class="tile"><span>Takings, last 30 days</span><strong>${money(revenue)}</strong><small>${earlier ? `${revenue >= earlier ? '▲' : '▼'} ${Math.abs(Math.round(((revenue - earlier) / earlier) * 100))}% on the 30 days before` : 'No earlier month to compare'}</small></div>
+  <a class="tile now" href="/kitchen" style="text-decoration:none"><span>To make</span><strong>${count('placed')}</strong><small>${count('making')} being made</small></a>
+  <div class="tile"><span>Ready at the window</span><strong>${count('ready')}</strong><small>waiting to be picked up</small></div>
+  <div class="tile"><span>For pickup today</span><strong>${todays.length}</strong><small>${money(todayTakings)} taken · ${open.length} not picked up yet</small></div>
+  <div class="tile${soldOut.length ? ' alert' : ''}"><span>Sold out now</span><strong>${soldOut.length}</strong><small>${soldOut.length ? escape(soldOut.map((item) => item.name).join(', ')) : 'Everything’s in'}${low.length ? ` · low: ${escape(low.map((item) => `${item.name} (${item.left})`).join(', '))}` : ''} · <a href="/kitchen/menu">Stock</a></small></div>
+</div></section>
+<section class="panel"><div class="section-title"><h2>Next to hand over</h2><a href="/admin/orders?when=today">Today’s orders</a></div>${orderRows(open.slice(0, 6))}</section>
+<section class="stack" aria-label="The last 30 days"><div class="section-title"><h2>The last 30 days</h2>${owner ? '<a href="/admin/reports">All reports</a>' : ''}</div>
+<div class="tiles">
+  <div class="tile"><span>Takings, last 30 days</span><strong>${money(revenue)}</strong><small>${change === null ? 'No earlier month to compare' : `<span class="${change >= 0 ? 'up' : 'down'}" style="display:inline">${change >= 0 ? '▲' : '▼'} ${Math.abs(change)}%</span> on the 30 days before`}</small></div>
   <div class="tile"><span>Orders, last 30 days</span><strong>${last30.length}</strong><small>${money(last30.length ? Math.round(revenue / last30.length) : 0)} on average</small></div>
-  <div class="tile"><span>For pickup today</span><strong>${all.filter((order) => order.slot.startsWith(today)).length}</strong><small>${open.length} not picked up yet</small></div>
-  <div class="tile"><span>Sold out now</span><strong>${soldOut.length}</strong><small>${soldOut.length ? escape(soldOut.map((item) => item.name).join(', ')) : 'Everything’s in'}</small></div>
   <div class="tile"><span>Customer accounts</span><strong>${people.length}</strong><small>${people.filter((one) => one.at > at - 30 * DAY).length} new in 30 days</small></div>
-</div>
-<section class="panel"><h2>Takings by day, last 30 days</h2>${barChart(days.map((b) => ({ label: short(b.start, 'day'), value: b.amount, tip: `${day(b.start)}: ${money(b.amount)} from ${b.count} order${b.count === 1 ? '' : 's'}` })), { name: 'Takings', format: money })}${owner ? '<p><a href="/admin/reports">All reports</a></p>' : ''}</section>
-<section class="panel"><h2>In the kitchen</h2>${orderRows(open.slice(0, 8))}<p><a href="/kitchen">The kitchen</a> · <a href="/admin/orders">Every order</a></p></section>
-<section class="panel"><h2>Staff activity</h2>${activity.length ? `<ul>${activity.map((one) => `<li><strong>${escape(one.by)}</strong> ${escape(one.what)} <small class="muted">${dateTime(one.at)}</small></li>`).join('')}</ul>` : '<p>Nothing yet.</p>'}</section>`,
-      );
+</div></section>
+<section class="panel"><h2>Takings by day</h2>${barChart(days.map((b) => ({ label: short(b.start, 'day'), value: b.amount, tip: `${day(b.start)}: ${money(b.amount)} from ${b.count} order${b.count === 1 ? '' : 's'}` })), { name: 'Takings', format: money })}</section>
+<section class="panel"><h2>Staff activity</h2>${activity.length ? `<ul class="activity">${activity.map((one) => `<li><span><strong>${escape(one.by)}</strong> ${escape(one.what)}</span><small>${dateTime(one.at)}</small></li>`).join('')}</ul>` : '<p class="muted">Nothing yet. What staff do here is listed as they do it.</p>'}</section>`;
     },
 
     orders({ url, owner, bar }) {
@@ -128,19 +145,21 @@ export function createAdmin({ counter, customers, sent, now = Date.now }) {
       const status = url.searchParams.get('status') ?? '';
       const query = new URLSearchParams(url.searchParams);
       query.delete('page');
+      const shown = sorted(url, list, { pickup: (order) => order.slot, status: (order) => counter.steps.indexOf(order.status), paid: (order) => order.cents });
       return frame(
         '/admin/orders',
         owner,
         bar,
-        `<section><h1>Orders</h1><p class="lede">${list.length} order${list.length === 1 ? '' : 's'}, ${money(totals(list, { amount: (order) => order.cents }).amount)}.</p></section>
+        `${head('Orders', `${list.length} order${list.length === 1 ? '' : 's'}, ${money(totals(list, { amount: (order) => order.cents }).amount)}.`)}
+<div class="segments" role="group" aria-label="Pickup day">${[['all', 'All'], ['today', 'Today'], ['ahead', 'After today'], ['past', 'Before today']].map(([value, words]) => { const next = new URLSearchParams(query); next.set('when', value); return `<a href="/admin/orders?${escape(String(next))}"${when === value ? ' aria-current="true"' : ''}>${words}</a>`; }).join('')}</div>
 <form class="panel filters" method="get" action="/admin/orders">
-  <label>Search<input name="q" value="${escape(url.searchParams.get('q') ?? '')}" placeholder="Name, email, phone or code"></label>
-  <label>Pickup<select name="when">${option('all', 'Any day', when)}${option('today', 'Today', when)}${option('ahead', 'After today', when)}${option('past', 'Before today', when)}</select></label>
+  <label class="grow">Search<input name="q" type="search" value="${escape(url.searchParams.get('q') ?? '')}" placeholder="Name, email, phone or code"></label>
+  <input type="hidden" name="when" value="${escape(when)}">
   <label>Status<select name="status">${option('', 'Any', status)}${Object.entries(STATUS).map(([value, [, words]]) => option(value, words, status)).join('')}</select></label>
   <button type="submit">Show</button>
   <a class="button light" href="/admin/orders.csv?${escape(String(query))}">Download CSV</a>
 </form>
-<section class="panel">${orderRows(list.slice((page - 1) * PAGE, page * PAGE))}${pager(url, '/admin/orders', list.length, page)}</section>`,
+<section class="panel">${list.length ? orderRows(shown.slice((page - 1) * PAGE, page * PAGE), `${sorter(url, '/admin/orders', 'pickup', 'Pickup')}<th scope="col">Who</th><th scope="col">What</th>${sorter(url, '/admin/orders', 'status', 'Status', { first: 'asc' })}${sorter(url, '/admin/orders', 'paid', 'Paid', { num: true })}`) : `<p class="muted">No orders match. <a href="/admin/orders">Clear the search</a>.</p>`}${pager(url, '/admin/orders', list.length, page)}</section>`,
       );
     },
 
@@ -166,10 +185,10 @@ export function createAdmin({ counter, customers, sent, now = Date.now }) {
         '/admin/orders',
         owner,
         bar,
-        `<section><a href="/admin/orders">All orders</a><h1>${escape(order.name)}: ${escape(pickup(order))}</h1><p class="lede">${escape(order.key)} · ${badge(order.status)}</p></section>
+        `<section class="page-head"><a class="back" href="/admin/orders">All orders</a><h1>${escape(order.name)}: ${escape(pickup(order))}</h1><p class="lede">Order ${escape(order.key.slice(-6).toUpperCase())} · ${badge(order.status)}</p></section>
 ${said}
 <section class="two">
-  <div class="panel"><h2>In the bag</h2><dl>${order.lines.map((line) => `<dt>${line.qty} × ${escape(line.name)}</dt><dd>${money(line.total ?? line.cents * line.qty)}</dd>`).join('')}<dt>Paid</dt><dd>${money(order.cents)} (test mode)</dd></dl>${next ? `<form method="post" action="/admin/orders/${order.key}/advance"><input type="hidden" name="to" value="${next}"><button type="submit">${words[next]}</button></form>` : ''}</div>
+  <div class="panel"><h2>In the bag</h2><dl>${order.lines.map((line) => `<dt>${line.qty} × ${escape(line.name)}</dt><dd>${money(line.total ?? line.cents * line.qty)}</dd>`).join('')}<dt>Paid</dt><dd>${money(order.cents)} (test mode)</dd></dl>${next ? `<form method="post" action="/admin/orders/${order.key}/advance"><input type="hidden" name="to" value="${next}"><button type="submit" class="go lg">${words[next]}</button></form>` : '<p class="muted">Picked up. Nothing more to do.</p>'}</div>
   <div class="panel"><h2>Who</h2><dl><dt>Name</dt><dd>${escape(order.name)}</dd><dt>Email</dt><dd>${escape(order.email || '—')}</dd><dt>Phone</dt><dd>${escape(order.phone || '—')}</dd><dt>Account</dt><dd>${account ? `<a href="/admin/customers/${escape(account.customer)}">${escape(account.name)}</a>` : 'Ordered as a guest'}</dd><dt>Placed</dt><dd>${dateTime(order.placedAt)}</dd></dl></div>
 </section>`,
       );
@@ -192,13 +211,13 @@ ${said}
         '/admin/customers',
         owner,
         bar,
-        `<section><h1>Customers</h1><p class="lede">${customers.list().length} with accounts. Anyone can also order as a guest.</p></section>
-<form class="panel filters" method="get" action="/admin/customers"><label>Search<input name="q" value="${escape(url.searchParams.get('q') ?? '')}" placeholder="Name or email"></label><button type="submit">Show</button><a class="button light" href="/admin/customers.csv">Download CSV</a></form>
-<section class="panel"><div class="table-wrap"><table><thead><tr><th scope="col">Customer</th><th scope="col">Joined</th><th scope="col" class="num">Orders</th><th scope="col" class="num">Spent</th><th scope="col">Last order</th></tr></thead><tbody>${list
+        `${head('Customers', `${customers.list().length} with accounts. Anyone can also order as a guest.`)}
+<form class="panel filters" method="get" action="/admin/customers"><label class="grow">Search<input name="q" type="search" value="${escape(url.searchParams.get('q') ?? '')}" placeholder="Name or email"></label><button type="submit">Show</button><a class="button light" href="/admin/customers.csv">Download CSV</a></form>
+<section class="panel">${list.length ? '' : '<p class="muted">Nobody matches. <a href="/admin/customers">Clear the search</a>.</p>'}<div class="table-wrap"${list.length ? '' : ' hidden'}><table class="cards"><thead><tr>${sorter(url, '/admin/customers', 'name', 'Customer', { first: 'asc' })}${sorter(url, '/admin/customers', 'joined', 'Joined')}${sorter(url, '/admin/customers', 'orders', 'Orders', { num: true })}${sorter(url, '/admin/customers', 'spent', 'Spent', { num: true })}${sorter(url, '/admin/customers', 'last', 'Last order')}</tr></thead><tbody>${sorted(url, list, { name: (one) => one.name.toLowerCase(), joined: (one) => one.at, orders: (one) => stats.get(one.customer)?.count ?? 0, spent: (one) => stats.get(one.customer)?.cents ?? 0, last: (one) => stats.get(one.customer)?.last ?? 0 })
           .slice((page - 1) * PAGE, page * PAGE)
           .map((one) => {
             const s = stats.get(one.customer) ?? { count: 0, cents: 0, last: 0 };
-            return `<tr><td><a href="/admin/customers/${escape(one.customer)}">${escape(one.name)}</a>${one.disabled ? ' <span class="badge off">Off</span>' : ''}<br><small class="muted">${escape(one.email)}</small></td><td>${dateTime(one.at)}</td><td class="num">${s.count}</td><td class="num">${money(s.cents)}</td><td>${s.last ? dateTime(s.last) : '—'}</td></tr>`;
+            return `<tr><td class="lead" data-label="Customer"><a href="/admin/customers/${escape(one.customer)}">${escape(one.name)}</a>${one.disabled ? ' <span class="badge off">Off</span>' : ''}<small class="muted">${escape(one.email)}</small></td><td data-label="Joined">${dateTime(one.at)}</td><td class="num" data-label="Orders">${s.count}</td><td class="num" data-label="Spent">${money(s.cents)}</td><td data-label="Last order">${s.last ? dateTime(s.last) : '—'}</td></tr>`;
           })
           .join('')}</tbody></table></div>${pager(url, '/admin/customers', list.length, page)}</section>`,
       );
@@ -223,13 +242,13 @@ ${said}
         '/admin/customers',
         owner,
         bar,
-        `<section><a href="/admin/customers">All customers</a><h1>${escape(one.name)}</h1><p class="lede">${escape(one.email)} · joined ${dateTime(one.at)}${one.disabled ? ' · <span class="badge off">Turned off</span>' : ''}</p></section>
+        `<section class="page-head"><a class="back" href="/admin/customers">All customers</a><h1>${escape(one.name)}</h1><p class="lede">${escape(one.email)} · joined ${dateTime(one.at)}${one.disabled ? ' · <span class="badge off">Turned off</span>' : ''}</p></section>
 ${said}
 <div class="tiles"><div class="tile"><span>Orders</span><strong>${orders.length}</strong></div><div class="tile"><span>Spent</span><strong>${money(totals(orders, { amount: (order) => order.cents }).amount)}</strong></div><div class="tile"><span>Usually gets</span><strong>${escape(favourite?.key ?? '—')}</strong></div></div>
 <section class="panel"><h2>Orders</h2>${orderRows(orders)}</section>
 ${
   owner
-    ? `<section class="panel"><h2>Account</h2><p>Turning an account off signs it out everywhere; its orders stay.</p><div class="filters"><form method="post" action="/admin/customers/${escape(one.customer)}/disabled"><input type="hidden" name="disabled" value="${one.disabled ? 'no' : 'yes'}"><button type="submit" class="${one.disabled ? '' : 'button light'}">${one.disabled ? 'Turn back on' : 'Turn off'}</button></form>${one.disabled ? '' : `<form method="post" action="/admin/customers/${escape(one.customer)}/reset"><button class="button light" type="submit">Email a reset link</button></form>`}</div></section>`
+    ? `<section class="panel"><h2>Account</h2><div class="filters">${one.disabled ? `<form method="post" action="/admin/customers/${escape(one.customer)}/disabled"><input type="hidden" name="disabled" value="no"><button type="submit">Turn back on</button></form>` : `<form method="post" action="/admin/customers/${escape(one.customer)}/reset"><button class="button light" type="submit">Email a reset link</button></form>`}</div>${one.disabled ? '<p class="muted">This account is off: it can’t sign in. Its orders are kept.</p>' : `<details class="confirm"><summary>Turn this account off…</summary><div class="sure"><p><strong>${escape(one.name)} will be signed out everywhere and won’t be able to sign in.</strong> Their orders stay, and an owner can turn the account back on.</p><form method="post" action="/admin/customers/${escape(one.customer)}/disabled"><input type="hidden" name="disabled" value="yes"><button type="submit">Yes, turn it off</button></form></div></details>`}</section>`
     : ''
 }`,
       );
@@ -257,8 +276,8 @@ ${
         '/admin/reports',
         owner,
         bar,
-        `<section><h1>Reports</h1><p class="lede">${r.label}, by ${r.by}, in the shop’s time (${escape(zone)}). Counted on the day each order was paid for.</p></section>
-<div class="panel filters" role="group" aria-label="Range">${Object.entries(RANGES).map(([key, one]) => `<a class="button${key === r.key ? '' : ' light'}" href="?range=${key}"${key === r.key ? ' aria-current="true"' : ''}>${one.label}</a>`).join('')}</div>
+        `${head('Reports', `${r.label}, by ${r.by}, in the shop’s time (${escape(zone)}). Counted on the day each order was paid for.`)}
+<div class="segments" role="group" aria-label="Range">${Object.entries(RANGES).map(([key, one]) => `<a href="?range=${key}"${key === r.key ? ' aria-current="true"' : ''}>${one.label}</a>`).join('')}</div>
 <div class="tiles">
   <div class="tile"><span>Takings</span><strong>${money(sum.amount)}</strong></div>
   <div class="tile"><span>Orders</span><strong>${sum.count}</strong></div>
@@ -291,12 +310,12 @@ ${
         '/admin/settings',
         owner,
         bar,
-        `<section><h1>Settings</h1><p class="lede">Names, prices and the words guests see. A new price applies to orders from now on; paid orders keep theirs. Stock is on <a href="/kitchen/menu">Stock and note</a>.</p></section>
+        `${head('Settings', 'Names, prices and the words guests see. Each row and each group saves on its own.')}
 ${said}
-<section class="panel"><h2>The menu</h2><div class="table-wrap"><table><tbody>${items
-          .map((item) => `<tr><td class="muted">${escape(item.section)}</td><td colspan="2"><form class="filters" method="post" action="/admin/settings/item"><input type="hidden" name="item" value="${escape(item.key)}"><label>Name<input name="name" maxlength="80" required value="${escape(item.name)}"></label><label>Price ($)<input name="price" inputmode="decimal" maxlength="8" required value="${(item.cents / 100).toFixed(2)}"></label><button class="button light" type="submit">Save</button></form></td></tr>`)
-          .join('')}</tbody></table></div></section>
-<form class="panel" method="post" action="/admin/settings/shop"><h2>The shop</h2>
+<section class="panel"><h2>The menu</h2><p class="hint">A new price applies to orders from now on; paid orders keep theirs. How many are left is on <a href="/kitchen/menu">Stock and note</a>.</p><div class="item-rows">${items
+          .map((item) => `<form method="post" action="/admin/settings/item"><input type="hidden" name="item" value="${escape(item.key)}"><span class="sec-name">${escape(item.section)}</span><label>Name<input name="name" maxlength="80" required value="${escape(item.name)}"></label><label>Price ($)<input name="price" inputmode="decimal" maxlength="8" required value="${(item.cents / 100).toFixed(2)}"></label><button class="button light" type="submit" aria-label="Save ${escape(item.name)}">Save</button></form>`)
+          .join('')}</div></section>
+<form class="panel" method="post" action="/admin/settings/shop"><h2>The shop</h2><p class="hint">Shown in the hero’s board, the Visit section and the footer of the shop’s page.</p>
 <label>Hours<input name="hours" maxlength="120" required value="${escape(shop.hours)}"></label>
 <label>Pickup<textarea name="pickup" rows="2" maxlength="240" required>${escape(shop.pickup)}</textarea></label>
 <button type="submit">Save the shop</button></form>`,
@@ -309,8 +328,8 @@ ${said}
         '/admin/outbox',
         owner,
         bar,
-        `<section><h1>Outbox</h1><p class="lede">This demo sends no real email. What it would have sent since the server started is here, newest first.</p></section>
-<section class="panel">${list.length ? list.map((message) => `<article class="stack" style="border-top:1px solid var(--border);padding-top:0.75rem"><p><strong>${escape(message.subject)}</strong><br><small class="muted">To ${escape(message.to)}</small></p><pre style="white-space:pre-wrap;margin:0">${escape(message.body)}</pre></article>`).join('') : '<p>Nothing sent yet.</p>'}</section>`,
+        `${head('Outbox', 'This demo sends no real email. What it would have sent since the server started is here, newest first.')}
+<section class="panel">${list.length ? list.map((message) => `<article class="message"><p><strong>${escape(message.subject)}</strong><br><small class="muted">To ${escape(message.to)}</small></p><pre>${escape(message.body)}</pre></article>`).join('') : '<p class="muted">Nothing sent yet. Order confirmations and password links will show here.</p>'}</section>`,
       );
     },
   };
