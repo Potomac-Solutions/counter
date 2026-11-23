@@ -2,7 +2,7 @@
 // to the log. The styles are files in public/ (base.css for every page, site.css for the landing
 // page, customer.css for the bag, checkout, orders and account); the words come from src/shop.js.
 import { CHART_CSS } from '@potomac-solutions/kit/charts';
-import { asset, FONT_CSS } from './assets.js';
+import { asset, photo, FONT_CSS } from './assets.js';
 import { site } from './shop.js';
 
 export const escape = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -43,7 +43,7 @@ function listing(shop, canonical) {
  */
 export function layout({ title, shop, body, count = null, refresh = 0, nav = {}, wide = false, here = '', landing = false, bag = null, toast = '', description = site.description, canonical = '' }) {
   const link = (href, words, cls = '') => `<a href="${href}"${cls ? ` class="${cls}"` : ''}${here === href ? ' aria-current="page"' : ''}>${words}</a>`;
-  const links = [link('/#menu', 'Menu', 'wide'), link('/#visit', 'Visit', 'wide'), nav.customer ? link('/account', 'Account') : link('/account/sign-in', 'Sign in'), ...(nav.staff ? [link('/admin', 'Admin')] : [])].join('');
+  const links = [link('/#menu', 'Menu', 'wide'), link('/#story', 'Our story', 'wide'), link('/#visit', 'Visit', 'wide'), nav.customer ? link('/account', 'Account') : link('/account/sign-in', 'Sign in'), ...(nav.staff ? [link('/admin', 'Admin')] : [])].join('');
   const fullTitle = landing ? `${shop.name} · Order ahead in ${shop.town}` : `${title} · ${shop.name}`;
   const money = (cents) => `$${(cents / 100).toFixed(2)}`;
   const bagBar = landing && bag?.count ? `<a class="bagbar" href="/order"><span>${bag.count} in your bag · ${money(bag.cents)}</span><span>Check out</span></a>` : '';
@@ -62,7 +62,9 @@ export function layout({ title, shop, body, count = null, refresh = 0, nav = {},
   <meta name="theme-color" content="#6b3f22">
   <link rel="icon" href="${asset('favicon.svg')}" type="image/svg+xml">
   <link rel="preload" href="${asset('fraunces-latin-600-normal.woff2')}" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="${asset('figtree-latin-400-normal.woff2')}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="${asset('figtree-latin-400-normal.woff2')}" as="font" type="font/woff2" crossorigin>${landing && photo('hero') ? `
+  <link rel="preload" href="${photo('hero')}" as="image" fetchpriority="high">
+  <meta property="og:image" content="${escape(canonical ? new URL(photo('hero'), canonical).href : photo('hero'))}">` : ''}
   <style>${FONT_CSS}</style>
   <link rel="stylesheet" href="${asset('base.css')}">
   <link rel="stylesheet" href="${asset(landing ? 'site.css' : 'customer.css')}">${wide ? `
@@ -70,14 +72,14 @@ export function layout({ title, shop, body, count = null, refresh = 0, nav = {},
 </head>
 <body${bagBar ? ' class="has-bag"' : ''}>
   <a class="skip" href="#main">Skip to the page</a>
-  <header class="site-head"><div class="wrap bar">${wordmark(shop)}<nav aria-label="Site">${links}${count === null ? "" : `<a class="bag" href="/order">${art.bag}Your order${count ? ` (${count})` : ""}</a>`}</nav></div></header>
+  <header class="site-head"><div class="wrap bar">${wordmark(shop)}<nav aria-label="Site">${links}${count === null ? "" : count ? `<a class="bag" href="/order">${art.bag}Your order (${count})</a>` : `<a class="bag" href="/#menu">${escape(site.order)}</a>`}</nav></div></header>
   <main id="main"${landing ? ' class="landing"' : wide ? ' class="wide"' : ''}>
     ${body}
   </main>
   ${toast ? `<p class="toast" role="status">${escape(toast)}</p>` : ''}${bagBar}
   <footer class="site-foot"><div class="wrap">
     <div class="cols">
-      <div>${wordmark(shop)}<p>${escape(site.foot.line)}</p><p>${escape(shop.town)}</p></div>
+      <div>${wordmark(shop)}<p>${escape(site.foot.line)}</p><p>${escape(shop.town)}</p><p><a class="go" href="/#menu">${escape(site.order)}</a></p></div>
       <div><h2>Hours</h2><p>${escape(shop.hours)}</p><p>${escape(shop.pickup)}</p></div>
       <div><h2>Order</h2><ul><li><a href="/#menu">Today’s menu</a></li><li><a href="/order">Your order</a></li><li><a href="/account">Your account</a></li><li><a href="tel:+1${shop.phone.replace(/\D/g, '')}">${escape(shop.phone)}</a></li></ul></div>
       <div><h2>Staff</h2><ul><li><a href="/admin">Staff sign in</a></li><li><a href="/kitchen">The kitchen</a></li></ul></div>

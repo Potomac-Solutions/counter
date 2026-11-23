@@ -104,7 +104,7 @@ test('without JavaScript: the menu, a bag, a pickup time, one payment, and the o
   assert.equal(left('drip'), null, 'coffee doesn’t run out');
   await page.goto(app.base);
   assert.match(await page.locator('main').innerText(), /Your orders/);
-  assert.equal(await page.locator('a.bag').innerText(), 'Your order', 'the bag is empty again');
+  assert.equal(await page.locator('a.bag').innerText(), 'Order now', 'the bag is empty again: the button invites an order');
   await guest.context.close();
 });
 

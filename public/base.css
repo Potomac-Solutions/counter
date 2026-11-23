@@ -63,30 +63,33 @@ p { text-wrap: pretty; }
 .skip:focus { top: 0.75rem; }
 .wrap { width: min(72rem, 100% - 2 * var(--gutter)); margin-inline: auto; }
 
-/* The bar across the top of every page. */
-.site-head { position: sticky; top: 0; z-index: 20; background: rgb(251 246 239 / 0.92); backdrop-filter: saturate(1.4) blur(10px); border-bottom: 1px solid var(--line); }
-.site-head .bar { display: flex; align-items: center; gap: 0.75rem 1.25rem; min-height: 4rem; }
+/* The bar across the top of every page: dark, so the logo and "Order now" are the two bright things. */
+.site-head { position: sticky; top: 0; z-index: 20; background: rgb(36 22 13 / 0.94); backdrop-filter: blur(10px); color: #fff; }
+.site-head .bar { display: flex; align-items: center; gap: 0.75rem 1.25rem; min-height: 4.25rem; }
 .wordmark { display: inline-flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--ink); }
-.wordmark svg { width: 2.25rem; height: 2.25rem; flex: none; }
-.wordmark b { display: block; white-space: nowrap; font-family: var(--font-heading); font-weight: 600; font-size: 1.2rem; line-height: 1; letter-spacing: -0.01em; }
+.site-head .wordmark { color: #fff; }
+.wordmark svg { width: 2.4rem; height: 2.4rem; flex: none; }
+.wordmark b { display: block; white-space: nowrap; font-family: var(--font-heading); font-weight: 600; font-size: 1.25rem; line-height: 1; letter-spacing: -0.01em; }
 .wordmark small { display: block; margin-top: 0.2rem; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--rust-ink); line-height: 1; }
+.site-head .wordmark small { color: var(--butter); }
 .site-head nav { margin-left: auto; display: flex; align-items: center; gap: 0.25rem; }
-.site-head nav a:not(.bag) { white-space: nowrap; padding: 0.5rem 0.7rem; border-radius: 999px; font-size: 0.95rem; font-weight: 600; text-decoration: none; }
-.site-head nav a:not(.bag):hover, .site-head nav a[aria-current] { background: var(--muted); }
-.bag { display: inline-flex; align-items: center; gap: 0.45rem; margin-left: 0.4rem; padding: 0.55rem 1rem; border-radius: 999px; background: var(--crust); color: #fff; font-size: 0.95rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
-.bag:hover { background: var(--crust-deep); }
+.site-head nav a:not(.bag) { white-space: nowrap; padding: 0.5rem 0.7rem; border-radius: 999px; font-size: 0.95rem; font-weight: 600; text-decoration: none; color: #f4ebdd; }
+.site-head nav a:not(.bag):hover, .site-head nav a[aria-current] { background: rgb(255 255 255 / 0.12); }
+.bag { display: inline-flex; align-items: center; gap: 0.45rem; margin-left: 0.5rem; min-height: 2.75rem; padding: 0.55rem 1.25rem; border-radius: 999px; background: var(--butter); color: var(--oven); font-size: 1rem; font-weight: 700; text-decoration: none; white-space: nowrap; transition: background-color 0.15s, transform 0.15s; }
+.bag:hover { background: #ffd778; }
+.bag:active { transform: translateY(1px); }
 .bag svg { width: 1.05rem; height: 1.05rem; }
-@media (max-width: 40rem) {
+@media (max-width: 46rem) {
   .site-head nav a.wide { display: none; }
   .wordmark small { display: none; }
   .wordmark b { font-size: 1.05rem; }
   .site-head .wordmark svg { width: 1.9rem; height: 1.9rem; }
-  .site-head .bar { gap: 0.5rem; }
+  .site-head .bar { gap: 0.5rem; min-height: 3.75rem; }
   .site-head .bag svg { display: none; }
-  .site-head .bag { padding-inline: 0.8rem; margin-left: 0.1rem; font-size: 0.9rem; }
+  .site-head .bag { padding-inline: 0.9rem; margin-left: 0.1rem; font-size: 0.92rem; }
   .site-head nav a:not(.bag) { padding-inline: 0.45rem; font-size: 0.9rem; }
 }
-@media (max-width: 23rem) { .wordmark b { font-size: 0.95rem; } .site-head .wordmark svg { display: none; } }
+@media (max-width: 23rem) { .wordmark b { font-size: 0.92rem; } .site-head .wordmark svg { display: none; } .site-head .bag { padding-inline: 0.7rem; font-size: 0.86rem; } .site-head nav a:not(.bag) { padding-inline: 0.3rem; font-size: 0.86rem; } }
 
 main { flex: 1; }
 main:not(.landing) { width: min(60rem, 100% - 2 * var(--gutter)); margin: 0 auto; padding: 2rem 0 4rem; display: grid; gap: 1.5rem; align-content: start; }

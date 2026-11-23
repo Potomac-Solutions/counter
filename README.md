@@ -17,7 +17,7 @@ The shop it starts with, Hickory Hollow Bakehouse in Oakland, Maryland, is made 
 `npm start` alone keeps what's there; with no data it prints a setup link for the first owner instead. `npm run seed` fills an empty shop, and `npm run seed -- --fresh` starts over.
 
 **The public side**
-1. **The landing page** (`/`): the next pickup time, a shelf board of what's running low (live), today's note, the menu with what's left (live), how ordering works, the bakery's story, questions, and where and when. Its words are all in `src/shop.js` (`site`); `src/site.js` lays them out.
+1. **The landing page** (`/`): a full-screen photograph with **Order now**, the carryout promise, today's note, the menu as photo cards with what's left (live) and Add on each, the bakery's story, how it works in three lines, and where and when. Its words are all in `src/shop.js` (`site`); `src/site.js` lays them out.
 2. **Order.** Add a few things, open **Your order**, choose a pickup time, and **Check out** with any card number (`4000 0000 0000 0002` is declined). A confirmation email lands in the owner's **Outbox**.
 3. **An account** (`/account`): sign up, and orders from this browser join it; signed in elsewhere, they're there too, and checkout fills in your name and email. **Forgot your password?** sends a one-time link (to the Outbox, and the server's log).
 4. **Watch it live.** In another window, buy the rye: the first window's menu counts down. Each pickup time takes three orders.
@@ -84,7 +84,7 @@ The design brief, with the audit behind it, is in [`docs/design/brief.md`](docs/
 
 - **Styles** are files in `public/`: `base.css` (colours, type, buttons, forms, panels; every page), `site.css` (the landing page), `customer.css` (the bag, checkout, an order, the account) and `app.css` (the kitchen, stock and the admin).
 - **The staff's side** has its own page frame (`src/shell.js`): a sidebar at a desk; on a phone a bar on top, tabs along the bottom and the sidebar as a sheet. It follows the device's light or dark setting, and a switch in the sidebar remembers a choice on that device. `public/app.js` adds the switch and a few keys (`k` kitchen, `o` orders, `s` stock, `/` search, `1`–`9` move a ticket on, `?` the list); everything works without it. `src/assets.js` serves them, the icon and the two typefaces (Fraunces and Figtree, from `@fontsource`, self-hosted) at `/assets/…` with a hash of their bytes in the address, cached for a year.
-- **Drawings** are inline SVG in `src/layout.js` (`art`). There are no photos.
+- **Photographs** are files in `public/photos/`, one per name: `hero`, `window`, `bakers`, and one per menu item by its key (`sourdough`, `rye`, `baguette`, `cinnamon`, `croissant`, `apple-hand-pie`, `drip`, `latte`), as `.jpg` or `.webp`. Replace a file and restart; a missing one leaves a plain panel. The ones here were generated for this made-up bakery (see `public/photos/README.md`). Small icons are inline SVG in `src/layout.js` (`art`).
 - **Search engines** are asked not to list the page, because the bakery is made up. Set `listed: true` in `src/shop.js` for a real shop: the page gets a canonical link (with `PUBLIC_URL`), `Bakery` structured data, a sitemap, and a `robots.txt` that hides only the private areas.
 - **Checks.** With the demo running, `npm run design-check` opens every page in a browser, signed out and as each demo sign-in, at five widths: nothing scrolls sideways, one `h1`, headings in order, every input labelled, text contrast of 4.5:1, and what the landing page weighs. `--shots <dir>` saves screenshots.
 
