@@ -60,7 +60,7 @@ Sync follows one document, and a new order is a new document that no element on 
 
 - **Only staff are sent it** (`scope` in `src/counter.js`), and it holds a number, never an order.
 - **Without JavaScript** the page reloads itself every 20 seconds, as before.
-- **The sidebar's count** beside "The kitchen" is not swapped; it is right again on the next page.
+- **The sidebar's count** beside "The kitchen" is swapped in too.
 
 ## What the tests prove
 

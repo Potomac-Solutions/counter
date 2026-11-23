@@ -289,6 +289,9 @@ test('the kitchen’s board is live: a new order and a moved one show without a 
   const key = placed.location.split('/').pop();
   await kitchen.page.locator('.lane.placed .ticket', { hasText: 'Opal Livengood' }).waitFor({ timeout: 5000 });
   assert.equal(await count(), before + 1, 'the lane counts it');
+  // The count in the sidebar follows too: it says what a fresh page would.
+  const sideNow = /data-live="waiting-side">(?:<b[^>]*>(\d+)<\/b>)?/.exec(await kitchen.get('/kitchen'))?.[1] ?? '';
+  await kitchen.page.waitForFunction((want) => (document.querySelector('[data-live="waiting-side"]')?.textContent ?? '') === want, sideNow, { timeout: 5000 });
   assert.match(await kitchen.page.locator('.page-head .lede').innerText(), /orders? to hand over/);
   await kitchen.page.locator('kitchen-watch [role=status]', { hasText: 'A new order came in.' }).waitFor({ timeout: 2000 });
 
