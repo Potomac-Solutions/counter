@@ -17,6 +17,7 @@ import * as accountPages from './src/account.js';
 import { money } from './src/account.js';
 import { createAdmin } from './src/admin.js';
 import { createNotices } from '@potomac-solutions/kit/notice';
+import { lockedStaff, lockedCustomers, staffSignIn, guestSignIn, nightly } from './src/demo.js';
 import { createCounter, timeLabel, dayWord, minutesUntil } from './src/counter.js';
 import { layout, escape } from './src/layout.js';
 import { landing } from './src/site.js';
@@ -26,7 +27,7 @@ import { serveAsset } from './src/assets.js';
 const here = dirname(fileURLToPath(import.meta.url));
 const components = join(here, 'src', 'components');
 
-export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'counter.db'), cache = true, secret = process.env.SESSION_SECRET, now = Date.now, holdMs, staffCost, publicUrl = process.env.PUBLIC_URL ?? '' } = {}) {
+export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'counter.db'), cache = true, secret = process.env.SESSION_SECRET, now = Date.now, holdMs, staffCost, publicUrl = process.env.PUBLIC_URL ?? '', demo = process.env.DEMO === '1' } = {}) {
   if (!secret) {
     if (process.env.NODE_ENV === 'production') throw new Error('Set SESSION_SECRET.');
     secret = 'counter-development-only';
@@ -35,7 +36,9 @@ export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'count
   const guests = signedCookie({ secret, name: 'guest' });
   const production = process.env.NODE_ENV === 'production';
   // Customers who make an account (kit/customers), in the shop's own log.
-  const customers = createCustomers({ store: counter.store, secure: production, now, ...(staffCost ? { cost: staffCost } : {}) });
+  const kitCustomers = createCustomers({ store: counter.store, secure: production, now, ...(staffCost ? { cost: staffCost } : {}) });
+  // The public demo (src/demo.js) refuses changes to its sign-ins.
+  const customers = demo ? lockedCustomers(kitCustomers) : kitCustomers;
   // A page follows the orders of its browser and, signed in, of its account.
   counter.identify((request) => {
     const guest = guests.session(request);
@@ -57,7 +60,8 @@ export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'count
 
   // The people who run the shop: an owner and the staff they invite (the kit's staff module), in the
   // shop's own log; their pages and routes are the kit's too.
-  const staff = createStaff({ store: counter.store, secure: production, ...(staffCost ? { cost: staffCost } : {}) });
+  const kitStaff = createStaff({ store: counter.store, secure: production, ...(staffCost ? { cost: staffCost } : {}) });
+  const staff = demo ? lockedStaff(kitStaff) : kitStaff;
   // Staff are sent the kitchen's board: the document that says an order was placed or moved.
   counter.staffed((request) => staff.can(staff.session(request), 'staff'));
   // A message in an address shows only if the server signed it (kit/notice), so a link can't put
@@ -203,7 +207,7 @@ ${note(url)}
       const owner = staff.can(who, 'owner');
       res.who = who;
       const nav = { customer: account, staff: onShift };
-      const signInPage = () => show(zubra.page(), 'Sign in', `<div class="auth">${pages.signIn(url)}</div>`);
+      const signInPage = () => show(zubra.page(), 'Sign in', `<div class="auth">${demo ? staffSignIn(escape) : ''}${pages.signIn(url)}</div>`);
       const show = (p, title, body, options = {}) => page(res, p, title, body, { nav, ...options });
       if (url.pathname.startsWith('/account') || url.pathname.startsWith('/admin')) res.setHeader('cache-control', 'no-store');
       const said = () => note(url);
@@ -299,7 +303,8 @@ ${note(url)}
           const one = customerAction && customers.get(customerAction[1]);
           if (one && customerAction[2] === 'disabled') {
             const off = form.get('disabled') === 'yes';
-            await customers.setDisabled(one.customer, off);
+            const changed = await customers.setDisabled(one.customer, off);
+            if (changed?.error) return back(res, withProblem(`/admin/customers/${one.customer}`, changed));
             await counter.audit(who, `${off ? 'turned off' : 'turned back on'} ${one.name}’s account`, one.customer);
             return back(res, `/admin/customers/${one.customer}?done=${encodeURIComponent(off ? 'Turned off and signed out everywhere.' : 'Turned back on.')}`);
           }
@@ -354,7 +359,7 @@ ${note(url)}
 
       // A customer's pages.
       if (url.pathname === '/account') return account ? show(p, 'Your account', accountPages.account({ counter, guest, customer: account, said: said() }), { guest, here: '/account' }) : back(res, '/account/sign-in');
-      if (url.pathname === '/account/sign-in') return account ? back(res, '/account') : show(p, 'Sign in', accountPages.signIn({ problem: said() }), { here: '/account/sign-in' });
+      if (url.pathname === '/account/sign-in') return account ? back(res, '/account') : show(p, 'Sign in', (demo ? `<div class="auth">${guestSignIn(escape)}</div>` : '') + accountPages.signIn({ problem: said() }), { here: '/account/sign-in' });
       if (url.pathname === '/account/sign-up') return account ? back(res, '/account') : show(p, 'Make an account', accountPages.signUp());
       if (url.pathname === '/account/forgot') return show(p, 'Reset your password', accountPages.forgot());
       if (url.pathname === '/account/reset') {
@@ -409,7 +414,7 @@ ${note(url)}
   server.close = (cb) => stop((error) => {
     try { counter.close(); } finally { cb?.(error); }
   });
-  return Object.assign(server, { counter, staff, customers, sent: mail.sent });
+  return Object.assign(server, { counter, staff, customers, demo, sent: mail.sent });
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -417,6 +422,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (process.argv.includes('--dev')) process.env.NODE_ENV = 'development';
   const port = Number(process.env.PORT ?? 3000);
   const server = await createApp();
+  if (server.demo) nightly();
   if (server.staff.needsOwner()) console.log(`Set up the first owner (works once, for a day): http://localhost:${port}/staff/accept?token=${await server.staff.setup()}`);
-  server.listen(port, '0.0.0.0', () => console.log(`Counter on http://localhost:${port}`));
+  server.listen(port, '0.0.0.0', () => console.log(`Counter on http://localhost:${port}${server.demo ? ' (the public demo: sign-ins on the sign-in pages, data reset every night)' : ''}`));
 }
