@@ -17,9 +17,10 @@ import * as accountPages from './src/account.js';
 import { money } from './src/account.js';
 import { createAdmin } from './src/admin.js';
 import { createNotices } from '@potomac-solutions/kit/notice';
-import { createCounter, timeLabel, dayWord } from './src/counter.js';
+import { createCounter, timeLabel, dayWord, minutesUntil } from './src/counter.js';
 import { layout, escape } from './src/layout.js';
 import { landing } from './src/site.js';
+import { shell } from './src/shell.js';
 import { serveAsset } from './src/assets.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -61,13 +62,16 @@ export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'count
   // its own words in a page's alert.
   const notices = createNotices({ secret });
   const proxies = Number(process.env.TRUST_PROXIES ?? 0);
-  const pages = staffPages({ staff, notices, proxies, home: '/admin', business: shop.name, secure: production, render: (res, title, body) => page(res, zubra.page(), title, body) });
+  const pages = staffPages({ staff, notices, proxies, home: '/admin', business: shop.name, secure: production, // A signed-in member of staff sees the kit's pages (people, their password) inside the staff shell;
+    // signing in and accepting an invite are a narrow card on the shop's own page.
+    render: (res, title, body) => (staff.can(res.who, 'staff') ? staffPage(res, zubra.page(), title, body, { here: title === 'People' ? '/staff/people' : '' }) : page(res, zubra.page(), title, `<div class="auth">${body}</div>`)) });
   const send = (res, status, html) => (res.writeHead(status, { 'content-type': 'text/html; charset=utf-8' }), res.end(html));
   const back = (res, location) => (res.writeHead(303, { location: notices.sign(location) }), res.end());
   const page = (res, p, title, body, { guest = null, refresh = 0, status = 200, ...options } = {}) => {
     const bag = guest ? counter.cart(guest) : null;
     return send(res, status, p.finish(layout({ title, shop, body, count: bag ? bag.count : null, bag, refresh, ...options })));
   };
+  const staffPage = (res, p, title, body, { status = 200, ...options } = {}) => send(res, status, p.finish(shell({ title, shop, body, who: res.who, owner: staff.can(res.who, 'owner'), waiting: counter.kitchen().length, ...options })));
   const admin = createAdmin({ counter, customers, sent: mail.sent, now });
   const downloadCsv = (res, name, text) => (res.writeHead(200, { 'content-type': 'text/csv; charset=utf-8', 'content-disposition': `attachment; filename="${name}"`, 'cache-control': 'no-store' }), res.end(text));
   const note = (url) => {
@@ -142,25 +146,41 @@ ${p.render('order-progress', { order: order.key, statusNow: order.status })}
   function kitchenPage(url) {
     const orders = counter.kitchen();
     const label = { making: 'Start making', ready: 'Ready', 'picked-up': 'Picked up' };
-    return `<section><h1>The kitchen</h1><p class="lede">Orders by pickup time. This page refreshes itself every 20 seconds; the guest’s phone follows each step at once. <a href="/kitchen/menu">Stock and today’s note</a></p></section>
+    const lanes = [['placed', 'To make'], ['making', 'Making'], ['ready', 'Ready at the window']];
+    // How long until pickup, in the kitchen's words. A ticket that should be made by now stands out.
+    const due = (order) => {
+      const mins = minutesUntil(order.slot, now());
+      if (order.status === 'ready') return mins < 0 ? ['warn', `${-mins} min waiting`] : ['handled', mins > 60 ? timeLabel(order.slot) : `in ${mins} min`];
+      if (mins < 0) return ['off', `${-mins} min late`];
+      if (mins <= shop.leadMinutes) return ['warn', mins === 0 ? 'now' : `in ${mins} min`];
+      return ['', mins >= 1440 ? 'tomorrow' : mins > 90 ? `in ${Math.round(mins / 60)} h` : `in ${mins} min`];
+    };
+    let n = 0;
+    const ticket = (order) => {
+      const next = counter.steps[counter.steps.indexOf(order.status) + 1];
+      const [kind, words] = due(order);
+      const key = ++n <= 9 ? n : 0;
+      return `<li class="ticket${kind === 'off' ? ' late' : ''}"><div class="top"><span class="at">${escape(timeLabel(order.slot))}</span><span class="badge ${kind}">${escape(words)}</span></div><p class="who">${escape(order.name)}</p><ul class="lines">${order.lines.map((line) => `<li>${line.qty} × ${escape(line.name)}</li>`).join('')}</ul><form method="post" action="/kitchen/advance"><input type="hidden" name="key" value="${order.key}"><input type="hidden" name="to" value="${next}"><button type="submit"${key ? ` data-key="${key}"` : ''}>${label[next]}${key ? `<kbd aria-hidden="true">${key}</kbd>` : ''}</button></form></li>`;
+    };
+    return `<section class="page-head board-head"><div><h1>The kitchen</h1><p class="lede">${orders.length ? `${orders.length} order${orders.length === 1 ? '' : 's'} to hand over.` : 'Nothing waiting.'} New orders show within 20 seconds; the guest’s phone follows each step at once.</p></div><a class="button light" href="/kitchen/menu">Stock and today’s note</a></section>
 ${note(url)}
-${orders.length ? `<ul class="orders">${orders
-      .map((order) => {
-        const next = counter.steps[counter.steps.indexOf(order.status) + 1];
-        return `<li class="ticket"><p><strong>${escape(timeLabel(order.slot))}</strong> ${dayWord(order.slot, now()) === 'tomorrow' ? '(tomorrow) ' : ''}· ${escape(order.name)} · ${order.status.replace('-', ' ')}</p>${lineList(order.lines)}<form method="post" action="/kitchen/advance"><input type="hidden" name="key" value="${order.key}"><input type="hidden" name="to" value="${next}"><button type="submit">${label[next]}</button></form></li>`;
+<div class="lanes">${lanes
+      .map(([status, title]) => {
+        const list = orders.filter((order) => order.status === status);
+        return `<section class="lane ${status}" aria-label="${title}"><h2>${title} <b>${list.length}</b></h2>${list.length ? `<ul class="orders">${list.map(ticket).join('')}</ul>` : `<p class="none">${status === 'placed' ? 'All caught up.' : status === 'making' ? 'Nothing on the bench.' : 'Nothing waiting at the window.'}</p>`}</section>`;
       })
-      .join('')}</ul>` : '<p>No orders waiting.</p>'}`;
+      .join('')}</div>`;
   }
 
   function kitchenMenu(url) {
     const items = counter.menu().flatMap(({ items }) => items);
-    return `<section><a href="/kitchen">Back to the orders</a><h1>Stock and today’s note</h1><p class="lede">Set how many are left (0 is sold out). Every open menu shows it at once.</p></section>
+    return `<section class="page-head"><a class="back" href="/kitchen">The kitchen</a><h1>Stock and today’s note</h1><p class="lede">Set how many are left. Every open menu, and the board on the shop’s page, shows it at once.</p></section>
 ${note(url)}
-<section class="panel">${items
+<div class="stock-grid">${items
       .filter((item) => item.left !== null)
-      .map((item) => `<form class="stock" method="post" action="/kitchen/stock"><input type="hidden" name="item" value="${item.key}"><label>${escape(item.name)}<input name="left" type="number" min="0" max="500" value="${item.left}"></label><button type="submit">Set</button></form>`)
-      .join('')}</section>
-<form class="panel" method="post" action="/kitchen/note"><h2>Today’s note</h2><label>The special, what’s fresh<textarea name="text" rows="2" maxlength="200">${escape(counter.note().text)}</textarea></label><button type="submit">Post it</button></form>`;
+      .map((item) => `<div class="stock-item${item.left === 0 ? ' gone' : ''}"><h2>${escape(item.name)} ${item.left === 0 ? '<span class="badge off">Sold out</span>' : item.left <= 5 ? `<span class="badge warn">${item.left} left</span>` : ''}</h2><div class="row"><form class="stock" method="post" action="/kitchen/stock"><input type="hidden" name="item" value="${item.key}"><label>Left<input name="left" type="number" inputmode="numeric" min="0" max="500" value="${item.left}"></label><button type="submit">Set</button></form>${item.left === 0 ? '' : `<form method="post" action="/kitchen/stock"><input type="hidden" name="item" value="${item.key}"><input type="hidden" name="left" value="0"><button class="button light" type="submit" aria-label="Mark ${escape(item.name)} sold out">Sold out</button></form>`}</div></div>`)
+      .join('')}</div>
+<form class="panel" method="post" action="/kitchen/note"><h2>Today’s note</h2><label>The special, what’s fresh<span class="hint">Shown at the top of the shop’s page. Up to 200 characters.</span><textarea name="text" rows="2" maxlength="200">${escape(counter.note().text)}</textarea></label><button type="submit">Post it</button></form>`;
   }
 
   const server = createServer(async (req, res) => {
@@ -179,7 +199,9 @@ ${note(url)}
       const who = staff.session(req);
       const onShift = staff.can(who, 'staff');
       const owner = staff.can(who, 'owner');
+      res.who = who;
       const nav = { customer: account, staff: onShift };
+      const signInPage = () => show(zubra.page(), 'Sign in', `<div class="auth">${pages.signIn(url)}</div>`);
       const show = (p, title, body, options = {}) => page(res, p, title, body, { nav, ...options });
       if (url.pathname.startsWith('/account') || url.pathname.startsWith('/admin')) res.setHeader('cache-control', 'no-store');
       const said = () => note(url);
@@ -340,25 +362,24 @@ ${note(url)}
 
       // The admin: staff only; reports, settings and the outbox for owners.
       if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
-        if (!onShift) return show(p, 'Sign in', pages.signIn(url));
-        const bar = pages.bar(who);
-        const wide = { wide: true, here: '/admin' };
-        if (url.pathname === '/admin') return show(p, 'Overview', admin.dashboard({ who, owner, bar }), wide);
-        if (url.pathname === '/admin/orders') return show(p, 'Orders', admin.orders({ url, owner, bar }), wide);
+        if (!onShift) return signInPage();
+        const at = (here) => ({ here });
+        if (url.pathname === '/admin') return staffPage(res, p, 'Overview', admin.dashboard({ who, owner }), at('/admin'));
+        if (url.pathname === '/admin/orders') return staffPage(res, p, 'Orders', admin.orders({ url, owner }), at('/admin/orders'));
         if (url.pathname === '/admin/orders.csv') return downloadCsv(res, 'orders.csv', admin.ordersCsv(url));
         const oneOrder = url.pathname.match(/^\/admin\/orders\/(c[a-z0-9]+)$/);
         const order = oneOrder && counter.staffOrder(oneOrder[1]);
-        if (order) return show(p, `Order ${order.key}`, admin.order({ order, owner, bar, said: said() }), wide);
-        if (url.pathname === '/admin/customers') return show(p, 'Customers', admin.customers({ url, owner, bar }), wide);
+        if (order) return staffPage(res, p, `Order ${order.key}`, admin.order({ order, owner, said: said() }), at('/admin/orders'));
+        if (url.pathname === '/admin/customers') return staffPage(res, p, 'Customers', admin.customers({ url, owner }), at('/admin/customers'));
         if (url.pathname === '/admin/customers.csv') return downloadCsv(res, 'customers.csv', admin.customersCsv());
         const oneCustomer = url.pathname.match(/^\/admin\/customers\/(c[a-z0-9]+)$/);
         const one = oneCustomer && customers.get(oneCustomer[1]);
-        if (one) return show(p, one.name, admin.customer({ one, owner, bar, said: said() }), wide);
-        if (['/admin/reports', '/admin/reports.csv', '/admin/settings', '/admin/outbox'].includes(url.pathname) && !owner) return show(p, 'Owners only', '<section><h1>Owners only</h1><p class="lede">Ask an owner to see this page.</p><p><a href="/admin">Back to the overview</a></p></section>', { status: 403 });
-        if (url.pathname === '/admin/reports') return show(p, 'Reports', admin.reports({ url, owner, bar }), wide);
+        if (one) return staffPage(res, p, one.name, admin.customer({ one, owner, said: said() }), at('/admin/customers'));
+        if (['/admin/reports', '/admin/reports.csv', '/admin/settings', '/admin/outbox'].includes(url.pathname) && !owner) return staffPage(res, p, 'Owners only', '<section class="page-head"><h1>Owners only</h1><p class="lede">Reports, settings and the outbox are for owners. Ask one to show you this page.</p></section><p><a class="button light" href="/admin">Back to the overview</a></p>', { status: 403 });
+        if (url.pathname === '/admin/reports') return staffPage(res, p, 'Reports', admin.reports({ url, owner }), at('/admin/reports'));
         if (url.pathname === '/admin/reports.csv') return downloadCsv(res, 'takings.csv', admin.reportCsv(url));
-        if (url.pathname === '/admin/settings') return show(p, 'Settings', admin.settings({ owner, bar, said: said() }), wide);
-        if (url.pathname === '/admin/outbox') return show(p, 'Outbox', admin.outbox({ owner, bar }), wide);
+        if (url.pathname === '/admin/settings') return staffPage(res, p, 'Settings', admin.settings({ owner, said: said() }), at('/admin/settings'));
+        if (url.pathname === '/admin/outbox') return staffPage(res, p, 'Outbox', admin.outbox({ owner }), at('/admin/outbox'));
         return send(res, 404, 'Not found');
       }
       if (url.pathname === '/order') return show(p, 'Your order', orderPage(p, url, guest), { guest });
@@ -371,9 +392,9 @@ ${note(url)}
       const order = ordering && counter.order(guest, ordering[1]);
       if (order) return show(p, 'Your order', orderStatus(p, order), { guest });
       if (url.pathname === '/kitchen' || url.pathname === '/kitchen/menu') {
-        if (!onShift) return show(p, 'Sign in', pages.signIn(url));
-        if (url.pathname === '/kitchen') return show(p, 'The kitchen', pages.bar(who) + kitchenPage(url), { refresh: 20 });
-        return show(p, 'Stock', pages.bar(who) + kitchenMenu(url));
+        if (!onShift) return signInPage();
+        if (url.pathname === '/kitchen') return staffPage(res, p, 'The kitchen', kitchenPage(url), { refresh: 20, here: '/kitchen' });
+        return staffPage(res, p, 'Stock and note', kitchenMenu(url), { here: '/kitchen/menu' });
       }
       send(res, 404, 'Not found');
     } catch (error) {

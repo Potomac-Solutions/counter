@@ -58,6 +58,12 @@ export const timeLabel = (slot) => {
   const [hours, mins] = slot.slice(11).split(':').map(Number);
   return `${((hours + 11) % 12) + 1}:${String(mins).padStart(2, '0')} ${hours < 12 ? 'am' : 'pm'}`;
 };
+/** Minutes from now until a pickup time, on the bakery's clock: negative once it has passed. */
+export const minutesUntil = (slot, now = Date.now()) => {
+  const here = moment(new Date(now), shop.timeZone);
+  const days = Math.round((Date.parse(`${slot.slice(0, 10)}T00:00:00Z`) - Date.parse(`${here.date}T00:00:00Z`)) / 86_400_000);
+  return days * 1440 + minutes(slot.slice(11)) - minutes(here.time);
+};
 const slotKey = (slot) => slot.replace(/[^0-9]/g, '');
 
 export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 2 * 60_000 } = {}) {
