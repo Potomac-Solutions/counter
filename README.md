@@ -82,7 +82,8 @@ Every behaviour was broken on purpose once to check a test fails (19 of 20 caugh
 
 The design brief, with the audit behind it, is in [`docs/design/brief.md`](docs/design/brief.md).
 
-- **Styles** are files in `public/`: `base.css` (colours, type, buttons, forms, panels; every page) and `site.css` (the landing page). `src/assets.js` serves them, the icon and the two typefaces (Fraunces and Figtree, from `@fontsource`, self-hosted) at `/assets/…` with a hash of their bytes in the address, cached for a year.
+- **Styles** are files in `public/`: `base.css` (colours, type, buttons, forms, panels; every page), `site.css` (the landing page), `customer.css` (the bag, checkout, an order, the account) and `app.css` (the kitchen, stock and the admin).
+- **The staff's side** has its own page frame (`src/shell.js`): a sidebar at a desk; on a phone a bar on top, tabs along the bottom and the sidebar as a sheet. It follows the device's light or dark setting, and a switch in the sidebar remembers a choice on that device. `public/app.js` adds the switch and a few keys (`k` kitchen, `o` orders, `s` stock, `/` search, `1`–`9` move a ticket on, `?` the list); everything works without it. `src/assets.js` serves them, the icon and the two typefaces (Fraunces and Figtree, from `@fontsource`, self-hosted) at `/assets/…` with a hash of their bytes in the address, cached for a year.
 - **Drawings** are inline SVG in `src/layout.js` (`art`). There are no photos.
 - **Search engines** are asked not to list the page, because the bakery is made up. Set `listed: true` in `src/shop.js` for a real shop: the page gets a canonical link (with `PUBLIC_URL`), `Bakery` structured data, a sitemap, and a `robots.txt` that hides only the private areas.
 - **Checks.** With the demo running, `npm run design-check` opens every page in a browser, signed out and as each demo sign-in, at five widths: nothing scrolls sideways, one `h1`, headings in order, every input labelled, text contrast of 4.5:1, and what the landing page weighs. `--shots <dir>` saves screenshots.
@@ -90,5 +91,5 @@ The design brief, with the audit behind it, is in [`docs/design/brief.md`](docs/
 ## Not yet
 
 - More of the owner's admin: adding items and sections, the opening hours and pickup spacing are still in `src/shop.js` (names, prices and the words are editable). Options on an item (oat milk, extra shot).
-- A kitchen list that updates itself without the 20-second refresh.
+- A kitchen board that updates itself without the 20-second refresh. Sync follows one document at a time, and the board is a list; it needs a way to follow a collection.
 - Texts when an order is ready, real email (the confirmations and reset links go to the outbox), and a real payment provider.
