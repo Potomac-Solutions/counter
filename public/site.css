@@ -1,0 +1,127 @@
+/* The landing page: hero and shelf board, facts, the menu, how it works, the story, questions, visit. */
+
+.landing { display: block; }
+.sec { padding: clamp(3rem, 8vw, 5.5rem) 0; }
+.sec.alt { background: var(--paper-deep); }
+.sec.dark { background: var(--oven); color: #f4ebdd; }
+.sec.dark .kicker { color: var(--butter); }
+.head { max-width: 44rem; margin-bottom: clamp(1.5rem, 4vw, 2.5rem); }
+.head h2, .sec h2.big { font-size: clamp(1.9rem, 4.5vw, 2.9rem); }
+.head p:not(.kicker) { margin: 0.75rem 0 0; color: var(--muted-foreground); font-size: 1.1rem; }
+
+/* Hero. */
+.hero { position: relative; overflow: hidden; padding: clamp(2rem, 6vw, 4.5rem) 0 clamp(2.5rem, 6vw, 4.5rem); background:
+    radial-gradient(60rem 30rem at 85% -10%, rgb(243 196 86 / 0.35), transparent 60%),
+    radial-gradient(40rem 26rem at -10% 110%, rgb(180 83 42 / 0.14), transparent 60%),
+    var(--paper); }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.hero h1 { font-size: clamp(2.9rem, 8.5vw, 5.4rem); line-height: 0.98; letter-spacing: -0.025em; }
+.hero h1 em { display: block; font-weight: 500; color: var(--rust); }
+.hero .lede { margin-top: 1.25rem; font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--ink); max-width: 34rem; }
+.hero .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+.live { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 1.5rem 0 0; padding: 0.5rem 0.95rem 0.5rem 0.75rem; border-radius: 999px; background: var(--card); box-shadow: 0 0 0 1px var(--line); font-weight: 600; font-size: 0.98rem; }
+.live .dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: #2f7d4a; box-shadow: 0 0 0 0 rgb(47 125 74 / 0.5); animation: pulse 2.4s infinite; }
+.live a { font-weight: 700; }
+@keyframes pulse { 70% { box-shadow: 0 0 0 0.6rem rgb(47 125 74 / 0); } 100% { box-shadow: 0 0 0 0 rgb(47 125 74 / 0); } }
+
+/* The shelf board: a chalkboard of what's left, live. */
+.board { position: relative; padding: 1.5rem 1.5rem 1.25rem; border-radius: 1.4rem; background: var(--oven); color: #f4ebdd; box-shadow: 0 30px 60px -30px rgb(36 22 13 / 0.7), inset 0 0 0 1px rgb(255 255 255 / 0.08); rotate: 1.2deg; }
+.board::before { content: ""; position: absolute; inset: 0.5rem; border: 1px dashed rgb(243 196 86 / 0.35); border-radius: 1rem; pointer-events: none; }
+.board .art { display: block; width: 100%; height: auto; margin-bottom: 0.75rem; }
+.board h2 { font-size: 1.5rem; color: #fff; }
+.board h2 + p { margin: 0.2rem 0 0.9rem; color: #cdbfac; font-size: 0.9rem; }
+.board .lines { display: grid; gap: 0.1rem; }
+.board .foot { margin: 0.9rem 0 0; color: #cdbfac; font-size: 0.85rem; }
+
+/* Your open orders, when you have some. */
+.mine { margin-top: -1.25rem; position: relative; z-index: 1; }
+.mine .panel { grid-template-columns: 1fr; border-left: 0; background: var(--crust); color: #fff; box-shadow: var(--shadow); }
+.mine h2 { font-size: 1.15rem; }
+.mine ul { list-style: none; padding: 0; display: grid; gap: 0.4rem; }
+.mine li a { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem; padding: 0.6rem 0.9rem; border-radius: var(--radius-sm); background: rgb(255 255 255 / 0.12); text-decoration: none; font-weight: 600; }
+.mine li a:hover { background: rgb(255 255 255 / 0.2); }
+.mine li span { color: var(--butter); text-transform: capitalize; }
+.said { padding-top: 1.25rem; display: grid; gap: 0.75rem; }
+.said:empty { display: none; }
+
+/* Facts band. */
+.band { border-block: 1px solid var(--line); background: var(--card); }
+.facts { display: grid; grid-template-columns: repeat(4, 1fr); margin-block: 0; padding: 0; list-style: none; }
+.facts li { padding: 1.4rem 1.25rem; border-left: 1px solid var(--line); }
+.facts li:first-child { border-left: 0; padding-left: 0; }
+.facts strong { display: block; font-family: var(--font-heading); font-weight: 600; font-size: clamp(1.25rem, 2.4vw, 1.6rem); line-height: 1.15; color: var(--crust); }
+.facts span { color: var(--muted-foreground); font-size: 0.95rem; }
+@media (max-width: 52rem) {
+  .facts { grid-template-columns: 1fr 1fr; }
+  .facts li { padding: 1.1rem 1rem; border-top: 1px solid var(--line); }
+  .facts li:nth-child(-n + 2) { border-top: 0; }
+  .facts li:nth-child(odd) { border-left: 0; padding-left: 0; }
+}
+
+/* The menu. */
+.menu-sections { display: grid; gap: clamp(2rem, 5vw, 3rem); }
+.section { display: grid; grid-template-columns: 14rem 1fr; gap: 1rem 2.5rem; align-items: start; }
+.section .label { position: sticky; top: 5.5rem; }
+.section .label svg { width: 3.5rem; height: 3.5rem; color: var(--rust); margin-bottom: 0.5rem; }
+.section h2 { font-size: 1.9rem; }
+.section .label p { margin: 0.35rem 0 0; color: var(--muted-foreground); }
+.items > div { scroll-margin-top: 6rem; }
+.items { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(19rem, 100%), 1fr)); gap: 0.9rem; }
+@media (max-width: 56rem) {
+  .section { grid-template-columns: 1fr; }
+  .section .label { position: static; display: grid; grid-template-columns: auto 1fr; column-gap: 0.9rem; align-items: center; }
+  .section .label svg { grid-row: span 2; margin: 0; width: 3rem; height: 3rem; }
+}
+
+/* How it works. */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 0; padding: 0; list-style: none; counter-reset: step; }
+.steps li { position: relative; padding: 1.5rem 1.4rem 1.6rem; border-radius: var(--radius); background: var(--card); box-shadow: 0 0 0 1px var(--line), var(--shadow); counter-increment: step; }
+.steps li::before { content: counter(step); display: block; margin-bottom: 0.6rem; font-family: var(--font-heading); font-style: italic; font-weight: 500; font-size: 3.2rem; line-height: 1; color: var(--rust); }
+.steps h3 { font-size: 1.3rem; }
+.steps p { margin: 0.5rem 0 0; color: var(--muted-foreground); }
+@media (max-width: 52rem) { .steps { grid-template-columns: 1fr; } .steps li { display: grid; grid-template-columns: 3rem 1fr; column-gap: 0.5rem; } .steps li::before { grid-row: span 2; margin: 0; } }
+
+/* The story. */
+.story { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(1.5rem, 5vw, 4rem); align-items: center; }
+.story h2 { font-size: clamp(2rem, 5vw, 3.2rem); color: #fff; }
+.story p { margin: 0 0 1rem; color: #e3d6c6; font-size: 1.1rem; }
+.story .sign { margin: 1.5rem 0 0; padding-top: 1rem; border-top: 1px solid rgb(255 255 255 / 0.18); font-family: var(--font-heading); font-style: italic; font-weight: 500; font-size: 1.15rem; color: var(--butter); }
+.story svg { width: 100%; height: auto; }
+@media (max-width: 52rem) { .story { grid-template-columns: 1fr; } .story .pic { order: -1; max-width: 22rem; } }
+
+/* Questions. */
+.qa { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(1.5rem, 5vw, 4rem); align-items: start; }
+.qa .head { margin: 0; position: sticky; top: 6rem; }
+.qa details { border-bottom: 1px solid var(--line); }
+.qa details:first-of-type { border-top: 1px solid var(--line); }
+.qa summary { display: flex; justify-content: space-between; gap: 1rem; padding: 1.1rem 0; font-family: var(--font-heading); font-weight: 600; font-size: 1.2rem; cursor: pointer; list-style: none; }
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary::after { content: "+"; flex: none; font-family: var(--font-body); font-weight: 400; font-size: 1.5rem; line-height: 1; color: var(--rust); transition: rotate 0.2s; }
+.qa details[open] summary::after { rotate: 45deg; }
+.qa details p { margin: 0 0 1.2rem; color: var(--muted-foreground); max-width: 38rem; }
+@media (max-width: 52rem) { .qa { grid-template-columns: 1fr; } .qa .head { position: static; } }
+
+/* Visit. */
+.visit { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.visit .panel { gap: 0.5rem; }
+.visit h3 { font-size: 1.25rem; }
+.visit .panel svg { width: 2rem; height: 2rem; color: var(--rust); }
+.visit .panel p { color: var(--muted-foreground); }
+.visit .panel p strong { color: var(--ink); }
+.visit .tel { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--crust); }
+@media (max-width: 52rem) { .visit { grid-template-columns: 1fr; } }
+
+/* A last nudge before the footer. */
+.closer { text-align: center; }
+.closer h2 { font-size: clamp(2rem, 5vw, 3rem); }
+.closer p { margin: 0.75rem auto 1.5rem; color: var(--muted-foreground); max-width: 34rem; }
+
+/* On a phone, the bag stays in reach once there's something in it. */
+.bagbar { display: none; }
+@media (max-width: 48rem) {
+  body.has-bag { --bagbar: 4.25rem; padding-bottom: 4.5rem; }
+  .bagbar { position: fixed; z-index: 30; inset: auto 0.75rem 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; padding: 0.6rem 0.75rem 0.6rem 1.1rem; border-radius: 999px; background: var(--crust); color: #fff; font-weight: 700; text-decoration: none; box-shadow: 0 14px 30px -12px rgb(36 22 13 / 0.7); }
+  .bagbar span:last-child { padding: 0.5rem 0.9rem; border-radius: 999px; background: var(--butter); color: var(--oven); }
+  .hero-grid { grid-template-columns: 1fr; }
+  .board { rotate: 0deg; }
+}

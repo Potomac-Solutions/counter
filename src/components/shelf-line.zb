@@ -1,0 +1,32 @@
+<!--
+  One line of the shelf board in the hero: an item and how many are left, live. The same Sync
+  document the menu reads ('use collection items by item'), so the board and the menu can't
+  disagree: when the last one sells, both say so without a reload.
+-->
+<script>
+  'use collection items by item'
+  import { from } from '@zubra/runtime'
+
+  let left = from(leftNow)
+
+  const out = left !== null && left <= 0
+  const few = left !== null && left > 0 && left <= 5
+  const words = left === null ? plenty : out ? none : `${left} left`
+</script>
+<style>
+  :host { display: block; }
+  p { display: flex; align-items: baseline; gap: 0.6rem; margin: 0; padding: 0.4rem 0; font-size: 1.02rem; }
+  .name { font-weight: 600; }
+  .name.out { text-decoration: line-through; opacity: 0.6; }
+  .dots { flex: 1; min-width: 1rem; border-bottom: 2px dotted rgb(255 255 255 / 0.28); translate: 0 -0.25em; }
+  .count { font-variant-numeric: tabular-nums; font-weight: 700; color: #f4ebdd; white-space: nowrap; }
+  .count.few { color: var(--butter, #f3c456); }
+  .count.out { color: #cdbfac; font-weight: 600; }
+</style>
+<shelf-line item="" name="" left-now={null} plenty="Plenty" none="Sold out">
+  <p>
+    <span class="name" class:out={out}>{name}</span>
+    <span class="dots" aria-hidden="true"></span>
+    <span class="count" class:few={few} class:out={out} aria-live="polite">{words}</span>
+  </p>
+</shelf-line>

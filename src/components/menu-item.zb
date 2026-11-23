@@ -15,25 +15,38 @@
   const few = left !== null && left > 0 && left <= 5
 </script>
 <style>
-  :host { display: block; }
-  article { display: grid; grid-template-columns: 1fr auto; gap: 0.25rem 1rem; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid var(--border, #e3d6c6); }
-  h3 { margin: 0; font-size: 1.05rem; }
-  p { margin: 0; color: var(--muted-foreground, #7a6a58); font-size: 0.92rem; }
-  .left { font-weight: 700; color: var(--accent, #b4532a); }
-  .out { color: var(--muted-foreground, #7a6a58); text-decoration: line-through; }
-  form { grid-row: span 2; display: flex; gap: 0.4rem; align-items: center; }
-  input { width: 3.2rem; font: inherit; padding: 0.4rem; border-radius: 0.4rem; border: 1px solid var(--border, #e3d6c6); }
-  button { font: inherit; font-weight: 700; padding: 0.45rem 0.8rem; border: 0; border-radius: 0.45rem; background: var(--primary, #6b3f22); color: var(--primary-foreground, #fff); cursor: pointer; }
-  button:disabled { opacity: 0.45; cursor: not-allowed; }
+  :host { display: block; scroll-margin-top: 6rem; }
+  article { display: grid; grid-template-columns: 1fr auto; gap: 0.3rem 1rem; height: 100%; padding: 1.1rem 1.2rem; border-radius: var(--radius, 1rem); background: var(--card, #fff); box-shadow: 0 0 0 1px var(--border, #e3d6c6), var(--shadow, none); transition: box-shadow 0.15s, translate 0.15s; }
+  article:hover { box-shadow: 0 0 0 1px var(--crust, #6b3f22), var(--shadow, none); }
+  article.out { background: transparent; box-shadow: 0 0 0 1px var(--border, #e3d6c6); }
+  h3 { margin: 0; font-family: var(--font-heading, inherit); font-weight: 600; font-size: 1.25rem; line-height: 1.15; }
+  h3.out { color: var(--muted-foreground, #7a6a58); text-decoration: line-through; }
+  .price { margin: 0; font-family: var(--font-heading, inherit); font-weight: 600; font-size: 1.25rem; line-height: 1.15; font-variant-numeric: tabular-nums; text-align: right; }
+  .about { grid-column: 1 / -1; margin: 0; color: var(--muted-foreground, #7a6a58); font-size: 0.97rem; }
+  .foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; margin-top: 0.6rem; align-self: end; }
+  .meta { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; color: var(--muted-foreground, #7a6a58); font-size: 0.9rem; }
+  .left { padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.82rem; }
+  .left.few { background: #fbe9c4; color: #6a3c06; }
+  .left.gone { background: var(--muted, #f1e7da); color: var(--muted-foreground, #7a6a58); }
+  form { display: flex; gap: 0.4rem; align-items: center; margin: 0; }
+  input { width: 3.6rem; min-height: 2.75rem; font: inherit; font-variant-numeric: tabular-nums; text-align: center; padding: 0.4rem; border-radius: 999px; border: 1px solid var(--input, #cdbba4); background: #fff; color: inherit; }
+  button { min-height: 2.75rem; font: inherit; font-weight: 700; padding: 0.5rem 1.15rem; border: 0; border-radius: 999px; background: var(--primary, #6b3f22); color: var(--primary-foreground, #fff); cursor: pointer; transition: background-color 0.15s; }
+  button:hover { background: var(--crust-deep, #472812); }
+  button:disabled, input:disabled { opacity: 0.45; cursor: not-allowed; }
+  :focus-visible { outline: 3px solid var(--ring, #b4532a); outline-offset: 2px; }
 </style>
-<menu-item item="" name="" unit="" cents={0} left-now={null} add="">
-  <article>
+<menu-item item="" name="" unit="" cents={0} left-now={null} add="" about="">
+  <article class:out={out}>
     <h3 class:out={out}>{name}</h3>
-    <form method="post" action={add}>
-      <input type="hidden" name="item" value={item}>
-      <input type="number" name="qty" value="1" min="1" max={left === null ? 24 : Math.max(1, left)} aria-label={`How many ${name}`} disabled={out}>
-      <button type="submit" disabled={out}>Add</button>
-    </form>
-    <p>{money(cents)} · {unit} <span class="left" zb-if={few}>· {left} left</span><span class="left" zb-if={out}>· Sold out</span></p>
+    <p class="price">{money(cents)}</p>
+    <p class="about" zb-if={about}>{about}</p>
+    <div class="foot">
+      <p class="meta">{unit} <span class="left few" zb-if={few}>{left} left</span><span class="left gone" zb-if={out}>Sold out</span></p>
+      <form method="post" action={add}>
+        <input type="hidden" name="item" value={item}>
+        <input type="number" name="qty" value="1" min="1" max={left === null ? 24 : Math.max(1, left)} inputmode="numeric" aria-label={`How many ${name}`} disabled={out}>
+        <button type="submit" disabled={out}>Add</button>
+      </form>
+    </div>
   </article>
 </menu-item>

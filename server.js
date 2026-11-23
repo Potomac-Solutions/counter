@@ -19,6 +19,8 @@ import { createAdmin } from './src/admin.js';
 import { createNotices } from '@potomac-solutions/kit/notice';
 import { createCounter, timeLabel, dayWord } from './src/counter.js';
 import { layout, escape } from './src/layout.js';
+import { landing } from './src/site.js';
+import { serveAsset } from './src/assets.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const components = join(here, 'src', 'components');
@@ -62,7 +64,10 @@ export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'count
   const pages = staffPages({ staff, notices, proxies, home: '/admin', business: shop.name, secure: production, render: (res, title, body) => page(res, zubra.page(), title, body) });
   const send = (res, status, html) => (res.writeHead(status, { 'content-type': 'text/html; charset=utf-8' }), res.end(html));
   const back = (res, location) => (res.writeHead(303, { location: notices.sign(location) }), res.end());
-  const page = (res, p, title, body, { guest = null, refresh = 0, status = 200, ...options } = {}) => send(res, status, p.finish(layout({ title, shop, body, count: guest ? counter.cart(guest).count : null, refresh, ...options })));
+  const page = (res, p, title, body, { guest = null, refresh = 0, status = 200, ...options } = {}) => {
+    const bag = guest ? counter.cart(guest) : null;
+    return send(res, status, p.finish(layout({ title, shop, body, count: bag ? bag.count : null, bag, refresh, ...options })));
+  };
   const admin = createAdmin({ counter, customers, sent: mail.sent, now });
   const downloadCsv = (res, name, text) => (res.writeHead(200, { 'content-type': 'text/csv; charset=utf-8', 'content-disposition': `attachment; filename="${name}"`, 'cache-control': 'no-store' }), res.end(text));
   const note = (url) => {
@@ -82,20 +87,9 @@ export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'count
   const lineList = (lines) => `<ul>${lines.map((line) => `<li>${line.qty} × ${escape(line.name)}</li>`).join('')}</ul>`;
 
   function menuPage(p, url, guest, account) {
-    const mine = counter.ordersFor(guest).filter((order) => order.status !== 'picked-up');
-    const today = counter.note();
-    return `<section class="hero"><h1>Order ahead</h1><p class="lede">Bread, pastry and coffee from ${escape(shop.name)}. Choose a pickup time, pay once, and we’ll have it bagged at the side window. ${escape(shop.hours)}.</p><div class="actions"><a class="go" href="#menu">See today’s menu</a>${account ? '<a class="button light" href="/account">Your orders</a>' : '<a class="button light" href="/account/sign-up">Make an account</a>'}</div></section>
-${note(url)}
-${p.render('kitchen-note', { note: 'today', textNow: today.text, atNow: today.at, atLabel: today.at ? new Date(today.at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: shop.timeZone }) : '', timeZone: shop.timeZone })}
-${mine.length ? `<section class="panel"><h2>Your orders</h2><ul>${mine.map((order) => `<li><a href="/orders/${order.key}">${escape(pickupWords(order.slot))}</a> · ${order.status.replace('-', ' ')}</li>`).join('')}</ul></section>` : ''}
-${counter
-  .menu()
-  .map(({ section, items }, i) => `<section class="section panel"${i === 0 ? ' id="menu"' : ''}><h2>${escape(section)}</h2>${items.map((item) => p.render('menu-item', { item: item.key, name: item.name, unit: item.unit, cents: item.cents, leftNow: item.left, add: '/cart/add' })).join('')}</section>`)
-  .join('')}
-<section class="two">
-  <div class="panel"><h2>How it works</h2><ol><li>Add what you’d like; the menu shows what’s left, live.</li><li>Choose a pickup time and pay once.</li><li>Your page follows the kitchen: making, then ready.</li></ol></div>
-  <div class="panel"><h2>Visit</h2><dl><dt>Where</dt><dd>${escape(shop.town)}</dd><dt>Hours</dt><dd>${escape(shop.hours)}</dd><dt>Pickup</dt><dd>${escape(shop.pickup)}</dd></dl></div>
-</section>`;
+    const mine = counter.ordersFor(guest).filter((order) => order.status !== 'picked-up').map((order) => ({ ...order, when: pickupWords(order.slot) }));
+    const open = counter.times().find((time) => !time.full);
+    return landing(p, { shop, menu: counter.menu(), next: open ? { label: open.label, day: dayWord(open.slot, now()) } : null, mine, today: counter.note(), account, problem: notices.read(url).problem });
   }
 
   function orderPage(p, url, guest) {
@@ -156,7 +150,11 @@ ${note(url)}
       if (zubra.handle(req, res)) return;
       const url = new URL(req.url, 'http://localhost');
       if (url.pathname === '/health') return res.writeHead(200, { 'content-type': 'text/plain' }).end('ok');
-      if (url.pathname === '/favicon.ico') return res.writeHead(204).end();
+      if (serveAsset(req, res, url)) return;
+      // A made-up shop asks not to be listed; a real one (shop.listed) lists its public pages only.
+      if (url.pathname === '/robots.txt') return res.writeHead(200, { 'content-type': 'text/plain; charset=utf-8' }).end(shop.listed ? `User-agent: *\nDisallow: /admin\nDisallow: /kitchen\nDisallow: /staff\nDisallow: /account\nDisallow: /order\nDisallow: /checkout\n${publicUrl ? `Sitemap: ${publicUrl}/sitemap.xml\n` : ''}` : 'User-agent: *\nDisallow: /\n');
+      if (url.pathname === '/sitemap.xml' && shop.listed && publicUrl) return res.writeHead(200, { 'content-type': 'application/xml; charset=utf-8' }).end(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${escape(publicUrl)}/</loc></url></urlset>`);
+      if (url.pathname === '/favicon.ico') return res.writeHead(302, { location: '/assets/favicon.svg' }).end();
       const account = customers.session(req);
       const guest = { ...guests.ensure(req, res), customer: account?.customer };
       const who = staff.session(req);
@@ -174,7 +172,8 @@ ${note(url)}
         if (!form) return send(res, 413, 'Too large');
         if (url.pathname === '/cart/add') {
           const done = await counter.add(guest, form);
-          return back(res, done.ok ? `/?done=${encodeURIComponent('Added to your order.')}` : withProblem('/', done));
+          // Back to the item they added, so the page doesn't jump to the top; the message floats.
+          return back(res, done.ok ? `/?done=${encodeURIComponent('Added to your order.')}#item-${encodeURIComponent(String(form.get('item') ?? ''))}` : withProblem('/', done));
         }
         if (url.pathname === '/cart/change') {
           const done = await counter.change(guest, form);
@@ -307,7 +306,7 @@ ${note(url)}
 
       if (await pages.handle(req, res, url, null)) return;
       const p = zubra.page();
-      if (url.pathname === '/') return show(p, 'Menu', menuPage(p, url, guest, account), { guest, here: '/' });
+      if (url.pathname === '/') return show(p, 'Menu', menuPage(p, url, guest, account), { guest, here: '/', landing: true, toast: notices.read(url).done, canonical: publicUrl ? `${publicUrl}/` : '' });
 
       // A customer's pages.
       if (url.pathname === '/account') return account ? show(p, 'Your account', accountPages.account({ counter, guest, customer: account, said: said() }), { guest, here: '/account' }) : back(res, '/account/sign-in');

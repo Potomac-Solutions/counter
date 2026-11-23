@@ -16,13 +16,14 @@
 </script>
 <style>
   :host { display: block; }
-  aside { display: grid; gap: 0.2rem; padding: 0.9rem 1.1rem; border-radius: var(--radius, 0.75rem); background: var(--note, #e6f2f7); border-left: 4px solid var(--primary, #1f6f8b); }
-  p { margin: 0; }
-  small { color: var(--muted-foreground, #5b6b73); }
+  aside { display: grid; gap: 0.2rem; padding: 1rem 1.25rem; border-radius: var(--radius, 1rem); background: var(--note, #f6e8d6); box-shadow: inset 4px 0 0 var(--rust, #b4532a); }
+  p { margin: 0; font-size: 1.08rem; }
+  strong { font-family: var(--font-heading, inherit); font-weight: 600; }
+  small { color: var(--muted-foreground, #6a5a49); }
 </style>
 <kitchen-note note="" text-now="" at-now={0} at-label="" time-zone="America/New_York">
   <aside zb-if={text} aria-live="polite">
-    <p><strong>Today:</strong> {text}</p>
+    <p><strong>From the kitchen today:</strong> {text}</p>
     <small zb-if={when}>Posted at {when}</small>
   </aside>
 </kitchen-note>
