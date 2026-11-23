@@ -20,7 +20,7 @@ export function shell({ title, shop, body, who, owner = false, here = '', refres
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">${refresh ? `
-  <meta http-equiv="refresh" content="${refresh}">` : ''}
+  <noscript><meta http-equiv="refresh" content="${refresh}"></noscript>` : ''}
   <title>${escape(title)} · ${escape(shop.name)} staff</title>
   <meta name="theme-color" content="#24160d">
   <link rel="icon" href="${asset('favicon.svg')}" type="image/svg+xml">

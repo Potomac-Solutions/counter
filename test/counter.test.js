@@ -273,3 +273,43 @@ test('a page reads the menu, the note and its own orders; nothing else; it write
   await owner.context.close();
   await other.context.close();
 });
+
+test('the kitchen’s board is live: a new order and a moved one show without a reload, to staff only', async () => {
+  const kitchen = await device('kitchen tablet', { shift: true });
+  await kitchen.page.goto(`${app.base}/kitchen`);
+  await kitchen.page.waitForFunction(() => customElements.get('kitchen-watch'));
+  await kitchen.page.waitForTimeout(400);
+  // The page is the same document throughout: a reload would lose this.
+  await kitchen.page.evaluate(() => (window.sameDocument = true));
+  const count = async () => Number(await kitchen.page.locator('.lane.placed h2 b').innerText());
+  const before = await count();
+
+  const guest = await device('ordering', { javaScriptEnabled: false });
+  const placed = await order(guest, [['croissant', 1]], { name: 'Opal Livengood', slot: times()[6].slot });
+  const key = placed.location.split('/').pop();
+  await kitchen.page.locator('.lane.placed .ticket', { hasText: 'Opal Livengood' }).waitFor({ timeout: 5000 });
+  assert.equal(await count(), before + 1, 'the lane counts it');
+  assert.match(await kitchen.page.locator('.page-head .lede').innerText(), /orders? to hand over/);
+  await kitchen.page.locator('kitchen-watch [role=status]', { hasText: 'A new order came in.' }).waitFor({ timeout: 2000 });
+
+  // Another tablet moves it: this one follows.
+  const other = await device('second tablet', { javaScriptEnabled: false, shift: true });
+  await other.post('/kitchen/advance', { key, to: 'making' });
+  await kitchen.page.locator('.lane.making .ticket', { hasText: 'Opal Livengood' }).waitFor({ timeout: 5000 });
+  assert.equal(await kitchen.page.evaluate(() => window.sameDocument), true, 'never reloaded');
+
+  // The swapped-in ticket still works: its button moves the order on.
+  await kitchen.page.locator('.lane.making .ticket', { hasText: 'Opal Livengood' }).locator('button').click();
+  await kitchen.page.waitForURL(/done=/);
+  assert.equal(counter().store.get('orders', key).status, 'ready');
+
+  // Staff are sent the board; a guest's page never is.
+  const pull = async (who) => (await who.context.request.get(`${app.base}/_zb/sync/pull?since=0`)).text();
+  const nosy = await device('nosy');
+  assert.match(await pull(other), /boards/, 'staff pull the board');
+  assert.match(await pull(nosy), /items/, 'a guest pulls the menu');
+  assert.doesNotMatch(await pull(nosy), /boards/, 'and no board');
+  // Without JavaScript the page reloads itself instead.
+  assert.match(await other.get('/kitchen'), /<noscript><meta http-equiv="refresh" content="20"><\/noscript>/);
+  await Promise.all([kitchen, guest, other, nosy].map((one) => one.context.close()));
+});

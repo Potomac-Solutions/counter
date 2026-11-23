@@ -58,6 +58,8 @@ export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'count
   // The people who run the shop: an owner and the staff they invite (the kit's staff module), in the
   // shop's own log; their pages and routes are the kit's too.
   const staff = createStaff({ store: counter.store, secure: production, ...(staffCost ? { cost: staffCost } : {}) });
+  // Staff are sent the kitchen's board: the document that says an order was placed or moved.
+  counter.staffed((request) => staff.can(staff.session(request), 'staff'));
   // A message in an address shows only if the server signed it (kit/notice), so a link can't put
   // its own words in a page's alert.
   const notices = createNotices({ secret });
@@ -143,7 +145,7 @@ ${p.render('order-progress', { order: order.key, statusNow: order.status })}
 </div>`;
   }
 
-  function kitchenPage(url) {
+  function kitchenPage(p, url) {
     const orders = counter.kitchen();
     const label = { making: 'Start making', ready: 'Ready', 'picked-up': 'Picked up' };
     const lanes = [['placed', 'To make'], ['making', 'Making'], ['ready', 'Ready at the window']];
@@ -162,9 +164,9 @@ ${p.render('order-progress', { order: order.key, statusNow: order.status })}
       const key = ++n <= 9 ? n : 0;
       return `<li class="ticket${kind === 'off' ? ' late' : ''}"><div class="top"><span class="at">${escape(timeLabel(order.slot))}</span><span class="badge ${kind}">${escape(words)}</span></div><p class="who">${escape(order.name)}</p><ul class="lines">${order.lines.map((line) => `<li>${line.qty} × ${escape(line.name)}</li>`).join('')}</ul><form method="post" action="/kitchen/advance"><input type="hidden" name="key" value="${order.key}"><input type="hidden" name="to" value="${next}"><button type="submit"${key ? ` data-key="${key}"` : ''}>${label[next]}${key ? `<kbd aria-hidden="true">${key}</kbd>` : ''}</button></form></li>`;
     };
-    return `<section class="page-head board-head"><div><h1>The kitchen</h1><p class="lede">${orders.length ? `${orders.length} order${orders.length === 1 ? '' : 's'} to hand over.` : 'Nothing waiting.'} New orders show within 20 seconds; the guest’s phone follows each step at once.</p></div><a class="button light" href="/kitchen/menu">Stock and today’s note</a></section>
+    return `${p.render('kitchen-watch', { board: 'kitchen', revNow: counter.board() })}<section class="page-head board-head" data-live="head"><div><h1>The kitchen</h1><p class="lede">${orders.length ? `${orders.length} order${orders.length === 1 ? '' : 's'} to hand over.` : 'Nothing waiting.'} New orders show as they come in; the guest’s phone follows each step at once.</p></div><a class="button light" href="/kitchen/menu">Stock and today’s note</a></section>
 ${note(url)}
-<div class="lanes">${lanes
+<div class="lanes" data-live="lanes">${lanes
       .map(([status, title]) => {
         const list = orders.filter((order) => order.status === status);
         return `<section class="lane ${status}" aria-label="${title}"><h2>${title} <b>${list.length}</b></h2>${list.length ? `<ul class="orders">${list.map(ticket).join('')}</ul>` : `<p class="none">${status === 'placed' ? 'All caught up.' : status === 'making' ? 'Nothing on the bench.' : 'Nothing waiting at the window.'}</p>`}</section>`;
@@ -393,7 +395,7 @@ ${note(url)}
       if (order) return show(p, 'Your order', orderStatus(p, order), { guest });
       if (url.pathname === '/kitchen' || url.pathname === '/kitchen/menu') {
         if (!onShift) return signInPage();
-        if (url.pathname === '/kitchen') return staffPage(res, p, 'The kitchen', kitchenPage(url), { refresh: 20, here: '/kitchen' });
+        if (url.pathname === '/kitchen') return staffPage(res, p, 'The kitchen', kitchenPage(p, url), { refresh: 20, here: '/kitchen' });
         return staffPage(res, p, 'Stock and note', kitchenMenu(url), { here: '/kitchen/menu' });
       }
       send(res, 404, 'Not found');

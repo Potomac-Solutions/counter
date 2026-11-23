@@ -1,0 +1,60 @@
+<!--
+  Keeps the kitchen's board current without a reload. Sync follows one document, and a new order
+  is a new document no element on the page was made for; so the server keeps one small document
+  of its own, `boards/kitchen`, and bumps its `rev` whenever an order is placed or moved. This
+  element follows that document ('use collection boards by board'), and when `rev` moves it
+  fetches the page again and swaps in the parts marked `data-live`: no flash, the scroll stays
+  put, and focus returns to the same ticket's button. It also swaps once a minute, so "in 12 min"
+  stays true. Without JavaScript the page reloads itself instead (the shell's <noscript> refresh).
+
+  Only staff are sent `boards` (the server's `scope`), and it holds a number, never an order.
+-->
+<script>
+  'use collection boards by board'
+  import { from, watch, onMount } from '@zubra/runtime'
+  import { ephemeral } from '@zubra/sync'
+
+  let rev = from(revNow)
+  let said = ephemeral('')
+  let busy = false
+
+  async function swap(announce) {
+    if (busy) return
+    busy = true
+    try {
+      const response = await fetch(location.pathname, { headers: { accept: 'text/html' }, credentials: 'same-origin' })
+      // Signed out meanwhile, or an error page: leave what's there; the next press says so.
+      if (!response.ok || response.redirected) return
+      const next = new DOMParser().parseFromString(await response.text(), 'text/html')
+      const before = document.querySelectorAll('[data-live] .ticket').length
+      // The ticket whose button has focus keeps it: tickets are found again by their order's key.
+      const focused = document.activeElement?.closest?.('.ticket form')?.querySelector('[name=key]')?.value
+      for (const fresh of next.querySelectorAll('[data-live]')) {
+        const old = document.querySelector(`[data-live="${fresh.dataset.live}"]`)
+        if (old) old.replaceWith(document.importNode(fresh, true))
+      }
+      if (focused) document.querySelector(`.ticket form input[name=key][value="${focused}"]`)?.closest('form')?.querySelector('button')?.focus()
+      const after = document.querySelectorAll('[data-live] .ticket').length
+      if (announce && after > before) said = after - before === 1 ? 'A new order came in.' : `${after - before} new orders came in.`
+    } catch {
+      // Offline: the board is as it was; Sync catches up and this runs again.
+    } finally {
+      busy = false
+    }
+  }
+
+  watch(() => rev, (next, prev) => {
+    if (next !== prev) swap(true)
+  })
+  onMount(() => {
+    const tick = setInterval(() => swap(false), 60_000)
+    return () => clearInterval(tick)
+  })
+</script>
+<style>
+  :host { display: block; }
+  p { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>
+<kitchen-watch board="" rev-now={0}>
+  <p role="status" aria-live="polite">{said}</p>
+</kitchen-watch>
