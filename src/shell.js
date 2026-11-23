@@ -13,7 +13,8 @@ export function shell({ title, shop, body, who, owner = false, here = '', refres
   const [last, ...first] = shop.name.split(' ').reverse();
   const wordmark = `<a class="wordmark" href="/admin">${art.mark}<span><b>${escape(first.reverse().join(' '))}</b><small>${escape(last)}</small></span></a>`;
   const link = (href, words, extra = '') => `<a href="${href}"${here === href ? ' aria-current="page"' : ''}>${words}${extra}</a>`;
-  const count = waiting ? `<b aria-label="${waiting} waiting">${waiting}</b>` : '';
+  // In a span of its own, so the board's page can swap the number in when it changes (data-live).
+  const count = (where) => `<span data-live="waiting-${where}">${waiting ? `<b aria-label="${waiting} waiting">${waiting}</b>` : ''}</span>`;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -37,7 +38,7 @@ export function shell({ title, shop, body, who, owner = false, here = '', refres
       <a class="close" href="#main">Close</a>
       ${wordmark}
       <nav aria-label="Staff">
-        <small>Today</small>${link('/kitchen', 'The kitchen', count)}${link('/kitchen/menu', 'Stock and note')}
+        <small>Today</small>${link('/kitchen', 'The kitchen', count('side'))}${link('/kitchen/menu', 'Stock and note')}
         <small>Shop</small>${link('/admin', 'Overview')}${link('/admin/orders', 'Orders')}${link('/admin/customers', 'Customers')}${
           owner ? `
         <small>Owner</small>${link('/admin/reports', 'Reports')}${link('/admin/settings', 'Settings')}${link('/staff/people', 'Staff')}${link('/admin/outbox', 'Outbox')}` : ''
@@ -54,7 +55,7 @@ export function shell({ title, shop, body, who, owner = false, here = '', refres
     <main id="main">
       ${body}
     </main>
-    <nav class="tabs" aria-label="Quick">${link('/kitchen', 'Kitchen', count)}${link('/kitchen/menu', 'Stock')}${link('/admin/orders', 'Orders')}${link('/admin', 'Overview')}</nav>
+    <nav class="tabs" aria-label="Quick">${link('/kitchen', 'Kitchen', count('tabs'))}${link('/kitchen/menu', 'Stock')}${link('/admin/orders', 'Orders')}${link('/admin', 'Overview')}</nav>
   </div>
   <script type="module" src="${asset('app.js')}"></script>
   <script type="module">
