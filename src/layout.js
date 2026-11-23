@@ -1,6 +1,6 @@
 // The page around the components: the head, the bar across the top, the foot, and the connection
 // to the log. The styles are files in public/ (base.css for every page, site.css for the landing
-// page); the words come from src/shop.js.
+// page, customer.css for the bag, checkout, orders and account); the words come from src/shop.js.
 import { CHART_CSS } from '@potomac-solutions/kit/charts';
 import { asset, FONT_CSS } from './assets.js';
 import { site } from './shop.js';
@@ -43,7 +43,7 @@ function listing(shop, canonical) {
  */
 export function layout({ title, shop, body, count = null, refresh = 0, nav = {}, wide = false, here = '', landing = false, bag = null, toast = '', description = site.description, canonical = '' }) {
   const link = (href, words, cls = '') => `<a href="${href}"${cls ? ` class="${cls}"` : ''}${here === href ? ' aria-current="page"' : ''}>${words}</a>`;
-  const links = [link('/#menu', 'Menu', 'wide'), link('/#visit', 'Visit', 'wide'), nav.customer ? link('/account', 'Your account') : link('/account/sign-in', 'Sign in'), ...(nav.staff ? [link('/admin', 'Admin')] : [])].join('');
+  const links = [link('/#menu', 'Menu', 'wide'), link('/#visit', 'Visit', 'wide'), nav.customer ? link('/account', 'Account') : link('/account/sign-in', 'Sign in'), ...(nav.staff ? [link('/admin', 'Admin')] : [])].join('');
   const fullTitle = landing ? `${shop.name} · Order ahead in ${shop.town}` : `${title} · ${shop.name}`;
   const money = (cents) => `$${(cents / 100).toFixed(2)}`;
   const bagBar = landing && bag?.count ? `<a class="bagbar" href="/order"><span>${bag.count} in your bag · ${money(bag.cents)}</span><span>Check out</span></a>` : '';
@@ -64,8 +64,8 @@ export function layout({ title, shop, body, count = null, refresh = 0, nav = {},
   <link rel="preload" href="${asset('fraunces-latin-600-normal.woff2')}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="${asset('figtree-latin-400-normal.woff2')}" as="font" type="font/woff2" crossorigin>
   <style>${FONT_CSS}</style>
-  <link rel="stylesheet" href="${asset('base.css')}">${landing ? `
-  <link rel="stylesheet" href="${asset('site.css')}">` : ''}${wide ? `
+  <link rel="stylesheet" href="${asset('base.css')}">
+  <link rel="stylesheet" href="${asset(landing ? 'site.css' : 'customer.css')}">${wide ? `
   <style>${CHART_CSS}</style>` : ''}
 </head>
 <body${bagBar ? ' class="has-bag"' : ''}>

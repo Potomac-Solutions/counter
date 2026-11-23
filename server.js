@@ -97,27 +97,46 @@ export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'count
     const times = counter.times();
     // A time that filled up since the guest chose it has to be chosen again.
     const chosen = times.find((time) => time.slot === counter.pickup(guest) && !time.full)?.slot ?? '';
-    return `<section><a href="/">Back to the menu</a><h1>Your order</h1></section>
-${note(url)}
+    const day = times.length ? dayWord(times[0].slot, now()) : '';
+    const head = `<section class="page-head"><a class="back" href="/#menu">Back to the menu</a><h1>Your order</h1></section>
+${note(url)}`;
+    if (!view.lines.length) return `${head}
+<section class="panel empty-bag"><h2>Your bag is empty</h2><p>Add something from today’s menu and it’ll be here.</p><a class="go" href="/#menu">See today’s menu</a></section>`;
+    return `${head}
+<div class="bag-grid">
 ${p.render('cart-panel', { cart: view, change: '/cart/change', checkout: chosen ? '/checkout' : '', heading: 'In your bag' })}
-${view.lines.length ? `<form class="panel" method="post" action="/order/time"><h2>Pickup time</h2>
-  <label>When you’ll come by <select name="slot" required><option value="">Choose…</option>${times.map((time) => `<option value="${escape(time.slot)}"${time.slot === chosen && !time.full ? ' selected' : ''}${time.full ? ' disabled' : ''}>${escape(dayWord(time.slot, now()))} ${escape(time.label)}${time.full ? ' (full)' : ''}</option>`).join('')}</select></label>
-  <button type="submit">${chosen ? 'Change the time' : 'Set the time'}</button>
-  <p>${chosen ? `Pickup ${escape(pickupWords(chosen))}. Check out above when you’re ready.` : 'Choose a time, then check out.'}</p>
-</form>` : ''}`;
+<form class="panel" id="pickup" method="post" action="/order/time"><h2>Pickup time</h2>
+  <p class="chosen">${chosen ? `Pickup ${escape(pickupWords(chosen))}. Check out when you’re ready.` : 'Choose a time, then check out.'}</p>
+  <fieldset class="times"><legend>${escape(day)}</legend><div class="grid">${times.map((time) => `<label class="time"><input type="radio" name="slot" value="${escape(time.slot)}" required${time.slot === chosen ? ' checked' : ''}${time.full ? ' disabled' : ''}><span>${escape(time.label)}${time.full ? '<small>Full</small>' : ''}</span></label>`).join('')}</div></fieldset>
+  <p class="hint">Each time takes ${shop.perSlot} orders. ${escape(shop.pickup)}</p>
+  <button type="submit" name="next" value="checkout" class="go lg">${chosen ? 'Check out' : 'Set the time and check out'}</button>
+</form>
+</div>`;
   }
 
   function checkoutPage(p, url, guest, account) {
     const view = counter.cart(guest);
     const slot = counter.pickup(guest);
-    return `<section><a href="/order">Back to your order</a><h1>Check out</h1><p class="lede">Pickup ${escape(pickupWords(slot))}. ${escape(shop.pickup)}</p></section>
-${p.render('checkout-form', { cart: view, place: '/checkout', checkout: counter.checkoutKey(), problem: notices.read(url).problem, testMode: true, name: account?.name ?? '', email: account?.email ?? '' })}`;
+    return `<div class="checkout">
+<section class="page-head"><a class="back" href="/order">Back to your order</a><h1>Check out</h1></section>
+<div class="summary"><p>Pickup<strong>${escape(pickupWords(slot))}</strong></p><a href="/order#pickup">Change the time</a></div>
+${p.render('checkout-form', { cart: view, place: '/checkout', checkout: counter.checkoutKey(), problem: notices.read(url).problem, testMode: true, name: account?.name ?? '', email: account?.email ?? '' })}
+<p class="safe">${escape(shop.pickup)}${account ? '' : ' No account needed; <a href="/account/sign-in">sign in</a> if you have one.'}</p>
+</div>`;
   }
 
   function orderStatus(p, order) {
-    return `<section><p class="lede">Order · test mode</p><h1>Pickup ${escape(pickupWords(order.slot))}</h1><p class="lede">For ${escape(order.name)} · ${money(order.cents)}. ${escape(shop.pickup)}</p></section>
+    const over = order.status === 'picked-up';
+    return `<div class="status">
+<section class="page-head"><p class="kicker">Order ${escape(order.key.slice(-6).toUpperCase())} · test mode</p><h1>Pickup ${escape(pickupWords(order.slot))}</h1><p class="lede">For ${escape(order.name)} · ${money(order.cents)}. ${escape(shop.pickup)}</p></section>
 ${p.render('order-progress', { order: order.key, statusNow: order.status })}
-<section class="panel"><h2>In the bag</h2>${lineList(order.lines)}</section>`;
+<section class="receipt" aria-label="In the bag"><h2>In the bag</h2>
+  <ul>${order.lines.map((line) => `<li><span>${line.qty} × ${escape(line.name)}</span><span>${money(line.total ?? line.cents * line.qty)}</span></li>`).join('')}</ul>
+  <p class="sum"><span>Paid</span><span>${money(order.cents)}</span></p>
+  <p class="fine">Test mode: no money moved.${order.email ? ` A confirmation went to ${escape(order.email)}.` : ''}</p>
+</section>
+<p class="after"><a class="button light" href="/#menu">${over ? 'Order again' : 'Order something else'}</a>${order.customer ? '<a class="button light" href="/account">Your orders</a>' : '<a class="button light" href="/account/sign-up">Keep your orders in an account</a>'}</p>
+</div>`;
   }
 
   function kitchenPage(url) {
@@ -181,7 +200,8 @@ ${note(url)}
         }
         if (url.pathname === '/order/time') {
           const done = await counter.choose(guest, form);
-          return back(res, done.ok ? '/order' : withProblem('/order', done));
+          // The page's own button goes straight on to checkout; a bare post stays on the order.
+          return back(res, done.ok ? (form.get('next') === 'checkout' ? '/checkout' : '/order') : withProblem('/order', done));
         }
         if (url.pathname === '/checkout') {
           const done = await counter.place(guest, form);

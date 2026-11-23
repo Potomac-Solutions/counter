@@ -89,9 +89,9 @@ test('without JavaScript: the menu, a bag, a pickup time, one payment, and the o
   assert.match(await page.locator('cart-panel').innerText(), /Butter croissant[\s\S]*\$8\.50[\s\S]*Drip coffee[\s\S]*Total\s*\$11\.50/);
   assert.equal(await page.locator('cart-panel a:has-text("Check out")').count(), 0, 'no checkout before a pickup time');
   const slot = times()[1].slot;
-  await page.selectOption('select[name=slot]', slot);
+  // Pickup times are radio buttons; the form's button sets the time and goes on to checkout.
+  await page.check(`input[name=slot][value="${slot}"]`, { force: true });
   await page.click('form[action="/order/time"] button');
-  await page.click('cart-panel a:has-text("Check out")');
   await page.waitForURL(`${app.base}/checkout`);
   await page.fill('checkout-form input[name=name]', 'Rosa Bittinger');
   await page.fill('checkout-form input[name=email]', 'rosa@example.com');
@@ -166,7 +166,7 @@ test('a pickup time takes three orders; the fourth is told it filled up, even at
   assert.match(full.location, /^\/order\?problem=\d{1,2}:\d{2} (am|pm) just filled up\. Choose another time\.$/);
   assert.equal(times().find((time) => time.slot === slot).full, true);
   const page = await guests[3].get('/order');
-  assert.match(page, new RegExp(`<option value="${slot}" disabled>[^<]*\\(full\\)`), 'full, and no longer chosen');
+  assert.match(page, new RegExp(`<input type="radio" name="slot" value="${slot}" required disabled><span>[^<]*<small>Full</small>`), 'full, and no longer chosen');
   assert.match(page, /Choose a time, then check out\./);
   assert.doesNotMatch(page, /cart-panel[^>]*checkout="\/checkout"/);
   await Promise.all(guests.map((guest) => guest.context.close()));
