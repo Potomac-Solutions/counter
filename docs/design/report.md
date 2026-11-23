@@ -24,7 +24,7 @@ Two assertions in `test/counter.test.js`, both because pickup times went from a 
 
 ## Not done, and why
 
-- **The kitchen still reloads every 20 seconds** to pick up new orders. Sync follows one document at a time; a board is a list. It needs a way to follow a collection, which is Zubra's to add. Each guest's order page is live, as before.
+- **The kitchen's board is live now** (after this report): the server keeps one document that says "the board changed", and the page follows it and swaps the board in. See "The kitchen's board, live" in the README. Zubra issue 432 asks for a way to follow a collection directly.
 - **"Open now"**. The hours are words an owner types, and pickup times are offered every day. The pages show the next pickup time instead. See question 1 in the brief.
 - **No screen reader pass.** The checks are structural (headings, labels, landmarks, contrast, keyboard order by reading the markup). Nobody has listened to it.
 - **No "order again".** It needs a rule for sold-out and repriced items.

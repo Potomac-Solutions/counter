@@ -54,6 +54,14 @@ npm test         # needs Chrome or Playwright's Chromium
 
 Node 26. `SESSION_SECRET` is required in production; `DATA_DIR` says where the database file goes. Behind a proxy (Railway, Fly, a load balancer), set `TRUST_PROXIES` to how many add to `X-Forwarded-For` (usually `1`), so a wrong-password lockout falls on the device guessing and not on everyone; left unset, no header is trusted and every sign-in counts as the proxy's address.
 
+## The kitchen's board, live
+
+Sync follows one document, and a new order is a new document that no element on the page was made for. So the server keeps one small document of its own, `boards/kitchen`, and adds one to its `rev` whenever an order is placed or moved (`touch()` in `src/counter.js`). The kitchen's page carries `<kitchen-watch>` (`src/components/kitchen-watch.zb`), which follows that document; when `rev` moves it fetches the page again and swaps in the parts marked `data-live`. Nothing flashes, the scroll stays where it was, and focus returns to the same ticket's button. It swaps once a minute too, so "in 12 min" stays true.
+
+- **Only staff are sent it** (`scope` in `src/counter.js`), and it holds a number, never an order.
+- **Without JavaScript** the page reloads itself every 20 seconds, as before.
+- **The sidebar's count** beside "The kitchen" is not swapped; it is right again on the next page.
+
 ## What the tests prove
 
 1. Without JavaScript: the menu in the bakery's order; a bag; no checkout before a pickup time; one payment; the order page; stock taken when paid (coffee never runs out); the bag empty again.
@@ -75,6 +83,7 @@ The admin, customer accounts and reports (`test/admin.test.js`, over plain HTTP)
 14. A new name and price show on the menu and new orders pay it; paid orders keep theirs; a bad price is refused; the hours change.
 15. The report's takings match the orders and its CSV adds up to them; a name starting with `=` opens in a spreadsheet as text.
 16. A turned-off customer is signed out; only an owner can turn them back on.
+17. The kitchen's board is live: a new order and one another tablet moved show without a reload, and the swapped-in ticket's button still works; staff are sent the board and a guest's page is not; without JavaScript the page reloads itself.
 
 Every behaviour was broken on purpose once to check a test fails (19 of 20 caught). The one that can't be: a guest's place at a pickup time is picked from those free with no wait in between, so holding it can't fail; the check stays as a safety belt.
 
@@ -91,5 +100,4 @@ The design brief, with the audit behind it, is in [`docs/design/brief.md`](docs/
 ## Not yet
 
 - More of the owner's admin: adding items and sections, the opening hours and pickup spacing are still in `src/shop.js` (names, prices and the words are editable). Options on an item (oat milk, extra shot).
-- A kitchen board that updates itself without the 20-second refresh. Sync follows one document at a time, and the board is a list; it needs a way to follow a collection.
 - Texts when an order is ready, real email (the confirmations and reset links go to the outbox), and a real payment provider.

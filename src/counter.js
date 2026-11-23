@@ -68,18 +68,20 @@ const slotKey = (slot) => slot.replace(/[^0-9]/g, '');
 
 export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 2 * 60_000 } = {}) {
   let who = () => null;
+  let onShift = () => false;
   const owns = (guest, order) => Boolean(guest && order && (order.owner === guest.pub || (guest.customer && order.customer === guest.customer)));
   const ordersOf = (guest) => store.under('orders').filter((order) => owns(guest, order)).map((order) => order.key);
   const log = await sqliteLog(db);
   const sync = createSyncServer({
     log,
     // Pages write nothing: every collection here is the server's.
-    authorize: serverOnly([...SERVER_ONLY, 'orders', 'slots', 'slot-holds', 'pickups', 'notes', 'settings', 'audit'], ({ kind }) => kind === 'read'),
+    authorize: serverOnly([...SERVER_ONLY, 'orders', 'slots', 'slot-holds', 'pickups', 'notes', 'settings', 'audit', 'boards'], ({ kind }) => kind === 'read'),
     // A page reads the menu and the note, and its own orders: nobody else's name or basket.
     scope({ request }) {
       const guest = who(request);
       const keys = guest ? ordersOf(guest) : [];
-      return { items: true, notes: true, ...(keys.length ? { orders: keys } : {}) };
+      // The kitchen's board (a number that moves when an order does) goes to staff only.
+      return { items: true, notes: true, ...(keys.length ? { orders: keys } : {}), ...(onShift(request) ? { boards: true } : {}) };
     },
   });
   const store = await syncStore(sync);
@@ -95,6 +97,9 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
   const catalog = createCatalog({ store });
   const cart = createCart({ store, catalog, max: 24 });
   const kitchen = createStages({ store, collection: 'orders', steps: STEPS, may: () => true, now });
+  // A new order is a new document, which no open page was made for. One document the server keeps
+  // says "the board changed"; the kitchen's page follows it and fetches the board again.
+  const touch = () => store.write('boards', 'kitchen', { rev: (store.get('boards', 'kitchen')?.rev ?? 0) + 1 });
   const checkout = createCheckout({ store, catalog, cart, pay: createPay({ provider: testProvider(), store, now }), stages: kitchen, now });
   // Each pickup time has `perSlot` places; a guest holds one while paying, and keeps it once paid.
   const places = Array.from({ length: shop.perSlot }, (_, i) => `o${i + 1}`);
@@ -127,6 +132,10 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
     sections: SECTIONS,
     identify(fn) {
       who = fn;
+    },
+    /** `fn(request)`: is this a member of staff? They are sent the kitchen's board. */
+    staffed(fn) {
+      onShift = fn;
     },
 
     /** The menu as the guest sees it now, by section, sold-out items included. */
@@ -194,6 +203,7 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
         return words(done);
       }
       await slots.confirm(guest.pub, pool, [place]);
+      await touch();
       return { ok: true, key };
     },
 
@@ -207,6 +217,8 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
     /** The kitchen's list: orders not picked up, soonest pickup first. */
     kitchen: () => store.under('orders').filter((order) => order.status !== 'picked-up').sort((a, b) => (a.slot < b.slot ? -1 : a.slot > b.slot ? 1 : a.placedAt - b.placedAt)),
     steps: STEPS,
+    /** How many times the board has changed: open kitchen pages follow it (`boards/kitchen`). */
+    board: () => store.get('boards', 'kitchen')?.rev ?? 0,
 
     /** The kitchen moves an order to the stage its button showed; a second press is refused. */
     async advance(key, to) {
@@ -215,6 +227,7 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
       const next = STEPS[STEPS.indexOf(order.status) + 1];
       if (!next || to !== next) return { error: `${order.name || 'That order'}’s order is already ${order.status.replace('-', ' ')}.` };
       const done = await kitchen.advance(key, next);
+      if (done.ok) await touch();
       return done.ok ? { ok: true, order: { key, ...store.get('orders', key) }, to: next } : { error: 'Someone just moved that order. Look again.' };
     },
 
