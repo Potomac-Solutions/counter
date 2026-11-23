@@ -1,0 +1,112 @@
+/*
+  The landing page: a full-screen photograph and a few words, a photo beside each promise, the
+  menu as photo cards, the story over a photograph, three steps, and where to find us.
+*/
+
+.landing { display: block; }
+.sec { padding: clamp(3.5rem, 9vw, 6.5rem) 0; }
+.sec.dark { background: var(--oven); color: #f4ebdd; }
+.sec.dark .kicker { color: var(--butter); }
+.head { max-width: 44rem; margin-bottom: clamp(1.75rem, 4vw, 3rem); }
+.head.center { margin-inline: auto; text-align: center; }
+.head h2, .sec h2.big { font-size: clamp(2.2rem, 5.5vw, 3.6rem); letter-spacing: -0.02em; }
+.head p:not(.kicker) { margin: 0.9rem 0 0; color: var(--muted-foreground); font-size: 1.15rem; }
+.sec.dark .head p:not(.kicker) { color: #cdbfac; }
+
+/* Hero: the photograph is the page. */
+.hero { position: relative; isolation: isolate; display: grid; grid-template-rows: 1fr auto; min-height: min(92svh, 56rem); background: var(--oven); color: #fff; overflow: hidden; }
+.hero .bg, .banner .bg { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
+.hero::before { content: ""; position: absolute; inset: 0; z-index: -1; background:
+    linear-gradient(90deg, rgb(20 12 7 / 0.88) 0%, rgb(20 12 7 / 0.55) 45%, rgb(20 12 7 / 0.1) 80%),
+    linear-gradient(0deg, rgb(20 12 7 / 0.85) 0%, transparent 38%); }
+.hero-words { align-self: center; padding-block: clamp(3rem, 10vh, 7rem) clamp(2rem, 6vh, 4rem); }
+.hero .kicker { color: var(--butter); font-size: 0.9rem; }
+.hero h1 { max-width: 12ch; font-size: clamp(3.4rem, 11vw, 7.5rem); line-height: 0.92; letter-spacing: -0.03em; text-shadow: 0 2px 30px rgb(0 0 0 / 0.35); }
+.hero h1 em { display: block; font-weight: 500; color: var(--butter); }
+.hero .lede { margin-top: 1.5rem; max-width: 30rem; font-size: clamp(1.2rem, 2.4vw, 1.5rem); color: #f4ebdd; }
+.hero .actions { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 2.25rem; }
+.landing .go.lg, .landing .button.lg { min-height: 3.75rem; padding: 1rem 2.2rem; font-size: 1.2rem; }
+.hero .go { background: var(--butter); color: var(--oven); box-shadow: 0 10px 30px -8px rgb(243 196 86 / 0.55); }
+.hero .go:hover { background: #ffd778; }
+.hero .button.ghost { color: #fff; box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.7); }
+.hero .button.ghost:hover { background: rgb(255 255 255 / 0.14); }
+.hero-strip { border-top: 1px solid rgb(255 255 255 / 0.18); background: rgb(20 12 7 / 0.55); backdrop-filter: blur(6px); }
+.hero-strip .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 2.5rem; padding-block: 1rem; font-weight: 600; }
+.hero-strip p { margin: 0; }
+.hero-strip a { font-weight: 700; }
+.live { display: inline-flex; align-items: center; gap: 0.55rem; }
+.live .dot { width: 0.65rem; height: 0.65rem; border-radius: 50%; background: #6fd08c; box-shadow: 0 0 0 0 rgb(111 208 140 / 0.6); animation: pulse 2.4s infinite; }
+@keyframes pulse { 70% { box-shadow: 0 0 0 0.6rem rgb(111 208 140 / 0); } 100% { box-shadow: 0 0 0 0 rgb(111 208 140 / 0); } }
+
+/* Your open orders, when you have some; and the kitchen's note. */
+.mine { margin-top: 1.25rem; }
+.mine .panel { background: var(--crust); color: #fff; box-shadow: var(--shadow); }
+.mine h2 { font-size: 1.15rem; }
+.mine ul { list-style: none; padding: 0; display: grid; gap: 0.4rem; }
+.mine li a { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem; padding: 0.6rem 0.9rem; border-radius: var(--radius-sm); background: rgb(255 255 255 / 0.12); text-decoration: none; font-weight: 600; }
+.mine li a:hover { background: rgb(255 255 255 / 0.2); }
+.mine li span { color: var(--butter); text-transform: capitalize; }
+.said { padding-top: 1.25rem; display: grid; gap: 0.75rem; }
+.said:empty { display: none; }
+
+/* A photograph beside a promise. */
+.split { padding: clamp(3rem, 8vw, 6rem) 0; }
+.split .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(1.75rem, 6vw, 5rem); align-items: center; }
+.split .pic { aspect-ratio: 3 / 2; border-radius: 1.5rem; overflow: hidden; background: var(--muted); box-shadow: 0 30px 60px -30px rgb(36 22 13 / 0.6); rotate: -1.2deg; }
+.split .pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.split h2 { font-size: clamp(2.2rem, 5.5vw, 3.6rem); letter-spacing: -0.02em; }
+.split .words p:not(.kicker) { margin: 1rem 0 1.75rem; font-size: 1.2rem; color: var(--muted-foreground); max-width: 28rem; }
+@media (max-width: 52rem) { .split .wrap { grid-template-columns: 1fr; } .split .pic { rotate: 0deg; } }
+
+/* The menu: a photograph of everything. */
+.sec.menu { background: var(--paper-deep); }
+.menu-sections { display: grid; gap: clamp(2.5rem, 6vw, 4rem); }
+.section { display: grid; gap: 1.25rem; }
+.section .label { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--crust); }
+.section h2 { font-size: clamp(1.9rem, 4vw, 2.5rem); }
+.section .label p { margin: 0; color: var(--muted-foreground); font-size: 1.05rem; }
+.items > div { scroll-margin-top: 6rem; }
+.items { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(17.5rem, 100%), 1fr)); gap: 1.25rem; }
+
+/* The story, over a photograph. */
+.banner { position: relative; isolation: isolate; padding: clamp(5rem, 14vw, 10rem) 0; background: var(--oven); color: #fff; overflow: hidden; scroll-margin-top: 4rem; }
+.banner::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgb(20 12 7 / 0.9) 0%, rgb(20 12 7 / 0.6) 55%, rgb(20 12 7 / 0.25) 100%); }
+.banner .kicker { color: var(--butter); }
+.banner h2 { max-width: 14ch; font-size: clamp(2.6rem, 7vw, 5rem); line-height: 0.98; letter-spacing: -0.025em; }
+.banner p:not(.kicker) { margin: 1.1rem 0 0; max-width: 34rem; font-size: 1.2rem; color: #f4ebdd; }
+.banner .go { margin-top: 2rem; background: var(--butter); color: var(--oven); }
+.banner .go:hover { background: #ffd778; }
+
+/* How it works: three short lines. */
+.how { text-align: center; }
+.how h2.big { margin-bottom: clamp(1.75rem, 4vw, 3rem); }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin: 0; padding: 0; list-style: none; counter-reset: step; }
+.steps li { counter-increment: step; }
+.steps li::before { content: counter(step); display: grid; place-items: center; width: 4.5rem; height: 4.5rem; margin: 0 auto 1rem; border-radius: 50%; background: var(--butter); color: var(--oven); font-family: var(--font-heading); font-style: italic; font-weight: 500; font-size: 2.2rem; }
+.steps h3 { font-size: 1.5rem; }
+.steps p { margin: 0.4rem auto 0; max-width: 16rem; color: var(--muted-foreground); font-size: 1.05rem; }
+@media (max-width: 44rem) { .steps { grid-template-columns: 1fr; gap: 2rem; } }
+
+/* Visit. */
+.visit { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+.visit h3 { margin: 0.6rem 0 0.4rem; font-size: 1.4rem; color: #fff; }
+.visit svg { width: 2.2rem; height: 2.2rem; color: var(--butter); }
+.visit p { margin: 0 0 0.4rem; color: #cdbfac; }
+.visit p strong { color: #fff; }
+.visit .tel { font-family: var(--font-heading); font-size: 1.8rem; font-weight: 600; text-decoration: none; color: var(--butter); }
+.visit-cta { margin: clamp(2rem, 5vw, 3.5rem) 0 0; }
+.visit-cta .go { background: var(--butter); color: var(--oven); }
+.visit-cta .go:hover { background: #ffd778; }
+@media (max-width: 52rem) { .visit { grid-template-columns: 1fr; gap: 1.75rem; } }
+
+/* On a phone, the bag stays in reach once there's something in it. */
+.bagbar { display: none; }
+@media (max-width: 48rem) {
+  body.has-bag { --bagbar: 4.25rem; padding-bottom: 4.5rem; }
+  .bagbar { position: fixed; z-index: 30; inset: auto 0.75rem 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; padding: 0.6rem 0.75rem 0.6rem 1.1rem; border-radius: 999px; background: var(--oven); color: #fff; font-weight: 700; text-decoration: none; box-shadow: 0 14px 30px -12px rgb(36 22 13 / 0.7); }
+  .bagbar span:last-child { padding: 0.5rem 0.9rem; border-radius: 999px; background: var(--butter); color: var(--oven); }
+  .hero::before { background: linear-gradient(0deg, rgb(20 12 7 / 0.92) 0%, rgb(20 12 7 / 0.6) 55%, rgb(20 12 7 / 0.3) 100%); }
+  .hero-words { align-self: end; }
+  .hero .actions .go { flex: 1 1 100%; }
+  .hero-strip .wrap { gap: 0.2rem 1.5rem; font-size: 0.95rem; }
+}

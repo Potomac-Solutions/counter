@@ -1,7 +1,8 @@
 <!--
   Where an order is: placed, being made, ready, picked up. A Sync document only the server writes
   ('use collection orders by order'); the page may read it because it's this guest's own. When the
-  kitchen moves it along, the guest's phone follows without a reload.
+  kitchen moves it along, the guest's phone follows without a reload: the headline changes, the
+  steps fill in, and "ready" turns the whole card butter-yellow so it can be seen at a glance.
 -->
 <script>
   'use collection orders by order'
@@ -11,20 +12,47 @@
 
   const steps = ['placed', 'making', 'ready', 'picked-up']
   const labels = { placed: 'Placed', making: 'Being made', ready: 'Ready at the window', 'picked-up': 'Picked up' }
+  const headline = { placed: 'We’ve got your order', making: 'It’s being made', ready: 'Your order is ready at the window', 'picked-up': 'Picked up. Enjoy it' }
+  const more = {
+    placed: 'It’s in the kitchen’s list. This page moves on its own; no need to refresh.',
+    making: 'The kitchen is on it now. This page will say when it’s ready.',
+    ready: 'Come to the side window and give your name.',
+    'picked-up': 'Thanks for ordering ahead. See you next time.',
+  }
   const reached = steps.indexOf(status)
 </script>
 <style>
-  :host { display: grid; gap: 0.6rem; }
-  ol { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
-  li { padding: 0.35rem 0.8rem; border-radius: 999px; box-shadow: 0 0 0 1px var(--border, #e3d6c6); color: var(--muted-foreground, #7a6a58); font-weight: 600; }
-  li.done { background: var(--primary, #6b3f22); color: var(--primary-foreground, #fff); box-shadow: none; }
-  .ready { margin: 0; padding: 0.8rem 1rem; border-radius: 0.6rem; background: #f6e1c8; color: #5a2e10; font-weight: 700; }
+  :host { display: block; }
+  .card { display: grid; gap: 1.25rem; padding: 1.4rem; border-radius: var(--radius, 1rem); background: var(--card, #fff); box-shadow: 0 0 0 1px var(--border, #e3d6c6), var(--shadow, none); transition: background-color 0.3s; }
+  .card.ready { background: var(--butter, #f3c456); box-shadow: 0 0 0 2px var(--crust, #6b3f22); }
+  .card.over { background: var(--muted, #f1e7da); }
+  .now { display: grid; gap: 0.3rem; }
+  .word { margin: 0; font-family: var(--font-heading, inherit); font-weight: 600; font-size: clamp(1.5rem, 5vw, 2rem); line-height: 1.1; }
+  .more { margin: 0; color: var(--muted-foreground, #6a5a49); }
+  .card.ready .more { color: var(--oven, #24160d); font-weight: 600; }
+  ol { display: grid; grid-template-columns: repeat(4, 1fr); margin: 0; padding: 0; list-style: none; }
+  li { position: relative; display: grid; justify-items: center; gap: 0.5rem; padding-top: 0.1rem; text-align: center; font-size: 0.88rem; font-weight: 600; line-height: 1.2; color: var(--muted-foreground, #6a5a49); }
+  li::before { content: ""; position: relative; z-index: 1; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--card, #fff); box-shadow: inset 0 0 0 2px var(--input, #cdbba4); }
+  li::after { content: ""; position: absolute; top: 0.72rem; left: -50%; width: 100%; height: 3px; background: var(--input, #cdbba4); }
+  li:first-child::after { display: none; }
+  li.done { color: var(--foreground, #2d2017); }
+  li.done::before { background: var(--crust, #6b3f22); box-shadow: none; }
+  li.done::after { background: var(--crust, #6b3f22); }
+  li.current::before { box-shadow: 0 0 0 0.3rem rgb(107 63 34 / 0.2); animation: beat 2s ease-in-out infinite; }
+  .card.over li.current::before { animation: none; box-shadow: none; }
+  @keyframes beat { 50% { box-shadow: 0 0 0 0.55rem rgb(107 63 34 / 0.08); } }
+  @media (prefers-reduced-motion: reduce) { li.current::before { animation: none; } .card { transition: none; } }
 </style>
 <order-progress order="" status-now="placed">
-  <p class="ready" zb-if={status === 'ready'} role="status">Your order is ready at the window.</p>
-  <ol aria-label="Where your order is">
-    <zb-each items={steps} as="step" key={step}>
-      <li class:done={steps.indexOf(step) <= reached} aria-current={step === status ? 'step' : null}>{labels[step]}</li>
-    </zb-each>
-  </ol>
+  <div class="card" class:ready={status === 'ready'} class:over={status === 'picked-up'}>
+    <div class="now" role="status" aria-live="polite">
+      <p class="word">{headline[status]}</p>
+      <p class="more">{more[status]}</p>
+    </div>
+    <ol aria-label="Where your order is">
+      <zb-each items={steps} as="step" key={step}>
+        <li class:done={steps.indexOf(step) <= reached} class:current={step === status} aria-current={step === status ? 'step' : null}>{labels[step]}</li>
+      </zb-each>
+    </ol>
+  </div>
 </order-progress>
