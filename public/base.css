@@ -108,6 +108,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Forms. */
 label { display: grid; gap: 0.35rem; font-weight: 600; }
+label:not(.check) > :is(input:not([type=checkbox], [type=radio]), select, textarea) { width: 100%; min-width: 0; }
 input, select, textarea { font: inherit; min-height: 2.75rem; padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--input); background: #fff; color: inherit; max-width: 100%; }
 input:hover, select:hover, textarea:hover { border-color: var(--crust); }
 .check { display: flex; gap: 0.5rem; align-items: start; font-weight: 400; }
