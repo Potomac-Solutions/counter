@@ -16,10 +16,10 @@
 </script>
 <style>
   :host { display: block; }
-  aside { display: grid; gap: 0.2rem; padding: 1rem 1.25rem; border-radius: var(--radius, 1rem); background: var(--note, #f6e8d6); box-shadow: inset 4px 0 0 var(--rust, #b4532a); }
+  aside { display: grid; gap: 0.2rem; padding: 1rem 1.25rem; border-radius: var(--radius, 1rem); background: var(--note, #fbf0c4); box-shadow: inset 4px 0 0 var(--rust, #1d1a14); }
   p { margin: 0; font-size: 1.08rem; }
   strong { font-family: var(--font-heading, inherit); font-weight: 600; }
-  small { color: var(--muted-foreground, #6a5a49); }
+  small { color: var(--muted-foreground, #5d574b); }
 </style>
 <kitchen-note note="" text-now="" at-now={0} at-label="" time-zone="America/New_York">
   <aside zb-if={text} aria-live="polite">

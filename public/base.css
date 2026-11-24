@@ -5,37 +5,37 @@
 */
 :root {
   /* Paper, crust, rust and butter: the existing hues, named for what they are. */
-  --paper: #fbf6ef;
-  --paper-deep: #f3e9da;
-  --ink: #2d2017;
-  --ink-soft: #6a5a49;
-  --crust: #6b3f22;
-  --crust-deep: #472812;
-  --oven: #24160d;
-  --rust: #b4532a;
-  --rust-ink: #963f1b;
-  --butter: #f3c456;
-  --line: #e3d6c6;
+  --paper: #fffdf6;
+  --paper-deep: #fbf3d6;
+  --ink: #1d1a14;
+  --ink-soft: #5d574b;
+  --crust: #1d1a14;
+  --crust-deep: #000000;
+  --oven: #1d1a14;
+  --rust: #1d1a14;
+  --rust-ink: #6b5300;
+  --butter: #f5b700;
+  --line: #e9e2c8;
 
   --background: var(--paper);
   --foreground: var(--ink);
-  --card: #fffdf9;
+  --card: #ffffff;
   --card-foreground: var(--ink);
   --border: var(--line);
-  --input: #cdbba4;
-  --muted: #f1e7da;
+  --input: #c9bf9f;
+  --muted: #f6efd6;
   --muted-foreground: var(--ink-soft);
   --primary: var(--crust);
   --primary-foreground: #fff;
   --ring: var(--rust);
   --accent: var(--rust);
-  --note: #f6e8d6;
+  --note: #fbf0c4;
   --radius: 1rem;
   --radius-sm: 0.6rem;
 
-  --font-heading: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-heading: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
   --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --shadow: 0 1px 2px rgb(71 40 18 / 0.06), 0 8px 24px -12px rgb(71 40 18 / 0.18);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px -12px rgb(0 0 0 / 0.18);
   --gutter: clamp(1rem, 4vw, 2.5rem);
   color-scheme: light;
 }
@@ -64,7 +64,7 @@ p { text-wrap: pretty; }
 .wrap { width: min(72rem, 100% - 2 * var(--gutter)); margin-inline: auto; }
 
 /* The bar across the top of every page: dark, so the logo and "Order now" are the two bright things. */
-.site-head { position: sticky; top: 0; z-index: 20; background: rgb(36 22 13 / 0.94); backdrop-filter: blur(10px); color: #fff; }
+.site-head { position: sticky; top: 0; z-index: 20; background: rgb(29 26 20 / 0.94); backdrop-filter: blur(10px); color: #fff; }
 .site-head .bar { display: flex; align-items: center; gap: 0.75rem 1.25rem; min-height: 4.25rem; }
 .wordmark { display: inline-flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--ink); }
 .site-head .wordmark { color: #fff; }
@@ -76,7 +76,7 @@ p { text-wrap: pretty; }
 .site-head nav a:not(.bag) { white-space: nowrap; padding: 0.5rem 0.7rem; border-radius: 999px; font-size: 0.95rem; font-weight: 600; text-decoration: none; color: #f4ebdd; }
 .site-head nav a:not(.bag):hover, .site-head nav a[aria-current] { background: rgb(255 255 255 / 0.12); }
 .bag { display: inline-flex; align-items: center; gap: 0.45rem; margin-left: 0.5rem; min-height: 2.75rem; padding: 0.55rem 1.25rem; border-radius: 999px; background: var(--butter); color: var(--oven); font-size: 1rem; font-weight: 700; text-decoration: none; white-space: nowrap; transition: background-color 0.15s, transform 0.15s; }
-.bag:hover { background: #ffd778; }
+.bag:hover { background: #ffc933; }
 .bag:active { transform: translateY(1px); }
 .bag svg { width: 1.05rem; height: 1.05rem; }
 @media (max-width: 46rem) {
@@ -105,7 +105,7 @@ button:not(.action-button):active, .button:active, .go:active { transform: trans
 .go.lg, .button.lg { min-height: 3.25rem; padding: 0.85rem 1.5rem; font-size: 1.08rem; }
 .button.light { background: var(--muted); color: var(--foreground); }
 .button.ghost { background: transparent; color: inherit; box-shadow: inset 0 0 0 1.5px currentColor; }
-.button.ghost:hover { background: rgb(107 63 34 / 0.08); }
+.button.ghost:hover { background: rgb(29 26 20 / 0.08); }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 .button.light:hover { background: var(--line); }
 
@@ -194,3 +194,13 @@ tr.done { opacity: 0.6; }
   .site-head, .site-foot, .bagbar, .toast, .skip { display: none !important; }
   body { background: #fff; }
 }
+
+/* Small lines above a heading are plain words in sentence case. */
+.kicker { text-transform: none; letter-spacing: 0; font-weight: 700; font-size: 1rem; }
+
+/* The bar across the top is the shop's yellow awning, with the words in ink. */
+.site-head { background: var(--butter); color: var(--oven); }
+.site-head .wordmark, .site-head .wordmark small, .site-head nav a:not(.bag) { color: var(--oven); }
+.site-head nav a:not(.bag):hover, .site-head nav a[aria-current] { background: rgb(0 0 0 / 0.1); }
+.site-head .bag { background: var(--oven); color: var(--butter); }
+.site-head .bag:hover { background: #000; }

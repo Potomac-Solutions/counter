@@ -4,8 +4,8 @@
   base.css; everything here is under body.staff.
 */
 body.staff {
-  --background: #f6f1e9;
-  --card: #fffdf9;
+  --background: #faf7ec;
+  --card: #ffffff;
   --field: #fff;
   --ok-bg: #e2f1e4; --ok-fg: #174a2a;
   --bad-bg: #fbe3df; --bad-fg: #7a1f17;
@@ -20,8 +20,8 @@ body.staff {
   :root:not([data-theme=light]) body.staff {
     --background: #17100b; --foreground: #f1e6d8; --card: #231810; --card-foreground: #f1e6d8; --field: #17100b;
     --border: #3f2d20; --line: #3f2d20; --input: #5a4332; --muted: #2f2117; --muted-foreground: #bcab97;
-    --primary: #f3c456; --primary-foreground: #24160d; --crust: #f3c456; --crust-deep: #e0ae38; --ring: #f3c456;
-    --rust: #e88a5c; --rust-ink: #f0a079; --accent: #e88a5c; --note: #2f2117; --ink: #f1e6d8;
+    --primary: #f5b700; --primary-foreground: #1d1a14; --crust: #f5b700; --crust-deep: #ffc933; --ring: #f5b700;
+    --rust: #f5b700; --rust-ink: #ffc933; --accent: #f5b700; --note: #2f2117; --ink: #f1e6d8;
     --ok-bg: #153823; --ok-fg: #a9e3bd; --bad-bg: #4a1a15; --bad-fg: #f6b8b0; --info-bg: #17324a; --info-fg: #b3d6f2; --warn-bg: #4a3410; --warn-fg: #f6d58f;
     --side: #0f0a07; --shadow: none; color-scheme: dark;
   }
@@ -29,8 +29,8 @@ body.staff {
 :root[data-theme=dark] body.staff {
   --background: #17100b; --foreground: #f1e6d8; --card: #231810; --card-foreground: #f1e6d8; --field: #17100b;
   --border: #3f2d20; --line: #3f2d20; --input: #5a4332; --muted: #2f2117; --muted-foreground: #bcab97;
-  --primary: #f3c456; --primary-foreground: #24160d; --crust: #f3c456; --crust-deep: #e0ae38; --ring: #f3c456;
-  --rust: #e88a5c; --rust-ink: #f0a079; --accent: #e88a5c; --note: #2f2117; --ink: #f1e6d8;
+  --primary: #f5b700; --primary-foreground: #1d1a14; --crust: #f5b700; --crust-deep: #ffc933; --ring: #f5b700;
+  --rust: #f5b700; --rust-ink: #ffc933; --accent: #f5b700; --note: #2f2117; --ink: #f1e6d8;
   --ok-bg: #153823; --ok-fg: #a9e3bd; --bad-bg: #4a1a15; --bad-fg: #f6b8b0; --info-bg: #17324a; --info-fg: #b3d6f2; --warn-bg: #4a3410; --warn-fg: #f6d58f;
   --side: #0f0a07; --shadow: none; color-scheme: dark;
 }
@@ -45,8 +45,8 @@ body.staff {
 .staff .badge.past, .staff .badge.handled { background: var(--ok-bg); color: var(--ok-fg); }
 .staff .badge.warn { background: var(--warn-bg); color: var(--warn-fg); }
 .staff .go { background: var(--rust); color: #fff; }
-:root[data-theme=dark] .staff .go { color: #24160d; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme=light]) .staff .go { color: #24160d; } }
+:root[data-theme=dark] .staff .go { color: #1d1a14; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme=light]) .staff .go { color: #1d1a14; } }
 .staff .button.light:hover { background: var(--border); }
 .staff .kicker { color: var(--rust-ink); }
 
@@ -54,14 +54,14 @@ body.staff {
 .shell { display: grid; grid-template-columns: 15rem minmax(0, 1fr); min-height: 100dvh; }
 .side { position: sticky; top: 0; height: 100dvh; overflow-y: auto; display: flex; flex-direction: column; gap: 1.25rem; padding: 1.1rem 0.9rem; background: var(--side); color: var(--side-fg); }
 .side .wordmark { color: #fff; padding: 0.2rem 0.4rem; }
-.side .wordmark small { color: #f3c456; }
+.side .wordmark small { color: #f5b700; }
 .side nav { display: grid; gap: 0.1rem; }
 .side nav small { padding: 0.9rem 0.6rem 0.3rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #a8957f; }
 .side nav a { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.55rem 0.6rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600; color: var(--side-fg); }
 .side nav a:hover { background: rgb(255 255 255 / 0.08); }
-.side nav a[aria-current] { background: #f3c456; color: #24160d; }
-.side nav a b { min-width: 1.5rem; padding: 0.05rem 0.4rem; border-radius: 999px; background: #b4532a; color: #fff; font-size: 0.78rem; text-align: center; }
-.side nav a[aria-current] b { background: #24160d; }
+.side nav a[aria-current] { background: #f5b700; color: #1d1a14; }
+.side nav a b { min-width: 1.5rem; padding: 0.05rem 0.4rem; border-radius: 999px; background: #1d1a14; color: #fff; font-size: 0.78rem; text-align: center; }
+.side nav a[aria-current] b { background: #1d1a14; }
 .side nav a kbd { display: none; }
 .side .me { margin-top: auto; display: grid; gap: 0.5rem; padding: 0.9rem 0.6rem 0; border-top: 1px solid rgb(255 255 255 / 0.14); font-size: 0.92rem; }
 .side .me p { margin: 0; line-height: 1.3; }
@@ -97,7 +97,7 @@ body.staff {
   .tabs { position: fixed; z-index: 30; inset: auto 0 0; display: grid; grid-template-columns: repeat(4, 1fr); padding: 0.3rem 0.3rem calc(0.3rem + env(safe-area-inset-bottom)); background: var(--card); border-top: 1px solid var(--border); }
   .tabs a { position: relative; display: grid; place-items: center; min-height: 3rem; border-radius: 0.6rem; font-size: 0.85rem; font-weight: 700; text-decoration: none; color: var(--muted-foreground); }
   .tabs a[aria-current] { background: var(--muted); color: var(--foreground); }
-  .tabs a b { position: absolute; top: 0.2rem; right: 18%; min-width: 1.3rem; padding: 0 0.3rem; border-radius: 999px; background: #b4532a; color: #fff; font-size: 0.72rem; line-height: 1.3rem; text-align: center; }
+  .tabs a b { position: absolute; top: 0.2rem; right: 18%; min-width: 1.3rem; padding: 0 0.3rem; border-radius: 999px; background: #1d1a14; color: #fff; font-size: 0.72rem; line-height: 1.3rem; text-align: center; }
   .staff main { padding-bottom: 6rem; }
 }
 
@@ -215,3 +215,20 @@ kbd { padding: 0.05rem 0.4rem; border-radius: 0.3rem; background: rgb(255 255 25
   body.staff { background: #fff; color: #000; }
   .panel, .tile { box-shadow: none !important; border: 1px solid #bbb; break-inside: avoid; }
 }
+
+/* The back office wears the awning too: a yellow sidebar with the words in ink. */
+body.staff { --side: var(--butter); --side-fg: #1d1a14; }
+:root[data-theme=dark] body.staff { --side-fg: #eadfce; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme=light]) body.staff { --side-fg: #eadfce; } }
+.side .wordmark, .side .me strong, .side .me a, .topbar, .topbar .wordmark, .topbar a.menu, .side .close, .side .me button, .keys { color: var(--side-fg); }
+.side nav a:hover, .topbar a.menu, .side .close, .side .me button { background: color-mix(in srgb, var(--side-fg) 10%, transparent); }
+.side .me button:hover { background: color-mix(in srgb, var(--side-fg) 18%, transparent); }
+.side .me { border-top-color: color-mix(in srgb, var(--side-fg) 18%, transparent); }
+.side nav small, .side .me span { color: color-mix(in srgb, var(--side-fg) 72%, var(--side)); }
+.side, .topbar { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--side-fg) 12%, transparent); }
+.side .wordmark small { color: var(--side-fg); }
+.side nav a[aria-current] { background: var(--primary); color: var(--primary-foreground); }
+.keys summary { color: inherit; }
+.side nav a[aria-current] b { background: var(--butter); color: var(--oven); }
+:root[data-theme=dark] .side .wordmark small { color: var(--butter); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme=light]) .side .wordmark small { color: var(--butter); } }

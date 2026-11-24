@@ -16,28 +16,28 @@
 </script>
 <style>
   :host { display: block; height: 100%; }
-  article { display: grid; grid-template-rows: auto 1fr; height: 100%; overflow: hidden; border-radius: var(--radius, 1rem); background: var(--card, #fff); box-shadow: 0 0 0 1px var(--border, #e3d6c6), var(--shadow, none); transition: box-shadow 0.15s, translate 0.2s; }
-  article:hover { translate: 0 -3px; box-shadow: 0 0 0 1px var(--border, #e3d6c6), 0 18px 34px -18px rgb(71 40 18 / 0.45); }
-  .pic { position: relative; aspect-ratio: 4 / 3; background: var(--muted, #f1e7da); overflow: hidden; }
+  article { display: grid; grid-template-rows: auto 1fr; height: 100%; overflow: hidden; border-radius: var(--radius, 1rem); background: var(--card, #fff); box-shadow: 0 0 0 1px var(--border, #e9e2c8), var(--shadow, none); transition: box-shadow 0.15s, translate 0.2s; }
+  article:hover { translate: 0 -3px; box-shadow: 0 0 0 1px var(--border, #e9e2c8), 0 18px 34px -18px rgb(0 0 0 / 0.45); }
+  .pic { position: relative; aspect-ratio: 4 / 3; background: var(--muted, #f6efd6); overflow: hidden; }
   .pic img { display: block; width: 100%; height: 100%; object-fit: cover; transition: scale 0.4s; }
   article:hover .pic img { scale: 1.04; }
   article.out .pic img { filter: grayscale(0.8); opacity: 0.6; }
   .left { position: absolute; left: 0.7rem; top: 0.7rem; padding: 0.25rem 0.7rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; box-shadow: 0 2px 8px rgb(0 0 0 / 0.25); }
-  .left.few { background: var(--butter, #f3c456); color: var(--oven, #24160d); }
-  .left.gone { background: var(--oven, #24160d); color: #fff; }
+  .left.few { background: var(--butter, #f5b700); color: var(--oven, #1d1a14); }
+  .left.gone { background: var(--oven, #1d1a14); color: #fff; }
   .body { display: grid; grid-template-columns: 1fr auto; gap: 0.3rem 1rem; align-content: start; padding: 1rem 1.1rem 1.1rem; }
   h3 { margin: 0; font-family: var(--font-heading, inherit); font-weight: 600; font-size: 1.3rem; line-height: 1.15; }
-  h3.out { color: var(--muted-foreground, #7a6a58); }
+  h3.out { color: var(--muted-foreground, #5d574b); }
   .price { margin: 0; font-family: var(--font-heading, inherit); font-weight: 600; font-size: 1.3rem; line-height: 1.15; font-variant-numeric: tabular-nums; text-align: right; }
-  .about { grid-column: 1 / -1; margin: 0; color: var(--muted-foreground, #7a6a58); font-size: 0.97rem; }
+  .about { grid-column: 1 / -1; margin: 0; color: var(--muted-foreground, #5d574b); font-size: 0.97rem; }
   .foot { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-top: 0.7rem; align-self: end; }
-  .unit { margin: 0; color: var(--muted-foreground, #7a6a58); font-size: 0.9rem; }
+  .unit { margin: 0; color: var(--muted-foreground, #5d574b); font-size: 0.9rem; }
   form { display: flex; gap: 0.4rem; align-items: center; margin: 0; }
-  input { width: 3.4rem; min-height: 2.9rem; font: inherit; font-variant-numeric: tabular-nums; text-align: center; padding: 0.4rem; border-radius: 999px; border: 1px solid var(--input, #cdbba4); background: #fff; color: inherit; }
-  button { min-height: 2.9rem; font: inherit; font-weight: 700; padding: 0.5rem 1.4rem; border: 0; border-radius: 999px; background: var(--rust, #b4532a); color: #fff; cursor: pointer; transition: background-color 0.15s; }
-  button:hover { background: var(--rust-ink, #963f1b); }
+  input { width: 3.4rem; min-height: 2.9rem; font: inherit; font-variant-numeric: tabular-nums; text-align: center; padding: 0.4rem; border-radius: 999px; border: 1px solid var(--input, #c9bf9f); background: #fff; color: inherit; }
+  button { min-height: 2.9rem; font: inherit; font-weight: 700; padding: 0.5rem 1.4rem; border: 0; border-radius: 999px; background: var(--rust, #1d1a14); color: #fff; cursor: pointer; transition: background-color 0.15s; }
+  button:hover { background: var(--rust-ink, #6b5300); }
   button:disabled, input:disabled { opacity: 0.45; cursor: not-allowed; }
-  :focus-visible { outline: 3px solid var(--ring, #b4532a); outline-offset: 2px; }
+  :focus-visible { outline: 3px solid var(--ring, #1d1a14); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) { article, .pic img { transition: none; } article:hover { translate: none; } article:hover .pic img { scale: none; } }
 </style>
 <menu-item item="" name="" unit="" cents={0} left-now={null} add="" about="" photo="">

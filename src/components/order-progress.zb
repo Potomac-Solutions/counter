@@ -23,24 +23,24 @@
 </script>
 <style>
   :host { display: block; }
-  .card { display: grid; gap: 1.25rem; padding: 1.4rem; border-radius: var(--radius, 1rem); background: var(--card, #fff); box-shadow: 0 0 0 1px var(--border, #e3d6c6), var(--shadow, none); transition: background-color 0.3s; }
-  .card.ready { background: var(--butter, #f3c456); box-shadow: 0 0 0 2px var(--crust, #6b3f22); }
-  .card.over { background: var(--muted, #f1e7da); }
+  .card { display: grid; gap: 1.25rem; padding: 1.4rem; border-radius: var(--radius, 1rem); background: var(--card, #fff); box-shadow: 0 0 0 1px var(--border, #e9e2c8), var(--shadow, none); transition: background-color 0.3s; }
+  .card.ready { background: var(--butter, #f5b700); box-shadow: 0 0 0 2px var(--crust, #1d1a14); }
+  .card.over { background: var(--muted, #f6efd6); }
   .now { display: grid; gap: 0.3rem; }
   .word { margin: 0; font-family: var(--font-heading, inherit); font-weight: 600; font-size: clamp(1.5rem, 5vw, 2rem); line-height: 1.1; }
-  .more { margin: 0; color: var(--muted-foreground, #6a5a49); }
-  .card.ready .more { color: var(--oven, #24160d); font-weight: 600; }
+  .more { margin: 0; color: var(--muted-foreground, #5d574b); }
+  .card.ready .more { color: var(--oven, #1d1a14); font-weight: 600; }
   ol { display: grid; grid-template-columns: repeat(4, 1fr); margin: 0; padding: 0; list-style: none; }
-  li { position: relative; display: grid; justify-items: center; gap: 0.5rem; padding-top: 0.1rem; text-align: center; font-size: 0.88rem; font-weight: 600; line-height: 1.2; color: var(--muted-foreground, #6a5a49); }
-  li::before { content: ""; position: relative; z-index: 1; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--card, #fff); box-shadow: inset 0 0 0 2px var(--input, #cdbba4); }
-  li::after { content: ""; position: absolute; top: 0.72rem; left: -50%; width: 100%; height: 3px; background: var(--input, #cdbba4); }
+  li { position: relative; display: grid; justify-items: center; gap: 0.5rem; padding-top: 0.1rem; text-align: center; font-size: 0.88rem; font-weight: 600; line-height: 1.2; color: var(--muted-foreground, #5d574b); }
+  li::before { content: ""; position: relative; z-index: 1; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--card, #fff); box-shadow: inset 0 0 0 2px var(--input, #c9bf9f); }
+  li::after { content: ""; position: absolute; top: 0.72rem; left: -50%; width: 100%; height: 3px; background: var(--input, #c9bf9f); }
   li:first-child::after { display: none; }
-  li.done { color: var(--foreground, #2d2017); }
-  li.done::before { background: var(--crust, #6b3f22); box-shadow: none; }
-  li.done::after { background: var(--crust, #6b3f22); }
-  li.current::before { box-shadow: 0 0 0 0.3rem rgb(107 63 34 / 0.2); animation: beat 2s ease-in-out infinite; }
+  li.done { color: var(--foreground, #1d1a14); }
+  li.done::before { background: var(--crust, #1d1a14); box-shadow: none; }
+  li.done::after { background: var(--crust, #1d1a14); }
+  li.current::before { box-shadow: 0 0 0 0.3rem rgb(29 26 20 / 0.2); animation: beat 2s ease-in-out infinite; }
   .card.over li.current::before { animation: none; box-shadow: none; }
-  @keyframes beat { 50% { box-shadow: 0 0 0 0.55rem rgb(107 63 34 / 0.08); } }
+  @keyframes beat { 50% { box-shadow: 0 0 0 0.55rem rgb(29 26 20 / 0.08); } }
   @media (prefers-reduced-motion: reduce) { li.current::before { animation: none; } .card { transition: none; } }
 </style>
 <order-progress order="" status-now="placed">
