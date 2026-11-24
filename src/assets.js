@@ -15,8 +15,8 @@ const TYPES = { '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.js
 
 /** The faces the pages use: [family, weight, style, package, file]. Latin only, a few KB each. */
 export const FONTS = [
-  ['Fraunces', 600, 'normal', '@fontsource/fraunces', 'fraunces-latin-600-normal.woff2'],
-  ['Fraunces', 500, 'italic', '@fontsource/fraunces', 'fraunces-latin-500-italic.woff2'],
+  ['Bricolage Grotesque', 600, 'normal', '@fontsource/bricolage-grotesque', 'bricolage-grotesque-latin-600-normal.woff2'],
+  ['Bricolage Grotesque', 700, 'normal', '@fontsource/bricolage-grotesque', 'bricolage-grotesque-latin-700-normal.woff2'],
   ['Figtree', 400, 'normal', '@fontsource/figtree', 'figtree-latin-400-normal.woff2'],
   ['Figtree', 600, 'normal', '@fontsource/figtree', 'figtree-latin-600-normal.woff2'],
   ['Figtree', 700, 'normal', '@fontsource/figtree', 'figtree-latin-700-normal.woff2'],

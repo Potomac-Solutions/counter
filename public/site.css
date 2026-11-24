@@ -26,8 +26,8 @@
 .hero .lede { margin-top: 1.5rem; max-width: 30rem; font-size: clamp(1.2rem, 2.4vw, 1.5rem); color: #f4ebdd; }
 .hero .actions { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 2.25rem; }
 .landing .go.lg, .landing .button.lg { min-height: 3.75rem; padding: 1rem 2.2rem; font-size: 1.2rem; }
-.hero .go { background: var(--butter); color: var(--oven); box-shadow: 0 10px 30px -8px rgb(243 196 86 / 0.55); }
-.hero .go:hover { background: #ffd778; }
+.hero .go { background: var(--butter); color: var(--oven); box-shadow: 0 10px 30px -8px rgb(245 183 0 / 0.55); }
+.hero .go:hover { background: #ffc933; }
 .hero .button.ghost { color: #fff; box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.7); }
 .hero .button.ghost:hover { background: rgb(255 255 255 / 0.14); }
 .hero-strip { border-top: 1px solid rgb(255 255 255 / 0.18); background: rgb(20 12 7 / 0.55); backdrop-filter: blur(6px); }
@@ -52,7 +52,7 @@
 /* A photograph beside a promise. */
 .split { padding: clamp(3rem, 8vw, 6rem) 0; }
 .split .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(1.75rem, 6vw, 5rem); align-items: center; }
-.split .pic { aspect-ratio: 3 / 2; border-radius: 1.5rem; overflow: hidden; background: var(--muted); box-shadow: 0 30px 60px -30px rgb(36 22 13 / 0.6); rotate: -1.2deg; }
+.split .pic { aspect-ratio: 3 / 2; border-radius: 1.5rem; overflow: hidden; background: var(--muted); box-shadow: 0 30px 60px -30px rgb(29 26 20 / 0.6); rotate: -1.2deg; }
 .split .pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .split h2 { font-size: clamp(2.2rem, 5.5vw, 3.6rem); letter-spacing: -0.02em; }
 .split .words p:not(.kicker) { margin: 1rem 0 1.75rem; font-size: 1.2rem; color: var(--muted-foreground); max-width: 28rem; }
@@ -75,7 +75,7 @@
 .banner h2 { max-width: 14ch; font-size: clamp(2.6rem, 7vw, 5rem); line-height: 0.98; letter-spacing: -0.025em; }
 .banner p:not(.kicker) { margin: 1.1rem 0 0; max-width: 34rem; font-size: 1.2rem; color: #f4ebdd; }
 .banner .go { margin-top: 2rem; background: var(--butter); color: var(--oven); }
-.banner .go:hover { background: #ffd778; }
+.banner .go:hover { background: #ffc933; }
 
 /* How it works: three short lines. */
 .how { text-align: center; }
@@ -96,17 +96,22 @@
 .visit .tel { font-family: var(--font-heading); font-size: 1.8rem; font-weight: 600; text-decoration: none; color: var(--butter); }
 .visit-cta { margin: clamp(2rem, 5vw, 3.5rem) 0 0; }
 .visit-cta .go { background: var(--butter); color: var(--oven); }
-.visit-cta .go:hover { background: #ffd778; }
+.visit-cta .go:hover { background: #ffc933; }
 @media (max-width: 52rem) { .visit { grid-template-columns: 1fr; gap: 1.75rem; } }
 
 /* On a phone, the bag stays in reach once there's something in it. */
 .bagbar { display: none; }
 @media (max-width: 48rem) {
   body.has-bag { --bagbar: 4.25rem; padding-bottom: 4.5rem; }
-  .bagbar { position: fixed; z-index: 30; inset: auto 0.75rem 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; padding: 0.6rem 0.75rem 0.6rem 1.1rem; border-radius: 999px; background: var(--oven); color: #fff; font-weight: 700; text-decoration: none; box-shadow: 0 14px 30px -12px rgb(36 22 13 / 0.7); }
+  .bagbar { position: fixed; z-index: 30; inset: auto 0.75rem 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; padding: 0.6rem 0.75rem 0.6rem 1.1rem; border-radius: 999px; background: var(--oven); color: #fff; font-weight: 700; text-decoration: none; box-shadow: 0 14px 30px -12px rgb(29 26 20 / 0.7); }
   .bagbar span:last-child { padding: 0.5rem 0.9rem; border-radius: 999px; background: var(--butter); color: var(--oven); }
   .hero::before { background: linear-gradient(0deg, rgb(20 12 7 / 0.92) 0%, rgb(20 12 7 / 0.6) 55%, rgb(20 12 7 / 0.3) 100%); }
   .hero-words { align-self: end; }
   .hero .actions .go { flex: 1 1 100%; }
   .hero-strip .wrap { gap: 0.2rem 1.5rem; font-size: 0.95rem; }
 }
+
+/* The hero is one voice: both lines in the same weight and colour. */
+.hero h1 { font-weight: 700; letter-spacing: -0.035em; }
+.hero h1 em { color: inherit; font-style: normal; font-weight: inherit; }
+.hero .kicker { font-size: 1.1rem; color: #fff; }
