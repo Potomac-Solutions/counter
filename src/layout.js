@@ -9,7 +9,7 @@ export const escape = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => 
 
 /** The drawings, as inline SVG: no photos to license, nothing to download, and they take the shop's colours. */
 export const art = {
-  mark: '<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1d1a14"/><path d="M12 40c0-11 9-19 20-19s20 8 20 19c0 3-2 5-5 5H17c-3 0-5-2-5-5z" fill="#f5b700"/><path d="M23 29l4 7M31 27l3 8M39 28l3 7" stroke="#1d1a14" stroke-width="3" stroke-linecap="round"/></svg>',
+  mark: '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="31" fill="#1d1a14"/><circle cx="32" cy="32" r="23" fill="#f5b700"/><path d="M32 15v34M32 25l-9-6M32 25l9-6M32 34l-11-7M32 34l11-7M32 43l-10-6M32 43l10-6" fill="none" stroke="#1d1a14" stroke-width="3.2" stroke-linecap="round"/></svg>',
   bag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
   Bread: '<svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 36c0-12 10-20 22-20s22 8 22 20c0 4-3 6-6 6H12c-3 0-6-2-6-6z" fill="rgb(245 183 0 / 0.45)"/><path d="M18 24l5 9M27 21l4 10M36 23l4 9"/></svg>',
   Pastry: '<svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 34c2-10 10-18 22-18s20 8 22 18c-4 5-9 2-11-2-3 6-8 8-11 8s-8-2-11-8c-2 4-7 7-11 2z" fill="rgb(245 183 0 / 0.45)"/><path d="M22 18c-3 5-4 9-5 14M34 18c3 5 4 9 5 14M28 16v24"/></svg>',
