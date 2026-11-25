@@ -1,6 +1,6 @@
 # Counter
 
-Order ahead, for a shop people pick food up from: a bakery, a café, a pizza or sub shop, a deli counter. The menu shows what's left, live. A guest fills a bag, picks a pickup time and pays once; the kitchen moves the order along and the guest's phone follows. A Potomac Solutions platform, built on the [kit](https://github.com/Potomac-Solutions/kit) and [Zubra](https://github.com/zubra-js/zubra).
+Order ahead, for a shop people pick food up from: a bakery, a café, a pizza or sub shop, a deli counter. The menu shows what's left, live. A guest fills a bag, picks a pickup time and pays once; the kitchen moves the order along and the guest's phone follows. A Potomac Solutions platform, built on the Potomac kit and [Zubra](https://github.com/zubra-js/zubra).
 
 The shop it starts with, Hickory Hollow Bakehouse in Oakland, Maryland, is made up. Nothing here is really for sale, and payments are in test mode.
 
@@ -69,7 +69,7 @@ For a real business, leave out `DEMO`, set `DATA_DIR` to a mounted volume, start
 
 | Piece | Job |
 | --- | --- |
-| [Potomac kit](https://github.com/Potomac-Solutions/kit) (private) | `catalog` (what's left, taken all or nothing), `cart` (the bag), `checkout` (pay once, then the order), `pay` (its test provider), `hold` (each pickup time's places), `stages` (placed, making, ready, picked up), `staff` and `staff/pages` (the owner and staff: passwords, sessions, invites, roles, and their pages), `auth` (guest and kitchen cookies), `store` (the Sync log). The kit's `cart-panel` and `checkout-form`, from its package |
+| Potomac kit (private) | `catalog` (what's left, taken all or nothing), `cart` (the bag), `checkout` (pay once, then the order), `pay` (its test provider), `hold` (each pickup time's places), `stages` (placed, making, ready, picked up), `staff` and `staff/pages` (the owner and staff: passwords, sessions, invites, roles, and their pages), `auth` (guest and kitchen cookies), `store` (the Sync log). The kit's `cart-panel` and `checkout-form`, from its package |
 | `@zubra/server` | Renders every page before any JavaScript runs |
 | `@zubra/sync` | The log (one SQLite file). Each menu item, the note and each order are documents only the server writes; pages follow them live, and read only the menu, the note and their own orders |
 | `src/shop.js` | The bakery: hours, pickup spacing and places, today's menu, as data |
@@ -81,7 +81,7 @@ For a real business, leave out `DEMO`, set `DATA_DIR` to a mounted volume, start
 ## Run it
 
 ```sh
-npm install      # needs read access to the private Potomac-Solutions/kit repository
+npm install      # needs read access to the private Potomac kit repository
 npm start        # http://localhost:3000
 npm test         # needs Chrome or Playwright's Chromium
 ```
