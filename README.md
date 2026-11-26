@@ -18,7 +18,7 @@ The shop it starts with, Hickory Hollow Bakehouse in Oakland, Maryland, is made 
 
 **The public side**
 1. **The landing page** (`/`): a full-screen photograph with **Order now**, the carryout promise, today's note, the menu as photo cards with what's left (live) and Add on each, the bakery's story, how it works in three lines, and where and when. Its words are all in `src/shop.js` (`site`); `src/site.js` lays them out.
-2. **Order.** Add a few things, open **Your order**, choose a pickup time, and **Check out** with any card number (`4000 0000 0000 0002` is declined). A confirmation email lands in the owner's **Outbox**.
+2. **Order.** Add a few things, open **Your order**, choose a pickup time, and **Check out**: you go on to pay on Square's page (until Square is set up, the kit's test page: press **Pay**, or go back without paying). A confirmation email lands in the owner's **Outbox**.
 3. **An account** (`/account`): sign up, and orders from this browser join it; signed in elsewhere, they're there too, and checkout fills in your name and email. **Forgot your password?** sends a one-time link (to the Outbox, and the server's log).
 4. **Watch it live.** In another window, buy the rye: the first window's menu counts down. Each pickup time takes three orders.
 
@@ -125,7 +125,7 @@ Sync follows one document, and a new order is a new document that no element on 
 3. The last hand pies go to one guest even when two pay at once; the other is told and keeps the bag.
 4. A pickup time takes three orders; the fourth is told it filled up, even at the same moment, and has to choose again.
 5. A paid order keeps its place after holds run out; a made-up pickup time is refused.
-6. A declined card takes nothing: the stock, the pickup place and the bag stay as they were. Checking out with no time goes back to choose one.
+6. Backing out of the payment page takes nothing: the stock, the pickup place and the bag stay as they were. The same checkout on Square (faked) goes there and back and is paid once, the webhook too. Checking out with no time goes back to choose one.
 7. The kitchen needs a staff sign-in; it moves an order one step per press (two presses at once move it once); the guest follows live; picked-up orders leave the list.
 8. A page reads the menu, the note and its own orders, nothing else, even when it asks; it writes nothing; another site's post is refused; another guest's order page isn't theirs.
 
