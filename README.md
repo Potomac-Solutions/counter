@@ -85,6 +85,8 @@ and no money, the same trip there and back. To use Square's sandbox, set these o
 settings, as in the kit's README; nothing else changes. With live keys and no `PAY_SQUARE_SANDBOX`,
 real money moves, so keep the sandbox on the public demo.
 
+`SESSION_SECRET` must be at least 32 characters now (the kit refuses a shorter one).
+
 ## How it is put together
 
 | Piece | Job |
