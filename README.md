@@ -65,6 +65,26 @@ With `DEMO=1` the server is a demo anyone can try, back office included (`src/de
 
 For a real business, leave out `DEMO`, set `DATA_DIR` to a mounted volume, start it with `npm start`, and claim the first owner's setup link from the deploy log.
 
+## Paying
+
+The customer pays on **Square**'s own page: the card is typed there, never here. Checkout holds
+the stock and the pickup place, sends them to Square, and makes the order once Square says it's
+paid (when they come back, or from Square's webhook). Backing out puts both back.
+
+Until Square's settings are on the server, the kit's test page stands in: plainly a test, no card
+and no money, the same trip there and back. To use Square's sandbox, set these on Railway:
+
+| Setting | What |
+| --- | --- |
+| `PAY_SQUARE_TOKEN` | The sandbox access token (Square Developer → the app → Credentials) |
+| `PAY_SQUARE_LOCATION` | The sandbox location id |
+| `PAY_SQUARE_SANDBOX` | `1` |
+| `PAY_SQUARE_WEBHOOK_KEY`, `PAY_SQUARE_WEBHOOK_URL` | Optional: a webhook subscription for `payment.updated` to `https://counter.potomac.solutions/pay/webhook`, its signature key, and that address |
+
+`PAY_PROVIDER` picks another platform instead (`stripe`, `paypal`, `helcim`) with its own
+settings, as in the kit's README; nothing else changes. With live keys and no `PAY_SQUARE_SANDBOX`,
+real money moves, so keep the sandbox on the public demo.
+
 ## How it is put together
 
 | Piece | Job |

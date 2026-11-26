@@ -16,7 +16,7 @@ let hand;
 let guest;
 
 before(async () => {
-  server = await createApp({ staffCost: COST, db: join(dir, 'shop.db'), cache: false, secret: 'test', demo: true });
+  server = await createApp({ staffCost: COST, db: join(dir, 'shop.db'), cache: false, secret: 'test-only-secret-that-is-long-enough-1234', demo: true });
   await server.staff.accept(await server.staff.setup(), DEMO.owner);
   owner = server.staff.list().find((one) => one.email === DEMO.owner.email);
   await server.staff.accept((await server.staff.invite(owner, { email: DEMO.staff.email, name: DEMO.staff.name, roles: ['staff'] })).token, DEMO.staff);
@@ -78,7 +78,7 @@ test('the demo exits once a day at the reset hour, never in its first hour', () 
 });
 
 test('without DEMO, the sign-in page shows no demo sign-ins', async () => {
-  const plain = await createApp({ staffCost: COST, db: join(dir, 'plain.db'), cache: false, secret: 'test' });
+  const plain = await createApp({ staffCost: COST, db: join(dir, 'plain.db'), cache: false, secret: 'test-only-secret-that-is-long-enough-1234' });
   await new Promise((done) => plain.listen(0, done));
   const page = await (await fetch(`http://localhost:${plain.address().port}/account/sign-in`)).text();
   plain.closeAllConnections?.();

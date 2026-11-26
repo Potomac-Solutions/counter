@@ -66,7 +66,7 @@ export const minutesUntil = (slot, now = Date.now()) => {
 };
 const slotKey = (slot) => slot.replace(/[^0-9]/g, '');
 
-export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 2 * 60_000 } = {}) {
+export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 2 * 60_000, provider = testProvider(), payingMs = 30 * 60_000 } = {}) {
   let who = () => null;
   let onShift = () => false;
   const owns = (guest, order) => Boolean(guest && order && (order.owner === guest.pub || (guest.customer && order.customer === guest.customer)));
@@ -100,7 +100,10 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
   // A new order is a new document, which no open page was made for. One document the server keeps
   // says "the board changed"; the kitchen's page follows it and fetches the board again.
   const touch = () => store.write('boards', 'kitchen', { rev: (store.get('boards', 'kitchen')?.rev ?? 0) + 1 });
-  const checkout = createCheckout({ store, catalog, cart, pay: createPay({ provider: testProvider(), store, now }), stages: kitchen, now });
+  // Paid on the platform's page (Square, for this shop): `wanted` keeps a let-go checkout from being taken.
+  let checkout;
+  const pay = createPay({ provider, store, now, wanted: (id) => checkout.wanted(id) });
+  checkout = createCheckout({ store, catalog, cart, pay, stages: kitchen, now, payingMs });
   // Each pickup time has `perSlot` places; a guest holds one while paying, and keeps it once paid.
   const places = Array.from({ length: shop.perSlot }, (_, i) => `o${i + 1}`);
   const slots = createHolds({ store, holdMs, max: 1, names: { units: 'slots', holders: 'slot-holds' }, now });
@@ -115,11 +118,31 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
     declined: () => 'That card was declined. Try another.',
     'in-progress': () => 'Your order is already going through.',
     'not-yours': () => 'That checkout has expired. Try again.',
+    'not-paid': () => 'That payment didn’t go through, so nothing was charged. Your order is still here.',
+    cancelled: () => 'Nothing was charged. Your order is still here.',
+    'not-set-up': () => 'Paying online isn’t working right now. Call us and we’ll take your order.',
+    'provider-failed': () => 'The payment service didn’t answer. Try again in a minute.',
+    'paid-after-cancel': () => 'That payment came through after the order was let go. We’ll refund it; call us if you’d like the order.',
   };
   const words = (answer) => ({ error: (WORDS[answer.error] ?? (() => 'That didn’t go through. Try again.'))(answer) });
 
   /** How many orders are already set for a pickup time. */
   const booked = (slot) => [...slots.taken(`slots/${slotKey(slot)}`).values()].filter((place) => place.state === 'taken' || place.state === 'held').length;
+
+  /** A paid checkout's pickup place, kept for good, and the kitchen told. */
+  async function afterPaid(key) {
+    const doc = store.get('checkouts', key);
+    const slot = doc?.fields?.slot;
+    if (slot) {
+      const pool = `slots/${slotKey(slot)}`;
+      const mine = slots.held(doc.owner, pool).units;
+      // The hold ran out while they paid: take a free place if there is one; the order stands either way.
+      const place = mine[0] ?? places.find((one) => !slots.taken(pool).has(one));
+      if (place && !mine.length) await slots.choose(doc.owner, pool, { units: [place] });
+      if (place) await slots.confirm(doc.owner, pool, [place]);
+    }
+    await touch();
+  }
 
   return {
     sync,
@@ -179,7 +202,7 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
      * Pay for the guest's order and set it for their pickup time. The time's place is held before
      * paying (the last place goes to one guest), kept once paid, let go if the card is declined.
      */
-    async place(guest, form) {
+    async place(guest, form, { back = '', cancel = '' } = {}) {
       const key = String(form.get('checkout') ?? '');
       if (!guest || !KEY.test(key)) return { error: 'That checkout has expired. Try again.' };
       const before = store.get('checkouts', key);
@@ -190,22 +213,77 @@ export async function createCounter({ db = ':memory:', now = Date.now, holdMs = 
       const mine = slots.held(guest.pub, pool).units;
       const place = mine[0] ?? places.find((one) => !slots.taken(pool).has(one));
       if (!place) return { error: `${timeLabel(slot)} just filled up. Choose another time.`, back: '/order' };
-      const held = await slots.choose(guest.pub, pool, { units: [place] });
+      // Paying on the platform's page takes longer than a typed card: the place is kept as long as the checkout.
+      const held = back ? await slots.chooseAcross(guest.pub, [{ pool, units: [place] }], { ms: payingMs }) : await slots.choose(guest.pub, pool, { units: [place] });
       if (held.error) return { error: `${timeLabel(slot)} just filled up. Choose another time.`, back: '/order' };
       const done = await checkout.place(guest.pub, {
         key,
         method: { card: String(form.get('card') ?? '') },
         fields: { name: String(form.get('name') ?? '').trim().slice(0, 80), email: String(form.get('email') ?? '').trim().slice(0, 200), phone: String(form.get('phone') ?? '').trim().slice(0, 40), slot, placedAt: now(), customer: guest.customer ?? '' },
-        description: `${shop.name} order (test mode)`,
+        description: `${shop.name} order`,
+        back,
+        cancel,
       });
       if (!done.ok) {
         await slots.choose(guest.pub, pool, { units: [] });
         return words(done);
       }
+      if (done.paying) return done.paid ? this.finish(key) : { ok: true, key, paying: true, pay: done.pay };
       await slots.confirm(guest.pub, pool, [place]);
       await touch();
       return { ok: true, key };
     },
+
+    /**
+     * Back from the platform's page, or its webhook: once it's paid, the order goes to the
+     * kitchen and the pickup place is kept. Not paid: the stock and place go back (unless the
+     * platform says it was paid after all), and the bag stays.
+     */
+    async finish(key, { told } = {}) {
+      const before = store.get('checkouts', key);
+      if (!before) return { error: 'That checkout has expired. Try again.' };
+      const done = await checkout.finish(key, { told });
+      if (done.error === 'not-paid') return this.cancel(before.owner, key, 'not-paid');
+      if (!done.ok) return { ...words(done), key };
+      if (!done.again) await afterPaid(key);
+      return { ok: true, key, again: Boolean(done.again) };
+    },
+
+    /** The webhook from the platform: `{ headers, body, url }`. */
+    async heard(request) {
+      const done = await checkout.heard(request);
+      if (done.ok && !done.again) await afterPaid(done.key);
+      return done;
+    },
+
+    /** Backed out of the platform's page: the stock and the pickup place go back. */
+    async cancel(owner, key, why = 'cancelled') {
+      const before = store.get('checkouts', key);
+      if (!before || before.owner !== owner) return { error: 'That checkout has expired. Try again.' };
+      const done = await checkout.cancel(owner, key);
+      if (done.ok && done.orders) {
+        if (!done.again) await afterPaid(key);
+        return { ok: true, key };
+      }
+      const slot = before.fields?.slot;
+      if (slot) await slots.choose(owner, `slots/${slotKey(slot)}`, { units: [] });
+      return { ...words({ error: why }), key };
+    },
+
+    /** Checkouts left on the platform's page: run every few minutes. */
+    async sweep() {
+      for (const one of await checkout.sweep()) {
+        if (one.orders) await afterPaid(one.key);
+        else {
+          const slot = store.get('checkouts', one.key)?.fields?.slot;
+          const owner = store.get('checkouts', one.key)?.owner;
+          if (slot && owner) await slots.choose(owner, `slots/${slotKey(slot)}`, { units: [] });
+        }
+      }
+    },
+
+    /** A paid order by its key, whoever owns it (for the email once it's paid). */
+    orderByKey: (key) => (KEY.test(key) ? store.get('orders', key) : null),
 
     /** A paid order the guest owns, or null. */
     order(guest, key) {
