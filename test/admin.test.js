@@ -14,7 +14,7 @@ let server;
 let base;
 
 before(async () => {
-  server = await createApp({ staffCost: COST, db: join(dir, 'shop.db'), cache: false, secret: 'test' });
+  server = await createApp({ staffCost: COST, db: join(dir, 'shop.db'), cache: false, secret: 'test-only-secret-that-is-long-enough-1234' });
   await server.staff.accept(await server.staff.setup(), OWNER);
   const owner = server.staff.list().find((one) => one.email === OWNER.email);
   await server.staff.accept((await server.staff.invite(owner, { email: STAFF.email, name: STAFF.name, roles: ['staff'] })).token, STAFF);
@@ -62,7 +62,11 @@ async function order(b, { item = 'croissant', qty = 2, name = 'Pat Quill', email
   await b.post('/cart/add', { item, qty: String(qty) });
   await b.post('/order/time', { slot: server.counter.times().find((time) => !time.full).slot });
   const checkout = /name="checkout" value="(c[a-z0-9]+)"/.exec((await b.get('/checkout')).text)[1];
-  const paid = await b.post('/checkout', { checkout, name, email, card: '4242 4242 4242 4242' });
+  const started = await b.post('/checkout', { checkout, name, email });
+  // The test payment page, standing in for Square's: "Pay", then the way back.
+  const ref = new URL(started.location, base).searchParams.get('ref');
+  const back = new URL((await b.post('/pay/test', { ref, answer: 'pay' })).location);
+  const paid = await b.get(back.pathname + back.search);
   const key = /^\/orders\/(c[a-z0-9]+)$/.exec(paid.location)?.[1];
   assert.ok(key, paid.location);
   return key;

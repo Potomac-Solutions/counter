@@ -23,16 +23,20 @@ import { layout, escape } from './src/layout.js';
 import { landing } from './src/site.js';
 import { shell } from './src/shell.js';
 import { serveAsset } from './src/assets.js';
+import { createPayments } from './src/payments.js';
+import { PLATFORM_NAMES as PAY_NAMES } from '@potomac-solutions/kit/pay/providers';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const components = join(here, 'src', 'components');
 
-export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'counter.db'), cache = true, secret = process.env.SESSION_SECRET, now = Date.now, holdMs, staffCost, publicUrl = process.env.PUBLIC_URL ?? '', demo = process.env.DEMO === '1' } = {}) {
+export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'counter.db'), cache = true, secret = process.env.SESSION_SECRET, now = Date.now, holdMs, staffCost, publicUrl = process.env.PUBLIC_URL ?? '', demo = process.env.DEMO === '1', payEnv = process.env, payFetch } = {}) {
   if (!secret) {
     if (process.env.NODE_ENV === 'production') throw new Error('Set SESSION_SECRET.');
-    secret = 'counter-development-only';
+    secret = 'counter-development-only-not-a-real-secret';
   }
-  const counter = await createCounter({ db, now, holdMs });
+  // Square is this demo's platform; until its settings are on the server, the kit's test page stands in.
+  const payments = createPayments({ env: payEnv, intended: 'square', fetch: payFetch });
+  const counter = await createCounter({ db, now, holdMs, provider: payments.provider });
   const guests = signedCookie({ secret, name: 'guest' });
   const production = process.env.NODE_ENV === 'production';
   // Customers who make an account (kit/customers), in the shop's own log.
@@ -50,7 +54,7 @@ export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'count
     send: mail.send,
     templates: {
       reset: ({ name, link }) => ({ subject: `Reset your ${counter.shop.name} password`, body: `Hi ${name},\n\nThis link sets a new password. It works once, for an hour:\n${link}\n\nIf it wasn’t you, ignore this email.` }),
-      placed: ({ name, when, what, total, link }) => ({ subject: `Your order for ${when}`, body: `Hi ${name},\n\nWe’ve got your order for pickup ${when}: ${what}. ${total}, paid (test mode).\n\nFollow it here: ${link}\n\n${counter.shop.pickup}` }),
+      placed: ({ name, when, what, total, link }) => ({ subject: `Your order for ${when}`, body: `Hi ${name},\n\nWe’ve got your order for pickup ${when}: ${what}. ${total}, paid${payments.sandbox ? ' (test mode)' : ''}.\n\nFollow it here: ${link}\n\n${counter.shop.pickup}` }),
     },
   });
   const origin = (req) => publicUrl || `http://${req.headers.host ?? 'localhost'}`;
@@ -94,6 +98,15 @@ export async function createApp({ db = join(process.env.DATA_DIR ?? here, 'count
     }
     return new URLSearchParams(body);
   }
+  /** The "we've got your order" email, once, when an order is first paid. */
+  async function tellPlaced(req, guest, done) {
+    if (done.ok && !done.again) {
+      const order = counter.orderByKey(done.key);
+      if (order?.email && !mail.sent.some((one) => one.body.includes(`/orders/${done.key}`))) {
+        await notify.notify({ email: order.email }, 'placed', { name: order.name, when: pickupWords(order.slot), what: order.lines.map((line) => `${line.qty} × ${line.name}`).join(', '), total: money(order.cents), link: `${origin(req)}/orders/${done.key}` });
+      }
+    }
+  }
   const lineList = (lines) => `<ul>${lines.map((line) => `<li>${line.qty} × ${escape(line.name)}</li>`).join('')}</ul>`;
 
   function menuPage(p, url, guest, account) {
@@ -130,7 +143,7 @@ ${p.render('cart-panel', { cart: view, change: '/cart/change', checkout: chosen 
     return `<div class="checkout">
 <section class="page-head"><a class="back" href="/order">Back to your order</a><h1>Check out</h1></section>
 <div class="summary"><p>Pickup<strong>${escape(pickupWords(slot))}</strong></p><a href="/order#pickup">Change the time</a></div>
-${p.render('checkout-form', { cart: view, place: '/checkout', checkout: counter.checkoutKey(), problem: notices.read(url).problem, testMode: true, name: account?.name ?? '', email: account?.email ?? '' })}
+${p.render('checkout-form', { cart: view, place: '/checkout', checkout: counter.checkoutKey(), problem: notices.read(url).problem, ...payments.form, name: account?.name ?? '', email: account?.email ?? '' })}
 <p class="safe">${escape(shop.pickup)}${account ? '' : ' No account needed; <a href="/account/sign-in">sign in</a> if you have one.'}</p>
 </div>`;
   }
@@ -138,12 +151,12 @@ ${p.render('checkout-form', { cart: view, place: '/checkout', checkout: counter.
   function orderStatus(p, order) {
     const over = order.status === 'picked-up';
     return `<div class="status">
-<section class="page-head"><p class="kicker">Order ${escape(order.key.slice(-6).toUpperCase())} · test mode</p><h1>Pickup ${escape(pickupWords(order.slot))}</h1><p class="lede">For ${escape(order.name)} · ${money(order.cents)}. ${escape(shop.pickup)}</p></section>
+<section class="page-head"><p class="kicker">Order ${escape(order.key.slice(-6).toUpperCase())}${payments.sandbox ? ' · test mode' : ''}</p><h1>Pickup ${escape(pickupWords(order.slot))}</h1><p class="lede">For ${escape(order.name)} · ${money(order.cents)}. ${escape(shop.pickup)}</p></section>
 ${p.render('order-progress', { order: order.key, statusNow: order.status })}
 <section class="receipt" aria-label="In the bag"><h2>In the bag</h2>
   <ul>${order.lines.map((line) => `<li><span>${line.qty} × ${escape(line.name)}</span><span>${money(line.total ?? line.cents * line.qty)}</span></li>`).join('')}</ul>
   <p class="sum"><span>Paid</span><span>${money(order.cents)}</span></p>
-  <p class="fine">Test mode: no money moved.${order.email ? ` A confirmation went to ${escape(order.email)}.` : ''}</p>
+  <p class="fine">${payments.sandbox ? 'Test mode: no money moved.' : `Paid on ${escape(payments.name === 'test' ? 'the test page' : PAY_NAMES[payments.name])}.`}${order.email ? ` A confirmation went to ${escape(order.email)}.` : ''}</p>
 </section>
 <p class="after"><a class="button light" href="/#menu">${over ? 'Order again' : 'Order something else'}</a>${order.customer ? '<a class="button light" href="/account">Your orders</a>' : '<a class="button light" href="/account/sign-up">Keep your orders in an account</a>'}</p>
 </div>`;
@@ -212,6 +225,25 @@ ${note(url)}
       if (url.pathname.startsWith('/account') || url.pathname.startsWith('/admin')) res.setHeader('cache-control', 'no-store');
       const said = () => note(url);
 
+      // Paying on the platform's page: the test page, the way back, backing out, and the webhook.
+      if (await payments.testRoute(req, res, url, readForm)) return;
+      if (url.pathname === '/pay/back' && req.method === 'GET') {
+        const done = await counter.finish(url.searchParams.get('checkout') ?? '');
+        await tellPlaced(req, guest, done);
+        return back(res, done.ok ? `/orders/${done.key}` : withProblem('/checkout', done));
+      }
+      if (url.pathname === '/pay/cancel' && req.method === 'GET') {
+        const done = await counter.cancel(guest.pub, url.searchParams.get('checkout') ?? '');
+        return back(res, done.ok ? `/orders/${done.key}` : withProblem('/checkout', done));
+      }
+      if (url.pathname === '/pay/webhook' && req.method === 'POST') {
+        const request = await payments.webhook(req, publicUrl || origin(req));
+        if (!request) return send(res, 413, 'Too large');
+        const heard = await counter.heard(request);
+        if (heard.ok && !heard.again) await tellPlaced(req, null, heard);
+        return send(res, heard.error === 'bad-signature' ? 401 : 200, heard.error === 'bad-signature' ? 'Bad signature' : 'ok');
+      }
+
       if (req.method === 'POST') {
         // Every form is ours: another site's post is refused (the cookies are SameSite=Lax too).
         if (req.headers['sec-fetch-site'] === 'cross-site') return send(res, 403, 'Forbidden');
@@ -232,14 +264,16 @@ ${note(url)}
           return back(res, done.ok ? (form.get('next') === 'checkout' ? '/checkout' : '/order') : withProblem('/order', done));
         }
         if (url.pathname === '/checkout') {
-          const done = await counter.place(guest, form);
-          if (done.ok && !done.again) {
-            const order = counter.order(guest, done.key);
-            if (order?.email && !mail.sent.some((one) => one.body.includes(`/orders/${done.key}`))) {
-              await notify.notify({ email: order.email }, 'placed', { name: order.name, when: pickupWords(order.slot), what: order.lines.map((line) => `${line.qty} × ${line.name}`).join(', '), total: money(order.cents), link: `${origin(req)}/orders/${done.key}` });
-            }
-          }
+          const done = await counter.place(guest, form, { back: `${origin(req)}/pay/back`, cancel: `${origin(req)}/pay/cancel` });
+          if (done.paying) return payments.send(res, done.pay, { cancel: `/pay/cancel?checkout=${done.key}`, fields: { checkout: done.key } });
+          await tellPlaced(req, guest, done);
           return back(res, done.ok ? `/orders/${done.key}` : withProblem(done.back ?? '/checkout', done));
+        }
+        // Helcim's frame says it's paid: the kit checks with Helcim before believing it.
+        if (url.pathname === '/pay/told') {
+          const done = await counter.finish(String(form.get('checkout') ?? ''), { told: String(form.get('told') ?? '') });
+          await tellPlaced(req, guest, done);
+          return back(res, done.ok ? `/orders/${done.key}` : withProblem('/checkout', done));
         }
         // A customer's account.
         if (url.pathname.startsWith('/account/')) {
@@ -410,11 +444,15 @@ ${note(url)}
       else res.end();
     }
   });
+  // Checkouts left on the platform's page give their stock and pickup place back.
+  const sweeping = setInterval(() => counter.sweep().catch((error) => console.error(error)), 5 * 60_000);
+  sweeping.unref();
   const stop = server.close.bind(server);
   server.close = (cb) => stop((error) => {
+    clearInterval(sweeping);
     try { counter.close(); } finally { cb?.(error); }
   });
-  return Object.assign(server, { counter, staff, customers, demo, sent: mail.sent });
+  return Object.assign(server, { counter, staff, customers, demo, payments, sent: mail.sent });
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

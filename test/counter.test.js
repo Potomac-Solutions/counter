@@ -35,7 +35,7 @@ const sinceHalfSeven = ((Number(bakery.find((part) => part.type === 'hour').valu
 const now = () => Date.now() - sinceHalfSeven;
 
 before(async () => {
-  const server = await withOwner(await createApp({ staffCost: COST, db: join(dir, 'app.db'), cache: false, secret: 'test', now }));
+  const server = await withOwner(await createApp({ staffCost: COST, db: join(dir, 'app.db'), cache: false, secret: 'test-only-secret-that-is-long-enough-1234', now }));
   await new Promise((done) => server.listen(0, done));
   app = { server, base: `http://localhost:${server.address().port}` };
   const system = ['/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser', 'C:/Program Files/Google/Chrome/Application/chrome.exe', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'].find((path) => existsSync(path));
@@ -72,7 +72,25 @@ async function order(guest, lines, { slot = times()[0].slot, card = '4242 4242 4
   for (const [item, qty] of lines) await guest.post('/cart/add', { item, qty: String(qty) });
   await guest.post('/order/time', { slot });
   const key = /name="checkout" value="(c[a-z0-9]+)"/.exec(await guest.get('/checkout'))?.[1];
-  return guest.post('/checkout', { checkout: key ?? '', name, email: 'sam@example.com', card });
+  const started = await guest.post('/checkout', { checkout: key ?? '', name, email: 'sam@example.com' });
+  return started.location.startsWith('/pay/test') ? onPage(guest, started.location, { pay: card !== DECLINED }) : started;
+}
+
+/**
+ * The test payment page, by plain requests: "Pay" (or "Go back without paying"), then the way
+ * back to the shop. Where it ends up. Square's own page stands here until Square is set up.
+ */
+const DECLINED = '4000 0000 0000 0002';
+/** Sent on to the test page: paid there and back. Anything else: as it was. */
+const through = (guest, answer) => (answer.location.startsWith('/pay/test') ? onPage(guest, answer.location) : answer);
+async function onPage(guest, location, { pay = true } = {}) {
+  const page = await guest.get(location);
+  assert.match(page, /Test payment page\.<\/strong> No money moves/);
+  assert.match(page, /Once Square is set up, this page is Square’s own\./);
+  const ref = new URL(location, app.base).searchParams.get('ref');
+  const next = pay ? (await guest.post('/pay/test', { ref, answer: 'pay' })).location : /href="([^"]+)">Go back without paying/.exec(page)[1].replaceAll('&amp;', '&');
+  const back = await guest.context.request.get(new URL(next, app.base).href, { maxRedirects: 0 });
+  return { status: back.status(), location: plain(back.headers().location ?? '') };
 }
 
 test('without JavaScript: the menu, a bag, a pickup time, one payment, and the order', async () => {
@@ -95,8 +113,12 @@ test('without JavaScript: the menu, a bag, a pickup time, one payment, and the o
   await page.waitForURL(`${app.base}/checkout`);
   await page.fill('checkout-form input[name=name]', 'Rosa Bittinger');
   await page.fill('checkout-form input[name=email]', 'rosa@example.com');
-  await page.fill('checkout-form input[name=card]', '4242 4242 4242 4242');
+  assert.match(await page.locator('checkout-form').innerText(), /You’ll go to a test payment page next\. No money moves, and no card is asked for\./);
+  assert.equal(await page.locator('checkout-form input[name=card]').count(), 0, 'no card is typed here');
   await page.click('checkout-form button[type=submit]');
+  await page.waitForURL(/\/pay\/test\?ref=/);
+  assert.match(await page.locator('main').innerText(), /Once Square is set up, this page is Square’s own\.[\s\S]*Pay \$11\.50/);
+  await page.click('button:has-text("Pay $11.50")');
   await page.waitForURL(/\/orders\/c[a-z0-9]+$/);
   const main = await page.locator('main').innerText();
   assert.match(main, /Pickup (today|tomorrow) at \d{1,2}:\d{2} (am|pm)[\s\S]*For Rosa Bittinger · \$11\.50[\s\S]*2 × Butter croissant[\s\S]*1 × Drip coffee/);
@@ -142,7 +164,7 @@ test('the last hand pies go to one guest; the other is told and keeps the bag', 
     await guest.post('/order/time', { slot: times()[2].slot });
   }
   const keys = await Promise.all([a, b].map(async (guest) => /name="checkout" value="(c[a-z0-9]+)"/.exec(await guest.get('/checkout'))[1]));
-  const [x, y] = await Promise.all([a, b].map((guest, i) => guest.post('/checkout', { checkout: keys[i], name: 'Pie Person', email: 'p@example.com', card: '4242' })));
+  const [x, y] = await Promise.all([a, b].map((guest, i) => guest.post('/checkout', { checkout: keys[i], name: 'Pie Person', email: 'p@example.com' }).then((answer) => through(guest, answer))));
   const outcomes = [x.location, y.location].map((location) => (location.startsWith('/orders/') ? 'won' : location));
   assert.deepEqual(outcomes.sort(), ['/checkout?problem=Something in your order just sold out. Check it and try again.', 'won']);
   assert.equal(left('apple-hand-pie'), 0);
@@ -160,7 +182,7 @@ test('a pickup time takes three orders; the fourth is told it filled up, even at
     await guest.post('/order/time', { slot });
   }
   const keys = await Promise.all(guests.map(async (guest) => /name="checkout" value="(c[a-z0-9]+)"/.exec(await guest.get('/checkout'))[1]));
-  const answers = await Promise.all(guests.map((guest, i) => guest.post('/checkout', { checkout: keys[i], name: `Guest ${i}`, email: 'g@example.com', card: '4242' })));
+  const answers = await Promise.all(guests.map((guest, i) => guest.post('/checkout', { checkout: keys[i], name: `Guest ${i}`, email: 'g@example.com' }).then((answer) => through(guest, answer))));
   assert.equal(answers.filter((answer) => answer.location.startsWith('/orders/')).length, 3, JSON.stringify(answers));
   const full = answers.find((answer) => !answer.location.startsWith('/orders/'));
   assert.match(full.location, /^\/order\?problem=\d{1,2}:\d{2} (am|pm) just filled up\. Choose another time\.$/);
@@ -173,7 +195,7 @@ test('a pickup time takes three orders; the fourth is told it filled up, even at
 });
 
 test('a paid order keeps its place after holds run out; a made-up time is refused', async () => {
-  const quick = await withOwner(await createApp({ staffCost: COST, db: join(dir, 'quick.db'), cache: false, secret: 'test', now, holdMs: 800 }));
+  const quick = await withOwner(await createApp({ staffCost: COST, db: join(dir, 'quick.db'), cache: false, secret: 'test-only-secret-that-is-long-enough-1234', now, holdMs: 800 }));
   await new Promise((done) => quick.listen(0, done));
   const base = `http://localhost:${quick.address().port}`;
   const slot = quick.counter.times()[0].slot;
@@ -185,7 +207,10 @@ test('a paid order keeps its place after holds run out; a made-up time is refuse
     await post('/cart/add', { item: 'baguette', qty: '1' });
     await post('/order/time', { slot });
     const key = /name="checkout" value="(c[a-z0-9]+)"/.exec(await (await context.request.get(`${base}/checkout`)).text())[1];
-    assert.match(await post('/checkout', { checkout: key, name: `Early ${i}`, email: 'e@example.com', card: '4242' }), /^\/orders\//);
+    // On the test payment page, and back, by plain requests.
+    const ref = new URL(await post('/checkout', { checkout: key, name: `Early ${i}`, email: 'e@example.com' }), base).searchParams.get('ref');
+    const back = await post('/pay/test', { ref, answer: 'pay' });
+    assert.match(plain((await context.request.get(back, { maxRedirects: 0 })).headers().location ?? ''), /^\/orders\//);
     await context.close();
   }
   await new Promise((done) => setTimeout(done, 1200));
@@ -205,7 +230,7 @@ test('a declined card takes nothing: the stock, the pickup place and the bag sta
   const guest = await device('declined', { javaScriptEnabled: false });
   const before = left('sourdough');
   const answer = await order(guest, [['sourdough', 2]], { slot, card: '4000 0000 0000 0002' });
-  assert.equal(answer.location, '/checkout?problem=That card was declined. Try another.');
+  assert.equal(answer.location, '/checkout?problem=Nothing was charged. Your order is still here.');
   assert.equal(left('sourdough'), before);
   assert.equal(counter().times().find((time) => time.slot === slot).full, false);
   assert.equal([...counter().store.under('slots')].filter((place) => place.key.includes(slot.replace(/\D/g, '')) && place.state !== 'free').length, 0, 'the place was let go');
